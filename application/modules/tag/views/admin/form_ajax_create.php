@@ -10,14 +10,13 @@
 </head>
 
 <body>
-    <div id="content-wrapper">
+    <div id="content-wrapper-ajax">
         <div class="container">
             <section id="content-popup">
             
             <div id="content-head">
                 <h4>Tag</h5>
             </div>
-            
                 <div id="white-bg-container">
                     <?php $this->load->view('admin/message'); ?>
                     

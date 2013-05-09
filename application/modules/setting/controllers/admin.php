@@ -37,7 +37,6 @@ class Admin extends Admin_Controller {
 		}
 		
 		$this->load->view('admin/header');
-		$this->load->view('admin/menu');
 		$this->load->view('admin/edit', $data);
 		$this->load->view('admin/footer');
 	}

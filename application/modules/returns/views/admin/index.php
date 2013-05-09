@@ -10,7 +10,7 @@
     
     <div id="white-bg-container">
         <?php echo form_open('admin/returns', array('class' => 'search')); ?>
-            <ul id="filter-fields-list">
+            <ul class="filter-fields-list">
                 <li>
                     <?php echo form_input('id', set_value('id'), 'class=\'small\' placeholder=\'Order #\''); ?>
                 </li>

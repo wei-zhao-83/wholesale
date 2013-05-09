@@ -9,6 +9,9 @@ class Admin_Controller extends MY_Controller {
 			redirect('admin');
 		}
 		
+		// Load validation rules
+		$this->config->load('validate', TRUE);
+		
 		// Todo: Theme
     }
     

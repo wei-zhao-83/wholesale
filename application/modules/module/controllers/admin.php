@@ -10,7 +10,6 @@ class Admin extends Admin_Controller {
 		$data['modules'] = $this->em->getRepository('module\models\Module')->findAll();
 		
 		$this->load->view('admin/header');
-		$this->load->view('admin/menu');
 		$this->load->view('admin/index', $data);
 		$this->load->view('admin/footer');
 	}

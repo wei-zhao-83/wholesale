@@ -10,7 +10,7 @@
     
     <div id="white-bg-container">
         <?php echo form_open('admin/tag', array('class' => 'search')); ?>
-            <ul id="filter-fields-list">
+            <ul class="filter-fields-list">
                 <li>
                     <?php echo form_input('name', set_value('name'), 'class=\'large\' placeholder=\'Name\''); ?>
                 </li>

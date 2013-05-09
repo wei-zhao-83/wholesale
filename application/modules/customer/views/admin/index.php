@@ -10,7 +10,7 @@
     
     <div id="white-bg-container">
         <?php echo form_open('admin/customer', array('class' => 'search')); ?>
-            <ul id="filter-fields-list">
+            <ul class="filter-fields-list">
                 <li>
                     <?php echo form_input('name', set_value('name'), 'class=\'small\' placeholder=\'Username\''); ?>
                 </li>
@@ -18,9 +18,10 @@
                 <li>
                     <?php echo form_input('phone', set_value('phone'), 'class=\'small\' placeholder=\'Phone\''); ?>
                 </li>
-                
+            </ul>
+            <ul class="filter-fields-list">
                 <li>
-                    <?php echo form_input('tags', set_value(''), 'class=\'large\' id=\'tags\''); ?>
+                    <input name="tags" class="large" id="tags" data-never-submit="false" data-prefill="<?php echo $this->input->post('as_values_tags'); ?>" >
                 </li>
             </ul>
             <?php echo form_submit('filter', '', 'class=\'btn-filter\''); ?>
@@ -51,9 +52,3 @@
         </table>
     </div>
 </section>
-
-<script>
-    $(document).ready(function() {
-        $("#tags").autoSuggest("<?php echo site_url('admin/tag/ajax_search');?>", {minChars: 2, startText: "Tags", asHtmlID: "tags"});
-    });
-</script>

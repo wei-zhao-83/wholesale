@@ -10,7 +10,7 @@
     
     <div id="white-bg-container">
         <?php echo form_open('admin/purchase', array('class' => 'search')); ?>
-            <ul id="filter-fields-list">
+            <ul class="filter-fields-list">
                 <li>
                     <?php echo form_input('id', set_value('id'), 'class=\'small\' placeholder=\'Order #\''); ?>
                 </li>
@@ -71,9 +71,3 @@
         </table>
     </div>
 </section>
-
-<script>
-    $(document).ready(function() {
-
-    });
-</script>

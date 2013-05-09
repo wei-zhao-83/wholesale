@@ -34,10 +34,10 @@
 			retrieveLimit: false, //number for 'limit' param on ajax request
 			extraParams: "",
 			matchCase: false,
-			minChars: 1,
+			minChars: 2,
 			keyDelay: 400,
 			resultsHighlight: true,
-			neverSubmit: false,
+			neverSubmit: true,
 			selectionLimit: false,
 			showResultList: true,
 		  	start: function(){},

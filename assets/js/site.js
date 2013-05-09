@@ -1,33 +1,67 @@
-$(document).ready(function() {
-    $('.btn-add').live('click', function() {
-        var tbl_id = $(this).parents('table').attr('id');
-        var id_str = $('#' + tbl_id + ' tbody>tr:last').attr('id').split("-");
-        var current_id = parseInt(id_str[1]);
-        var myRegExp = new RegExp(current_id, 'ig');
-        
-        $string = $('#' + tbl_id + ' tbody>tr:last').clone(true).wrap("<div />").parent().html().replace(myRegExp, current_id + 1);
-        $(this).parents('table').append($string);
-        
-        return false;
-    });
+// Tag
+(function($) {
+    // Tag FancyBox
+    $('.add-tag').fancybox({ maxWidth: 495, maxHeight: 495 });
     
-    $('.btn-remove').live('click', function() {
-        var id_str = $(this).parents('tr').attr('id').split("-");
-        var current_id = parseInt(id_str[1]);
-        if (current_id != 0) {
-            $(this).parents('tr').remove();
+    // Tag autoSuggest
+    var tags = $("#tags"),
+        _prefill     = tags.data('prefill') || '', // get prefill data
+        _neverSubmit = tags.data('never-submit') || true,
+        _settings    = {
+            asHtmlID:    'tags',
+            preFill:     '',
+            neverSubmit: true
+        };
+    
+    $.extend(_settings, {preFill: _prefill, neverSubmit: _neverSubmit});
+    
+    tags.autoSuggest("/wholesale/admin/tag/ajax_search", _settings);
+}(jQuery));
+
+// Form
+(function($) {
+    var siteForm = {
+        config: {
+            addRowBtn:    '.btn-add',
+            removeRowBtn: '.btn-remove',
+            checkAllBtn:  '.check-all'
+        },
+        
+        init: function(config) {
+            $.extend(this.config, config)
+            
+            this.bindEvents();
+        },
+        
+        bindEvents: function() {
+            var self = this,
+                config = this.config;
+            
+            $(config.addRowBtn).on('click', function(e) {
+                var _tbl = $(this).closest('table'),
+                    _last_row = _tbl.find('tr').eq(-1),
+                    _random = Math.ceil(Math.random()*99999);
+                
+                _last_row.clone(true).appendTo(_tbl)
+                       .find('.btn-remove').css('display', 'inline-block').end()
+                       .find('input').each(function() {
+                            $(this).attr('name', $(this).attr('name').replace(/\[\d+\]/, '[' + _random + ']'));
+                        });
+                
+                e.preventDefault();
+            });
+            
+            $(config.removeRowBtn).on('click', function(e) {
+                $(this).closest('tr').remove();
+                e.preventDefault();
+            });
+            
+            $(config.checkAllBtn).click(function () {
+                $(this).parents('ul').find(':checkbox').attr('checked', this.checked);
+            });
         }
-        
-        return false;
-    });
+    }
     
-    $('.btn-remove-current').live('click', function() {
-        $(this).parents('tr').remove();
-        
-        return false;
-    });
-    
-    $('.check-all').click(function () {
-        $(this).parents('ul').find(':checkbox').attr('checked', this.checked);
-    });
-});
+    siteForm.init();
+}(jQuery));
+

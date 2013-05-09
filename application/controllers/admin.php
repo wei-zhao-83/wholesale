@@ -8,7 +8,6 @@ class Admin extends Admin_Controller {
     
     public function index() {
         $this->load->view('admin/header');
-		$this->load->view('admin/menu');
 		$this->load->view('admin/dashboard');
 		$this->load->view('admin/footer');
     }
@@ -35,7 +34,6 @@ class Admin extends Admin_Controller {
 		}
 		
 		$this->load->view('admin/header');
-		$this->load->view('admin/menu');
 		$this->load->view('admin/login', $data);
 		$this->load->view('admin/footer');
 	}

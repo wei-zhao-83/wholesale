@@ -61,11 +61,11 @@ class Vendor extends Dealer {
 		$this->order_frequency = $order_frequency;
 	}
     
-    public function getHSTNumber() {
+    public function getHstNumber() {
 		return $this->hst_number;
 	}
 	
-	public function setHSTNumber($hst_number) {
+	public function setHstNumber($hst_number) {
 		$this->hst_number = $hst_number;
 	}
     
@@ -106,3 +106,4 @@ class Vendor extends Dealer {
         return $this->purchases;
     }
 }
+

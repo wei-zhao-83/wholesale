@@ -133,7 +133,6 @@ class Admin extends Admin_Controller {
 					  'filter' 			=> $filter);
 		
 		$this->load->view('admin/header');
-		$this->load->view('admin/menu');
 		$this->load->view('admin/index', $data);
 		$this->load->view('admin/footer');
 	}
@@ -166,7 +165,6 @@ class Admin extends Admin_Controller {
 		}
 		
 		$this->load->view('admin/header');
-		$this->load->view('admin/menu');
 		$this->load->view('admin/form_create', $data);
 		$this->load->view('admin/footer');
 	}
@@ -190,6 +188,7 @@ class Admin extends Admin_Controller {
 		$selected_vendor = !empty($_selected_vendors) ? $_selected_vendors[0] : false;
 		
 		$data = array('product' => $product,
+					  'histories' => $product->getProductChanges(),
 					  'tags' => $tags,
 					  'categories' => $this->em->getRepository('category\models\Category')->getCategories(),
 					  'vendors' => $this->em->getRepository('vendor\models\Vendor')->getVendors(),
@@ -214,7 +213,6 @@ class Admin extends Admin_Controller {
 		}
 		
 		$this->load->view('admin/header');
-		$this->load->view('admin/menu');
 		$this->load->view('admin/form_edit', $data);
 		$this->load->view('admin/footer');
 	}

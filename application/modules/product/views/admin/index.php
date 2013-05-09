@@ -10,7 +10,7 @@
     
     <div id="white-bg-container">
         <?php echo form_open('admin/product', array('class' => 'search')); ?>
-            <ul id="filter-fields-list">
+            <ul class="filter-fields-list">
                 <li>
                     <input placeholder="Name" class="medium" name="name" value="<?php echo !empty($filter['name']) ? $filter['name'] : ''; ?>" >
                 </li>
@@ -33,19 +33,21 @@
                 </li>
                 
                 <li>
+                    <select name="per_page">
+                        <option value="12" <?php if(!empty($filter['per_page']) && $filter['per_page'] == 12) { ?> selected="selected" <?php } ?>>12</option>
+                        <option value="24" <?php if(!empty($filter['per_page']) && $filter['per_page'] == 24) { ?> selected="selected" <?php } ?>>24</option>
+                        <option value="48" <?php if(!empty($filter['per_page']) && $filter['per_page'] == 48) { ?> selected="selected" <?php } ?>>48</option>
+                    </select>
+                </li>
+            </ul>
+            
+            <ul class="filter-fields-list">
+                <li>
                     <select name="vendor">
                         <option value="">Vendor</option>
                         <?php foreach($vendors as $vendor): ?>
                         <option value="<?php echo $vendor->getId(); ?>" <?php if(!empty($filter['vendor']) && $filter['vendor'] == $vendor->getId()) { ?> selected="selected" <?php } ?> ><?php echo $vendor->getName(); ?></option>
                         <?php endforeach; ?>
-                    </select>
-                </li>
-                
-                <li>
-                    <select name="per_page">
-                        <option value="12" <?php if(!empty($filter['per_page']) && $filter['per_page'] == 12) { ?> selected="selected" <?php } ?>>12</option>
-                        <option value="24" <?php if(!empty($filter['per_page']) && $filter['per_page'] == 24) { ?> selected="selected" <?php } ?>>24</option>
-                        <option value="48" <?php if(!empty($filter['per_page']) && $filter['per_page'] == 48) { ?> selected="selected" <?php } ?>>48</option>
                     </select>
                 </li>
                 

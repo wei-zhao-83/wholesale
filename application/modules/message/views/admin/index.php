@@ -10,7 +10,7 @@
     
     <div id="white-bg-container">
         <?php echo form_open('admin/message', array('class' => 'search')); ?>
-            <ul id="filter-fields-list">
+            <ul class="filter-fields-list">
                 <li>
                     <?php echo form_input('subject', set_value('subject'), 'class=\'large\' placeholder=\'Subject\''); ?>
                 </li>

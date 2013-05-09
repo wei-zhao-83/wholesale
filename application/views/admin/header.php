@@ -6,16 +6,9 @@
     
     <link rel="stylesheet" href="<?php echo site_url('assets/css/reset.css') ?>">
     <link rel="stylesheet" href="<?php echo site_url('assets/css/text.css') ?>">
-    <link rel="stylesheet" href="<?php echo site_url('assets/css/site.css') ?>">
     <link rel="stylesheet" href="<?php echo site_url('assets/css/autoSuggest.css') ?>">
     <link rel="stylesheet" href="<?php echo site_url('assets/css/jquery.fancybox.css') ?>">
-    
-    
-    <script src="<?php echo site_url('assets/js/jquery-1.7.2.min.js') ?>" type="text/javascript"></script>
-    <script src="<?php echo site_url('assets/js/jquery.autoSuggest.js') ?>" type="text/javascript" charset="utf-8"></script>
-    <script src="<?php echo site_url('assets/js/jquery.fancybox.pack.js') ?>" type="text/javascript" charset="utf-8"></script>
-    <script src="<?php echo site_url('assets/js/site.js') ?>" type="text/javascript"></script>
-    
+    <link rel="stylesheet" href="<?php echo site_url('assets/css/site.css') ?>">
 </head>
 <body>
     <div id="header-wrapper">
@@ -46,3 +39,7 @@
     
     <div id="content-wrapper">
         <div class="container">
+            <?php if($this->auth->is_logged_in()) { ?>
+                <?php $this->load->view('admin/menu'); ?>
+            <?php } ?>
+                

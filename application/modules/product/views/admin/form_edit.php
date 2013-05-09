@@ -197,7 +197,8 @@
             <?php echo form_fieldset_close(); ?>
             
             <?php echo form_fieldset('History'); ?>
-                <?php foreach($product->getProductChanges() as $history) { ?>
+            <?php if ($histories->count()) { ?>
+                <?php foreach($histories as $history) { ?>
                     <div class="history-element">
                         <?php $changes = $history->getChanges(); ?>
                         <div class="history-time"><?php echo date('Y-m-d H:i:s', $history->getTimeStamp()); ?></div>
@@ -205,6 +206,9 @@
                         <div class="history-view"><a class="view-history btn-view" data-fancybox-type="iframe" href="<?php echo site_url('admin/product/view_history/');?>/<?php echo $product->getId(); ?>/<?php echo $history->getTimeStamp(); ?>"></a></div>
                     </div>
                 <?php } ?>
+            <?php } else { ?>
+                <p class="text-center">No Records</p>
+            <?php } ?>
             <?php echo form_fieldset_close(); ?>
             
             <?php echo form_hidden('id', $product->getId()); ?>

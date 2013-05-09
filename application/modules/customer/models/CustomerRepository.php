@@ -29,7 +29,9 @@ class CustomerRepository extends EntityRepository {
 					$tag_qry_array[] = ' t.name = \'' . $tag . '\' ';
 				}
 			}
-			$qry_array[] = implode(' AND ', $tag_qry_array);
+			if (!empty($tag_qry_array)) {
+				$qry_array[] = implode(' AND ', $tag_qry_array);
+			}
 		}
 		
 		if (count($qry_array) > 0) {

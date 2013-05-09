@@ -14,7 +14,6 @@ class Admin extends Admin_Controller {
 					  'users' => $this->em->getRepository('user\models\User')->findAll());
 		
 		$this->load->view('admin/header');
-		$this->load->view('admin/menu');
 		$this->load->view('admin/index', $data);
 		$this->load->view('admin/footer');	
 	}
@@ -43,7 +42,6 @@ class Admin extends Admin_Controller {
 		}
 		
 		$this->load->view('admin/header');
-		$this->load->view('admin/menu');
 		$this->load->view('admin/form_create', $data);
 		$this->load->view('admin/footer');
 	}
@@ -85,7 +83,6 @@ class Admin extends Admin_Controller {
 				$this->em->flush();
 				
 				$this->load->view('admin/header');
-				$this->load->view('admin/menu');
 				$this->load->view('admin/view', $data);
 				$this->load->view('admin/footer');
 			}

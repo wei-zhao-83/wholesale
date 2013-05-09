@@ -1,10 +1,8 @@
-<section id="content">
+<section id="content" class="login">
     <div id="content-head">
         <h2></h2>
     </div>
-    
         <div id="login">
-            
             <?php $this->load->view('admin/message'); ?>
             
             <?php echo form_open('admin/login/'); ?>

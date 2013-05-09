@@ -36,8 +36,8 @@
                         </li>
                         
                         <li>
-                            <label for="tag">Tags <span>[<a class="add-tag" data-fancybox-type="iframe" href="<?php echo site_url('admin/tag/create/');?>/ajax">Add New</a>]</span></label>
-                            <?php echo form_input('tags', '', 'class=\'large\' id=\'tags\''); ?>
+                            <label for="tag">Tags <span>[<a class="add-tag" data-fancybox-type="iframe" href="<?php echo site_url('admin/tag/create/');?>/ajax">Add New</a>]</span></label>                            
+                            <input name="tags" class="large" id="tags" data-prefill="<?php echo $this->input->post('as_values_tags'); ?>" >
                         </li>
                         
                         <li>
@@ -143,7 +143,7 @@
                         <th class="small">Comment</th>
                         <th class="xxsmall"><a href="#" class="btn-add"></a></th>
                     </tr>
-                    <tr id="row-0">
+                    <tr>
                         <td><?php echo form_input('vendor_contacts[0][name]', '', 'class=\'small\''); ?></td>
                         <td><?php echo form_input('vendor_contacts[0][direct_line]', '', 'class=\'xxsmall\''); ?></td>
                         <td><?php echo form_input('vendor_contacts[0][phone]', '', 'class=\'small\''); ?></td>
@@ -153,31 +153,29 @@
                 </table>
             <?php echo form_fieldset_close(); ?>
             
-            <?php echo form_fieldset('Images'); ?>
-                <table id="image-input">
+            <?php // echo form_fieldset('Images'); ?>
+                <!--<table id="image-input">
                     <tr>
                         <th class="medium">File</th>
-                        <th class="small">Name</th>
                         <th class="small">Alt</th>
                         <th class="xxsmall">Order</th>
                         <th class="xsmall">Main</th>
                         <th class="xxsmall"><a href="#" class="btn-add"></a></th>
                     </tr>
-                    <tr id="row-0">
-                        <td><?php echo form_upload('image_file_0', '', 'class=\'medium\''); ?></td>
-                        <td><?php echo form_input('vendor_images[0][name]', '', 'class=\'small\''); ?></td>
-                        <td><?php echo form_input('vendor_images[0][alt]', '', 'class=\'small\''); ?></td>
-                        <td><?php echo form_input('vendor_images[0][arrange]', '', 'class=\'xxsmall\''); ?></td>
+                    <tr>
+                        <td><?php // echo form_upload('vendor_images[0]', '', 'class=\'medium\''); ?></td>
+                        <td><?php // echo form_input('vendor_images[0][alt]', '', 'class=\'small\''); ?></td>
+                        <td><?php // echo form_input('vendor_images[0][arrange]', '', 'class=\'xxsmall\''); ?></td>
                         <td>
                             <select class="xsmall" name="vendor_images[0][main]">
-                                <option value="1" <?php echo set_select('vendor_images[0][main]', '1', TRUE); ?>>Yes</option>
-                                <option value="0" <?php echo set_select('vendor_images[0][main]', '0'); ?>>No</option>
+                                <option value="1" <?php // echo set_select('vendor_images[0][main]', '1', TRUE); ?>>Yes</option>
+                                <option value="0" <?php // echo set_select('vendor_images[0][main]', '0'); ?>>No</option>
                             </select>
                         </td>
                         <td><a href="#" class="btn-remove"></a></td>
                     </tr>
-                </table>
-            <?php echo form_fieldset_close(); ?>
+                </table>-->
+            <?php // echo form_fieldset_close(); ?>
             
             <div class="btn-box">
                 <ul>
@@ -186,24 +184,5 @@
                 </ul>
             </div>
         <?php echo form_close(); ?>
-    
     </div>
-</section>    
-<script>
-    $(document).ready(function() {
-        $("#tags").autoSuggest("<?php echo site_url('admin/tag/ajax_search');?>", {
-            minChars: 2,
-            neverSubmit: "true",
-            startText: "Tags",
-            asHtmlID: "tags",
-            preFill: "<?php echo $post_tags; ?>"
-        });
-        
-        $(".add-tag").fancybox({
-           maxWidth: 530,
-           minWidth: 530,
-           maxHeight: 390,
-           minHeight: 390
-        });
-    });
-</script>
+</section>
