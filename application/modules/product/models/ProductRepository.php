@@ -7,15 +7,6 @@ use Doctrine\ORM\Query;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class ProductRepository extends EntityRepository {
-	//public function getTotal() {
-	//	$qry_str = 'SELECT COUNT(p)
-	//				FROM product\models\Product p
-	//				WHERE p.deleted_at IS NULL';
-	//	
-	//	$qry = $this->_em->createQuery($qry_str);
-	//	return $qry->getSingleScalarResult();
-	//}
-	
 	public function getProducts($filter = null) {
 		$qry_str = 'SELECT p
 					FROM product\models\Product p
@@ -61,7 +52,9 @@ class ProductRepository extends EntityRepository {
 					$tag_qry_array[] = ' t.name = \'' . $tag . '\' ';
 				}
 			}
-			$qry_array[] = implode(' AND ', $tag_qry_array);
+			if (!empty($tag_qry_array)) {
+				$qry_array[] = implode(' AND ', $tag_qry_array);
+			}
 		}
 		
 		if (count($qry_array) > 0) {

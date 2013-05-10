@@ -1,7 +1,9 @@
 // Tag
 (function($) {
-    // Tag FancyBox
+    // Tag Adding
     $('.add-tag').fancybox({ maxWidth: 495, maxHeight: 495 });
+    // Product History
+    $('.view-history').fancybox({ minWidth: 1030, maxHeight: 595 });
     
     // Tag autoSuggest
     var tags = $("#tags"),

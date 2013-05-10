@@ -100,41 +100,37 @@ class Admin extends Admin_Controller {
 		redirect('admin/customer');
 	}
 	
-	private function _do($customer) {
-		if ($customer instanceof customer\models\Customer) {
-            if ($this->input->post('edit')) {
-				// remove the current tags
-				$current_tags = $customer->getTags();
-				foreach ($current_tags as $current_tag) {
-					$customer->removeTag($current_tag);
-				}
+	private function _do(customer\models\Customer $customer) {
+		if ($this->input->post('edit')) {
+			// remove the current tags
+			$current_tags = $customer->getTags();
+			foreach ($current_tags as $current_tag) {
+				$customer->removeTag($current_tag);
 			}
-			
-			// add selected tags
-			$tags = explode(',', $this->input->post('as_values_tags'));
-			foreach($tags as $tag_name) {
-				$tag = $this->em->getRepository('tag\models\Tag')->findOneBy(array('name' => $tag_name));
-				if ($tag) {
-					$customer->addTag($tag);
-				}
-			}
-			
-			// Reflection object
-			$reflected_model = new ReflectionClass('customer\models\Customer');
-			
-			foreach($this->input->post() as $field => $value) {
-				$_method = 'set' . implode(array_map('ucfirst', explode('_', $field)));
-				
-				if ($reflected_model->hasMethod($_method)) {
-					$customer->$_method($value);
-				}
-			}			
-			
-			$this->em->persist($customer);
-			$this->em->flush();
-		} else {
-			throw new Exception('Customer not exists.');
 		}
+		
+		// add selected tags
+		$tags = explode(',', $this->input->post('as_values_tags'));
+		foreach($tags as $tag_name) {
+			$tag = $this->em->getRepository('tag\models\Tag')->findOneBy(array('name' => $tag_name));
+			if ($tag) {
+				$customer->addTag($tag);
+			}
+		}
+		
+		// Reflection object
+		$reflected_model = new ReflectionClass('customer\models\Customer');
+		
+		foreach($this->input->post() as $field => $value) {
+			$_method = 'set' . implode(array_map('ucfirst', explode('_', $field)));
+			
+			if ($reflected_model->hasMethod($_method)) {
+				$customer->$_method($value);
+			}
+		}			
+		
+		$this->em->persist($customer);
+		$this->em->flush();
 	}
 	
 	private function _customer_validate() {

@@ -12,11 +12,11 @@
         <?php echo form_open('admin/product', array('class' => 'search')); ?>
             <ul class="filter-fields-list">
                 <li>
-                    <input placeholder="Name" class="medium" name="name" value="<?php echo !empty($filter['name']) ? $filter['name'] : ''; ?>" >
+                    <input placeholder="Name" class="small" name="name" value="<?php echo !empty($filter['name']) ? $filter['name'] : ''; ?>" >
                 </li>
                 
                 <li>
-                    <input placeholder="Barcode" class="medium" name="barcode" value="<?php echo !empty($filter['barcode']) ? $filter['barcode'] : ''; ?>" >
+                    <input placeholder="Barcode" class="small" name="barcode" value="<?php echo !empty($filter['barcode']) ? $filter['barcode'] : ''; ?>" >
                 </li>
                 
                 <li>
@@ -33,6 +33,15 @@
                 </li>
                 
                 <li>
+                    <select name="vendor">
+                        <option value="">Vendor</option>
+                        <?php foreach($vendors as $vendor): ?>
+                        <option value="<?php echo $vendor->getId(); ?>" <?php if(!empty($filter['vendor']) && $filter['vendor'] == $vendor->getId()) { ?> selected="selected" <?php } ?> ><?php echo $vendor->getName(); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </li>
+                
+                <li>
                     <select name="per_page">
                         <option value="12" <?php if(!empty($filter['per_page']) && $filter['per_page'] == 12) { ?> selected="selected" <?php } ?>>12</option>
                         <option value="24" <?php if(!empty($filter['per_page']) && $filter['per_page'] == 24) { ?> selected="selected" <?php } ?>>24</option>
@@ -43,16 +52,7 @@
             
             <ul class="filter-fields-list">
                 <li>
-                    <select name="vendor">
-                        <option value="">Vendor</option>
-                        <?php foreach($vendors as $vendor): ?>
-                        <option value="<?php echo $vendor->getId(); ?>" <?php if(!empty($filter['vendor']) && $filter['vendor'] == $vendor->getId()) { ?> selected="selected" <?php } ?> ><?php echo $vendor->getName(); ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </li>
-                
-                <li>
-                    <?php echo form_input('tags', set_value(''), 'class=\'large\' id=\'tags\''); ?>
+                    <input name="tags" class="large" id="tags" data-never-submit="false" data-prefill="<?php echo !empty($filter['tags']) ? implode(',', $filter['tags']) : ''; ?>" >
                 </li>
             </ul>
             <?php echo form_submit('filter', '', 'class=\'btn-filter\''); ?>
@@ -88,9 +88,3 @@
         <?php } ?>
     </div>
 </section>
-
-<script>
-    $(document).ready(function() {
-        $("#tags").autoSuggest("<?php echo site_url('admin/tag/ajax_search');?>", {minChars: 2, startText: "Tags", asHtmlID: "tags"});
-    });
-</script>

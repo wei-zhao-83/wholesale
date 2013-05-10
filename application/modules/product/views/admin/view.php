@@ -14,7 +14,7 @@
 <body>
     <div id="content-wrapper">
         <div class="container">
-            <section id="content">
+            <section id="content-popup" class="pop-large">
             
             <div id="content-head">
                 <h4>Modified by <?php echo $changes['user']['username'] ?> @ <?php echo date('Y-m-d H:i:s', $timestamp); ?></h5>
@@ -36,7 +36,7 @@
                                     <li>
                                         <?php echo form_label('Barcode', 'barcode'); ?>
                                         <div class="text">
-                                            <div class="medium"><?php echo $changes['content']['barcode'] ?></div>
+                                            <div class="medium"><?php echo !empty($changes['content']['barcode']) ? $changes['content']['barcode'] : 'N/A'; ?></div>
                                         </div>
                                     </li>
                                     
@@ -61,14 +61,14 @@
                                     <li>
                                         <?php echo form_label('Description', 'description'); ?>
                                         <div class="text">
-                                            <div class="large-2"><?php echo $changes['content']['description'] ?></div>
+                                            <div class="large-2"><?php echo !empty($changes['content']['description']) ? $changes['content']['description'] : 'N/A'; ?></div>
                                         </div>
                                     </li>
                                     
                                     <li>
                                         <?php echo form_label('Comment', 'comment'); ?>
                                         <div class="text">
-                                            <div class="large-2"><?php echo $changes['content']['comment'] ?></div>
+                                            <div class="large-2"><?php echo !empty($changes['content']['comment']) ? $changes['content']['comment'] : 'N/A'; ?></div>
                                         </div>
                                     </li>
                                 </ul>
@@ -107,9 +107,9 @@
                                     </li>
                                     
                                     <li>
-                                        <?php echo form_label('CNC', 'cash_and_carry'); ?>
+                                        <?php echo form_label('CNC', 'CNC'); ?>
                                         <div class="text">
-                                            <div class="medium"><?php echo $changes['content']['cash_and_carry'] ?></div>
+                                            <div class="medium"><?php echo $changes['content']['CNC'] ?></div>
                                         </div>
                                     </li>
                                     
@@ -132,9 +132,9 @@
                                     </li>
                                     
                                     <li>
-                                        <?php echo form_label('Qty', 'qty'); ?>
+                                        <?php echo form_label('Qty', 'total_qty'); ?>
                                         <div class="text">
-                                            <div class="small"><?php echo $changes['content']['qty'] ?></div>
+                                            <div class="small"><?php echo $changes['content']['total_qty'] ?></div>
                                         </div>
                                     </li>
                                     

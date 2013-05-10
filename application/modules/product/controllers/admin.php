@@ -2,19 +2,10 @@
 
 class Admin extends Admin_Controller {
 	
-	private $upload_path = '';
 	private $unit_measures = array();
 	
 	function  __construct() {
 		parent::__construct();
-		
-		$config['upload_path'] = $this->upload_path = $this->config->item('product_image_upload_path', 'config_site');
-		$config['allowed_types'] = $this->config->item('product_image_allowed_types', 'config_site');
-		$config['max_size']	= $this->config->item('product_image_max_size', 'config_site');
-		$config['max_width']  = $this->config->item('product_image_max_width', 'config_site');
-		$config['max_height']  = $this->config->item('product_image_max_height', 'config_site');
-		
-		$this->load->library('upload', $config);
 		
 		$temp_unit_measures = product\models\Product::getUOM();
 		foreach ($temp_unit_measures as $measure) {
@@ -140,12 +131,9 @@ class Admin extends Admin_Controller {
 	public function create() {
 		$product = new product\models\Product;
 		
-		$post_tags = ($this->input->post('as_values_tags'))?trim($this->input->post('as_values_tags')):'';
-		
 		$data = array('product' => $product,
 					  'categories' => $this->em->getRepository('category\models\Category')->getCategories(),
 					  'vendors' => $this->em->getRepository('vendor\models\Vendor')->getVendors(),
-					  'post_tags' => $post_tags,
 					  'unit_measures' => $this->unit_measures);
 		
 		if ($this->_product_validate() !== FALSE) {	
@@ -237,200 +225,83 @@ class Admin extends Admin_Controller {
 	}
 	
 	private function _do(product\models\Product $product) {
-		if ($product instanceof product\models\Product) {
+		if ($this->input->post('edit')) {
+			// save history
+			$changes = array();
+			$changes['content'] = $this->input->post();
+			$changes['user']= array('id' => $this->current_user->getId(), 'username' => $this->current_user->getUsername());
 			
-			$category = $this->em->getRepository('category\models\Category')->findOneBy(array('id' => $this->input->post('category')));
+			// Add product change log
+			$history = new product\models\ProductHistory;
+			$history->setTimeStamp(time());
+			$history->setChanges($changes);
 			
-            if ($this->input->post('edit')) {
-				// save history
-				$changes = array();
-				$changes['content'] = $this->input->post();
-				$changes['user']= array('id' => $this->current_user->getId(), 'username' => $this->current_user->getUsername());
-				
-				$history = new product\models\ProductHistory;
-				$history->setTimeStamp(time());
-				$history->setChanges($changes);
-				
-				$product->addProductChange($history);
-				
-				// remove the current tags
-				$current_tags = $product->getTags();
-				foreach ($current_tags as $current_tag) {
-					$product->removeTag($current_tag);
-				}
-				
-				// remove the current image
-				$current_images = $product->getImages();
-				foreach ($current_images as $current_image) {
-					$product->removeImage($current_image);
-					$this->em->remove($current_image);
-				}
-				
-				// update the current images
-				if ($this->input->post('current_product_images')) {
-					foreach ($this->input->post('current_product_images') as $id => $value) {
-						$image = new image\models\Image;
-						$image->setName($value['name']);
-						$image->setPath($value['path']);
-						$image->setAlt($value['alt']);
-						$image->setArrange($value['arrange']);
-						$image->setMain($value['main']);
-						
-						$product->addImage($image);
-					}
-				}
-				
-				// remove the current vendor
-				$current_vendors = $product->getVendors();
-				foreach ($current_vendors as $current_vendor) {
-					$product->removeVendor($current_vendor);
-					$current_vendor->removeProduct($product);
-				}
+			$product->addProductChange($history);
+			
+			// remove the current tags
+			$current_tags = $product->getTags();
+			foreach ($current_tags as $current_tag) {
+				$product->removeTag($current_tag);
 			}
 			
-			// add and update vendor
-			$vendor = $this->em->getRepository('vendor\models\Vendor')->findOneById($this->input->post('product_vendor'));
-			$vendor->addProduct($product);
-			$product->addVendor($vendor);
-			
-			// upload images first to folder
-			foreach($_FILES as $key => $value):
-				if ($this->upload->do_upload($key)):
-					$array_key = (int)str_replace('image_file_', '', $key);
-					$product_image_array[$array_key] = $this->upload->data();
-				endif;
-			endforeach;
-			
-			// add images
-			foreach ($this->input->post('product_images') as $key => $value) {
-				if(isset($product_image_array[$key]['file_name'])) {
-					$image = new image\models\Image;
-					$image->setName($value['name']);
-					$image->setPath($this->upload_path . $product_image_array[$key]['file_name']);
-					$image->setAlt($value['alt']);
-					$image->setArrange($value['arrange']);
-					$image->setMain($value['main']);
-					
-					$product->addImage($image);
-				}
+			// remove the current vendor
+			$current_vendors = $product->getVendors();
+			foreach ($current_vendors as $current_vendor) {
+				$product->removeVendor($current_vendor);
+				$current_vendor->removeProduct($product);
 			}
-			
-			// add selected tags
-			$tags = explode(',', $this->input->post('as_values_tags'));
-			foreach($tags as $tag_name) {
-				$tag = $this->em->getRepository('tag\models\Tag')->findOneBy(array('name' => $tag_name));
-				if ($tag) {
-					$product->addTag($tag);
-				}
-			}
-			
-			// add category
-			$product->setCategory($category);
-			
-			$product->setName($this->input->post('name'));
-			$product->setBarcode($this->input->post('barcode'));
-			$product->setSKU($this->input->post('sku'));
-			$product->setSection($this->input->post('section'));
-			$product->setActive($this->input->post('active'));
-			$product->setDescription($this->input->post('description'));
-			$product->setComment($this->input->post('comment'));
-			
-			$product->setCost($this->input->post('cost'));
-			$product->setSuggestedPrice($this->input->post('suggested_price'));
-			$product->setNoServicePrice($this->input->post('no_service_price'));
-			$product->setFullServicePrice($this->input->post('full_service_price'));
-			$product->setDiscount($this->input->post('discount'));
-			$product->setCNC($this->input->post('cash_and_carry'));
-            
-			$product->setTotalQty($this->input->post('total_qty'));
-			$product->setQtyUnit($this->input->post('qty_unit'));
-			$product->setUnit($this->input->post('unit'));
-			$product->setUnitCase($this->input->post('unit_case'));
-			
-			$this->em->persist($product);
-			$this->em->flush();
-		} else {
-			throw new Exception('Product not exists.');
 		}
+		
+		// add and update vendor
+		$vendor = $this->em->getRepository('vendor\models\Vendor')->findOneById($this->input->post('product_vendor'));
+		$vendor->addProduct($product);
+		$product->addVendor($vendor);
+		
+		// Add selected tags
+		$tags = explode(',', $this->input->post('as_values_tags'));
+		foreach($tags as $tag_name) {
+			$tag = $this->em->getRepository('tag\models\Tag')->findOneBy(array('name' => $tag_name));
+			if ($tag) {
+				$product->addTag($tag);
+			}
+		}
+		
+		// Add category and unset category post
+		$category = $this->em->getRepository('category\models\Category')->findOneBy(array('id' => $this->input->post('category')));
+		$product->setCategory($category);
+		unset($_POST['category']);
+		
+		// Reflection object
+		$reflected_model = new ReflectionClass('product\models\Product');
+		
+		foreach($this->input->post() as $field => $value) {
+			$_method = 'set' . implode(array_map('ucfirst', explode('_', $field)));
+			
+			if ($reflected_model->hasMethod($_method)) {
+				$product->$_method($value);
+			}
+		}			
+		
+		$this->em->persist($product);
+		$this->em->flush();
 	}
 	
 	private function _product_validate() {
-		$product_validation_rule = array(
-			array('field'=>'name',
-				  'label'=>'Name',
-				  'rules'=>'required|xss_clean|min_length[3]'),
-			array('field'=>'barcode',
-				  'label'=>'Barcode',
-				  'rules'=>''),
-			array('field'=>'sku',
-				  'label'=>'SKU',
-				  'rules'=>''),
-			array('field'=>'section',
-				  'label'=>'Section',
-				  'rules'=>''),
-			array('field'=>'active',
-				  'label'=>'Active',
-				  'rules'=>'required'),
-			array('field'=>'description',
-				  'label'=>'Description',
-				  'rules'=>''),
-			array('field'=>'comment',
-				  'label'=>'Comment',
-				  'rules'=>''),
-			array('field'=>'cost',
-				  'label'=>'Cost',
-				  'rules'=>'is_money'),
-			array('field'=>'suggested_price',
-				  'label'=>'Suggested Retail Price',
-				  'rules'=>'is_money'),
-			array('field'=>'no_service_price',
-				  'label'=>'No Service Price',
-				  'rules'=>'is_money'),
-			array('field'=>'full_service_price',
-				  'label'=>'Full Service Price',
-				  'rules'=>'is_money'),
-			array('field'=>'discount',
-				  'label'=>'Discount',
-				  'rules'=>'is_money'),
-			array('field'=>'cash_and_carry',
-				  'label'=>'CNC',
-				  'rules'=>'is_money'),
-			array('field'=>'total_qty',
-				  'label'=>'Total Qty',
-				  'rules'=>''),
-			array('field'=>'qty_unit',
-				  'label'=>'Qty./Unit',
-				  'rules'=>''),
-			array('field'=>'unit',
-				  'label'=>'Unit',
-				  'rules'=>''),
-			array('field' => 'unit_pack',
-				  'label' => 'Unit / Pack',
-				  'rules'=>''),
-			array('field' => 'pack_case',
-				  'label' => 'Pack / Case',
-				  'rules'=>''),
-			array('field'=>'category',
-				  'label'=>'Category',
-				  'rules'=>'required'),
-			array('field'=>'product_vendor',
-				  'label'=>'Vendor',
-				  'rules'=>'required')
-		);
+		$_rules = $this->config->item('rule_product', 'validate');
 		
 		if($this->input->post('edit')) {
 			$product = $this->em->getRepository('product\models\Product')->findOneBy(array('id' => $this->input->post('id')));
 			
 			if($this->input->post('barcode') == $product->getBarcode()) {
-				unset($product_validation_rule[1]);
+				unset($_rules['barcode']);
 			}
 			
 			if($this->input->post('sku') == $product->getSKU()) {
-				unset($product_validation_rule[2]);
+				unset($_rules['sku']);
 			}
 		}
 		
-		$this->form_validation->set_rules($product_validation_rule); 
+		$this->form_validation->set_rules($_rules); 
 		return $this->form_validation->run();
 	}
 }

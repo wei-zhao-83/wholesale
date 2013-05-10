@@ -194,11 +194,16 @@ body {
                     }
     
 	#content-popup {
-       width: 455px;
         margin: 0 auto;
         background: #F7F7F7;
         padding: 20px;
     }
+		.pop-small {
+			width: 455px;
+		}
+		.pop-large {
+			width: 910px;
+		}
     #content {
        width: 870px;
         margin: 0;

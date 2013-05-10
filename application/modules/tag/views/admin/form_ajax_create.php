@@ -12,7 +12,7 @@
 <body>
     <div id="content-wrapper-ajax">
         <div class="container">
-            <section id="content-popup">
+            <section id="content-popup" class="pop-small">
             
             <div id="content-head">
                 <h4>Tag</h5>

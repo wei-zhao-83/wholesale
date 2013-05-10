@@ -67,7 +67,7 @@
                         
                         <li>
                             <label for="tag">Tags <span>[<a class="add-tag" data-fancybox-type="iframe" href="<?php echo site_url('admin/tag/create/');?>/ajax">Add New</a>]</span></label>
-                            <?php echo form_input('tags', '', 'class=\'large\' id=\'tags\''); ?>
+                            <input name="tags" class="large" id="tags" data-prefill="<?php echo $current_tags; ?>" >
                         </li>
                     </ul>
                 </div>
@@ -110,8 +110,8 @@
                         </li>
                         
                         <li>
-                            <?php echo form_label('CNC', 'cash_and_carry'); ?>
-                            <?php echo form_input('cash_and_carry', set_value('cash_and_carry', $product->getCNC()), 'class=\'medium\''); ?>
+                            <?php echo form_label('CNC', 'CNC'); ?>
+                            <?php echo form_input('CNC', set_value('CNC', $product->getCNC()), 'class=\'medium\''); ?>
                         </li>
                         
                         <li>
@@ -152,50 +152,6 @@
             </div>
             <?php echo form_fieldset_close(); ?>
             
-            <?php echo form_fieldset('Images'); ?>
-                <table id="image-input">
-                    <tr>
-                        <th class="medium">File</th>
-                        <th class="small">Name</th>
-                        <th class="small">Alt</th>
-                        <th class="xxsmall">Order</th>
-                        <th class="xsmall">Main</th>
-                        <th class="xxsmall"><a href="#" class="btn-add"></a></th>
-                    </tr>
-                    
-                    <?php foreach($product->getImages() as $image) { ?>
-                    <tr>
-                        <td><img width="35" height="35" src="<?php echo site_url($image->getPath()); ?>">
-                            <?php echo form_hidden('current_product_images['.$image->getId().'][path]', $image->getPath(), 'class=\'medium\''); ?>
-                        </td>
-                        <td><?php echo form_input('current_product_images['.$image->getId().'][name]', $image->getName(), 'class=\'small\''); ?></td>
-                        <td><?php echo form_input('current_product_images['.$image->getId().'][alt]', $image->getAlt(), 'class=\'small\''); ?></td>
-                        <td><?php echo form_input('current_product_images['.$image->getId().'][arrange]', $image->getArrange(), 'class=\'xxsmall\''); ?></td>
-                        <td>
-                            <select class="xsmall" name="current_product_images[<?php echo $image->getId(); ?>][main]">
-                                <option value="1" <?php if($image->getMain() == 1){ ?> selected="selected" <?php } ?>>Yes</option>
-                                <option value="0" <?php if($image->getMain() == 0){ ?> selected="selected" <?php } ?>>No</option>
-                            </select>
-                        </td>
-                        <td><a href="#" class="btn-remove-current"></a></td>
-                    </tr>
-                    <?php } ?>
-                    <tr id="row-0">
-                        <td><?php echo form_upload('image_file_0', '', 'class=\'medium\''); ?></td>
-                        <td><?php echo form_input('product_images[0][name]', '', 'class=\'small\''); ?></td>
-                        <td><?php echo form_input('product_images[0][alt]', '', 'class=\'small\''); ?></td>
-                        <td><?php echo form_input('product_images[0][arrange]', '', 'class=\'xxsmall\''); ?></td>
-                        <td>
-                            <select class="xsmall" name="product_images[0][main]">
-                                <option value="1" <?php echo set_select('product_images[0][main]', '1', TRUE); ?>>Yes</option>
-                                <option value="0" <?php echo set_select('product_images[0][main]', '0'); ?>>No</option>
-                            </select>
-                        </td>
-                        <td><a href="#" class="btn-remove"></a></td>
-                    </tr>
-                </table>
-            <?php echo form_fieldset_close(); ?>
-            
             <?php echo form_fieldset('History'); ?>
             <?php if ($histories->count()) { ?>
                 <?php foreach($histories as $history) { ?>
@@ -222,29 +178,3 @@
         <?php echo form_close(); ?>
     </div>
 </section>
-
-<script>
-    $(document).ready(function() {
-        $("#tags").autoSuggest("<?php echo site_url('admin/tag/ajax_search');?>", {
-            minChars: 2,
-            neverSubmit: "true",
-            startText: "Tags",
-            asHtmlID: "tags",
-            preFill: "<?php echo $current_tags; ?>"
-        });
-        
-        $(".add-tag").fancybox({
-           maxWidth: 530,
-           minWidth: 530,
-           maxHeight: 390,
-           minHeight: 390
-        });
-        
-        $(".view-history").fancybox({
-           maxWidth: 945,
-           minWidth: 945,
-           maxHeight: 710,
-           minHeight: 710
-        });
-    });
-</script>
