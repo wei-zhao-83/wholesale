@@ -2,18 +2,8 @@
 
 class Admin extends Admin_Controller {
 	
-	private $upload_path = '';
-	
 	function  __construct() {
 		parent::__construct();
-		
-		$config['upload_path'] = $this->upload_path = $this->config->item('category_image_upload_path', 'config_site');
-		$config['allowed_types'] = $this->config->item('category_image_allowed_types', 'config_site');
-		$config['max_size']	= $this->config->item('category_image_max_size', 'config_site');
-		$config['max_width']  = $this->config->item('category_image_max_width', 'config_site');
-		$config['max_height']  = $this->config->item('category_image_max_height', 'config_site');
-		
-		$this->load->library('upload', $config);
 	}
 	
 	public function index() {
@@ -32,10 +22,7 @@ class Admin extends Admin_Controller {
 	public function create() {
 		$category = new category\models\Category;
 		
-		$post_tags = ($this->input->post('as_values_tags'))?trim($this->input->post('as_values_tags')):'';
-		
-		$data = array('category' => $category,
-					  'post_tags' => $post_tags);
+		$data = array('category' => $category);
 		
 		if ($this->_category_validate() !== FALSE) {	
 			try {
@@ -121,134 +108,50 @@ class Admin extends Admin_Controller {
 	}
 	
 	private function _do(category\models\Category $category) {
-		if ($category instanceof category\models\Category) {
-            if ($this->input->post('edit')) {
-				// remove the current tags
-				$current_tags = $category->getTags();
-				foreach ($current_tags as $current_tag) {
-					$category->removeTag($current_tag);
-				}
-				
-				// remove the current image
-				$current_images = $category->getImages();
-				foreach ($current_images as $current_image) {
-					$category->removeImage($current_image);
-					$this->em->remove($current_image);
-				}
-				
-				// update the current images
-				if ($this->input->post('current_category_images')) {
-					foreach ($this->input->post('current_category_images') as $id => $value) {
-						$image = new image\models\Image;
-						$image->setName($value['name']);
-						$image->setPath($value['path']);
-						$image->setAlt($value['alt']);
-						$image->setArrange($value['arrange']);
-						$image->setMain($value['main']);
-						
-						$category->addImage($image);
-					}
-				}
+		if ($this->input->post('edit')) {
+			// remove the current tags
+			$current_tags = $category->getTags();
+			foreach ($current_tags as $current_tag) {
+				$category->removeTag($current_tag);
 			}
-			
-			// upload images first to folder
-			foreach($_FILES as $key => $value):
-				if ($this->upload->do_upload($key)):
-					$array_key = (int)str_replace('image_file_', '', $key);
-					$category_image_array[$array_key] = $this->upload->data();
-				endif;
-			endforeach;
-			
-			// add images
-			foreach ($this->input->post('category_images') as $key => $value) {
-				if(isset($category_image_array[$key]['file_name'])) {
-					$image = new image\models\Image;
-					$image->setName($value['name']);
-					$image->setPath($this->upload_path . $category_image_array[$key]['file_name']);
-					$image->setAlt($value['alt']);
-					$image->setArrange($value['arrange']);
-					$image->setMain($value['main']);
-					
-					$category->addImage($image);
-				}
-			}
-			
-			// add selected tags
-			$tags = explode(',', $this->input->post('as_values_tags'));
-			foreach($tags as $tag_name) {
-				$tag = $this->em->getRepository('tag\models\Tag')->findOneBy(array('name' => $tag_name));
-				if ($tag) {
-					$category->addTag($tag);
-				}
-			}
-			
-			$category->setName($this->input->post('name'));
-			$category->setSlug(generate_slug($this->input->post('slug')));
-			$category->setArrange($this->input->post('arrange'));
-			$category->setActive($this->input->post('active'));
-            $category->setDescription($this->input->post('description'));
-            
-			$category->setSEOTitle($this->input->post('seo_title'));
-			$category->setSEOURL($this->input->post('seo_url'));
-			$category->setSEOCanonicalLink($this->input->post('seo_canonical_link'));
-			$category->setSEOKeywords($this->input->post('seo_keywords'));
-			$category->setSEORobots($this->input->post('seo_robots'));
-			
-			$this->em->persist($category);
-			$this->em->flush();
-		} else {
-			throw new Exception('category not exists.');
 		}
+		
+		// add selected tags
+		$tags = explode(',', $this->input->post('as_values_tags'));
+		foreach($tags as $tag_name) {
+			$tag = $this->em->getRepository('tag\models\Tag')->findOneBy(array('name' => $tag_name));
+			if ($tag) {
+				$category->addTag($tag);
+			}
+		}
+		
+		// Reflection object
+		$reflected_model = new ReflectionClass('category\models\Category');
+		
+		foreach($this->input->post() as $field => $value) {
+			$_method = 'set' . implode(array_map('ucfirst', explode('_', $field)));
+			
+			if ($reflected_model->hasMethod($_method)) {
+				$category->$_method($value);
+			}
+		}			
+		
+		$this->em->persist($category);
+		$this->em->flush();
 	}
 	
 	private function _category_validate() {
-		$category_validation_rule = array(
-			//[0]
-			array('field'=>'name',
-				  'label'=>'Name',
-				  'rules'=>'required|xss_clean|min_length[3]'),
-			//[1]
-			array('field'=>'slug',
-				  'label'=>'Slug',
-				  'rules'=>'required|xss_clean|min_length[3]|is_unique[category\models\Category.slug]'),
-			//[2]
-			array('field'=>'arrange',
-				  'label'=>'Arrange',
-				  'rules'=>'numeric'),
-			//[3]
-			array('field'=>'active',
-				  'label'=>'Active',
-				  'rules'=>'required'),
-            //[4]
-			array('field'=>'description',
-				  'label'=>'Description',
-				  'rules'=>'max_length[250]'),
-			array('field'=>'seo_title',
-				  'label'=>'Page Title',
-				  'rules'=>''),
-			array('field'=>'seo_url',
-				  'label'=>'URL',
-				  'rules'=>''),
-			array('field'=>'seo_canonical_link',
-				  'label'=>'Canonical Link',
-				  'rules'=>''),
-			array('field'=>'seo_keywords',
-				  'label'=>'Keywords',
-				  'rules'=>''),
-			array('field'=>'seo_robots',
-				  'label'=>'Robots',
-				  'rules'=>'')
-		);
+		$_rules = $this->config->item('rule_category', 'validate');
 		
 		if($this->input->post('edit')) {
 			$category = $this->em->getRepository('category\models\Category')->findOneBy(array('id' => $this->input->post('id')));
 			
 			if($this->input->post('slug') == $category->getSlug()) {
-				unset($category_validation_rule[1]);
+				unset($_rules['slug']);
 			}
 		}
 		
-		$this->form_validation->set_rules($category_validation_rule); 
+		$this->form_validation->set_rules($_rules); 
 		return $this->form_validation->run();
 	}
 }

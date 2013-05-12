@@ -124,4 +124,23 @@ class Transaction {
 	public function removeItem($item) {
 		$this->items->removeElement($item);
 	}
+	
+	public function getSummary() {
+		$sub_total = $discount = $tax = 0;
+		
+		$items = $this->getItems();
+		
+		if(!empty($items)) {
+			foreach($items as $item) {
+				$sub_total += $item->getCost() * $item->getQty();
+				$discount += $item->getDiscount() * $item->getQty();
+				$tax += $item->getTax() * $item->getCost() * $item->getQty();				
+			}
+		}
+		
+		return array('sub_total' => number_format((float)$sub_total, 2, '.', ''),
+					 'discount'  => number_format((float)($discount), 2, '.', ''),
+					 'tax' 		 => number_format((float)($tax), 2, '.', ''),
+					 'total' 	 => number_format((float)($sub_total + $tax), 2, '.', ''));
+	}
 }

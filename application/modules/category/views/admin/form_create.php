@@ -40,7 +40,7 @@
                         
                         <li>
                             <label for="tag">Tags <span>[<a class="add-tag" data-fancybox-type="iframe" href="<?php echo site_url('admin/tag/create/');?>/ajax">Add New</a>]</span></label>
-                            <?php echo form_input('tags', '', 'class=\'large\' id=\'tags\''); ?>
+                           <input name="tags" class="large" id="tags" data-url="<?php echo site_url('admin/tag/ajax_search/'); ?>" data-prefill="<?php echo $this->input->post('as_values_tags'); ?>" >
                         </li>
                     </ul>
                 </div>
@@ -58,25 +58,25 @@
                 <div class="half">
                     <ul>
                         <li>
-                            <?php echo form_label('Page Title', 'seo_title'); ?>
-                            <?php echo form_input('seo_title', set_value('seo_title'), 'class=\'medium\''); ?>
+                            <?php echo form_label('Page Title', 'SEO_title'); ?>
+                            <?php echo form_input('SEO_title', set_value('SEO_title'), 'class=\'medium\''); ?>
                         </li>
                         
                         <li>
-                            <?php echo form_label('Canonical Link', 'seo_canonical_link'); ?>
-                            <?php echo form_input('seo_canonical_link', set_value('seo_canonical_link'), 'class=\'medium\''); ?>
+                            <?php echo form_label('Canonical Link', 'SEO_canonical_link'); ?>
+                            <?php echo form_input('SEO_canonical_link', set_value('SEO_canonical_link'), 'class=\'medium\''); ?>
                         </li>
                         
                         <li>
-                            <?php echo form_label('URL', 'seo_url'); ?>
-                            <?php echo form_input('seo_url', set_value('seo_url'), 'class=\'large\''); ?>
+                            <?php echo form_label('URL', 'SEO_URL'); ?>
+                            <?php echo form_input('SEO_URL', set_value('SEO_URL'), 'class=\'large\''); ?>
                         </li>
                         
                         <li>
-                            <?php echo form_label('Robots', 'seo_robots'); ?>
-                            <select class="medium-2" name="seo_robots">
-                                <option value="1" <?php echo set_select('seo_robots', '1', TRUE); ?>>Yes</option>
-                                <option value="0" <?php echo set_select('seo_robots', '0'); ?>>No</option>
+                            <?php echo form_label('Robots', 'SEO_robots'); ?>
+                            <select class="medium-2" name="SEO_robots">
+                                <option value="1" <?php echo set_select('SEO_robots', '1', TRUE); ?>>Yes</option>
+                                <option value="0" <?php echo set_select('SEO_robots', '0'); ?>>No</option>
                             </select>
                         </li>
                     </ul>
@@ -84,37 +84,11 @@
                 <div class="half">
                     <ul>        
                         <li>
-                            <?php echo form_label('Keywords', 'seo_keywords'); ?>
-                            <?php echo form_textarea('seo_keywords', set_value('seo_keywords'), 'class=\'large-2\''); ?>
+                            <?php echo form_label('Keywords', 'SEO_keywords'); ?>
+                            <?php echo form_textarea('SEO_keywords', set_value('SEO_keywords'), 'class=\'large-2\''); ?>
                         </li>
                     </ul>
                 </div>
-            <?php echo form_fieldset_close(); ?>
-            
-            <?php echo form_fieldset('Images'); ?>
-                <table id="image-input">
-                    <tr>
-                        <th class="medium">File</th>
-                        <th class="small">Name</th>
-                        <th class="small">Alt</th>
-                        <th class="xxsmall">Order</th>
-                        <th class="xsmall">Main</th>
-                        <th class="xxsmall"><a href="#" class="btn-add"></a></th>
-                    </tr>
-                    <tr id="row-0">
-                        <td><?php echo form_upload('image_file_0', '', 'class=\'medium\''); ?></td>
-                        <td><?php echo form_input('category_images[0][name]', '', 'class=\'small\''); ?></td>
-                        <td><?php echo form_input('category_images[0][alt]', '', 'class=\'small\''); ?></td>
-                        <td><?php echo form_input('category_images[0][arrange]', '', 'class=\'xxsmall\''); ?></td>
-                        <td>
-                            <select class="xsmall" name="category_images[0][main]">
-                                <option value="1" <?php echo set_select('category_images[0][main]', '1', TRUE); ?>>Yes</option>
-                                <option value="0" <?php echo set_select('category_images[0][main]', '0'); ?>>No</option>
-                            </select>
-                        </td>
-                        <td><a href="#" class="btn-remove"></a></td>
-                    </tr>
-                </table>
             <?php echo form_fieldset_close(); ?>
             
             <div class="btn-box">
@@ -126,22 +100,3 @@
         <?php echo form_close(); ?>
     </div>
 </section>
-
-<script>
-    $(document).ready(function() {
-        $("#tags").autoSuggest("<?php echo site_url('admin/tag/ajax_search');?>", {
-            minChars: 2,
-            neverSubmit: "true",
-            startText: "Tags",
-            asHtmlID: "tags",
-            preFill: "<?php echo $post_tags; ?>"
-        });
-        
-        $(".add-tag").fancybox({
-           maxWidth: 530,
-           minWidth: 530,
-           maxHeight: 390,
-           minHeight: 390
-        });
-    });
-</script>

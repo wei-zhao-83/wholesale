@@ -164,3 +164,36 @@ $config['rule_product'] = array(
           'label'=>'Vendor',
           'rules'=>'required')
 );
+
+$config['rule_category'] = array(
+    'name' => array('field'=>'name',
+          'label'=>'Name',
+          'rules'=>'required|xss_clean|min_length[3]'),
+    'slug' => array('field'=>'slug',
+          'label'=>'Slug',
+          'rules'=>'required|xss_clean|min_length[3]|is_unique[category\models\Category.slug]'),
+    'arrange' => array('field'=>'arrange',
+          'label'=>'Arrange',
+          'rules'=>'numeric'),
+    'active' => array('field'=>'active',
+          'label'=>'Active',
+          'rules'=>'required'),
+    'description' => array('field'=>'description',
+          'label'=>'Description',
+          'rules'=>'max_length[250]'),
+    'SEO_title' => array('field'=>'SEO_title',
+          'label'=>'Page Title',
+          'rules'=>''),
+    'SEO_URL' => array('field'=>'SEO_URL',
+          'label'=>'URL',
+          'rules'=>''),
+    'SEO_canonical_link' => array('field'=>'SEO_canonical_link',
+          'label'=>'Canonical Link',
+          'rules'=>''),
+    'SEO_keywords' => array('field'=>'SEO_keywords',
+          'label'=>'Keywords',
+          'rules'=>''),
+    'SEO_robots' => array('field'=>'SEO_robots',
+          'label'=>'Robots',
+          'rules'=>'')
+);

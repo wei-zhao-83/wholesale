@@ -42,7 +42,7 @@
                         
                         <li>
                             <label for="tag">Tags <span>[<a class="add-tag" data-fancybox-type="iframe" href="<?php echo site_url('admin/tag/create/');?>/ajax">Add New</a>]</span></label>
-                            <?php echo form_input('tags', '', 'class=\'large\' id=\'tags\''); ?>
+                            <input name="tags" class="large" id="tags" data-url="<?php echo site_url('admin/tag/ajax_search/'); ?>" data-prefill="<?php echo $current_tags; ?>" >
                         </li>
                     </ul>
                 </div>
@@ -60,24 +60,24 @@
                 <div class="half">
                     <ul>
                         <li>
-                            <?php echo form_label('Page Title', 'seo_title'); ?>
-                            <?php echo form_input('seo_title', set_value('seo_title', $category->getSEOTitle()), 'class=\'medium\''); ?>
+                            <?php echo form_label('Page Title', 'SEO_title'); ?>
+                            <?php echo form_input('SEO_title', set_value('SEO_title', $category->getSEOTitle()), 'class=\'medium\''); ?>
                         </li>
                         
                         <li>
-                            <?php echo form_label('Canonical Link', 'seo_canonical_link'); ?>
-                            <?php echo form_input('seo_canonical_link', set_value('seo_canonical_link', $category->getSEOCanonicalLink()), 'class=\'medium\''); ?>
+                            <?php echo form_label('Canonical Link', 'SEO_canonical_link'); ?>
+                            <?php echo form_input('SEO_canonical_link', set_value('SEO_canonical_link', $category->getSEOCanonicalLink()), 'class=\'medium\''); ?>
                         </li>
                         
                         <li>
-                            <?php echo form_label('URL', 'seo_url'); ?>
-                            <?php echo form_input('seo_url', set_value('seo_url', $category->getSEOURL()), 'class=\'large\''); ?>
+                            <?php echo form_label('URL', 'SEO_URL'); ?>
+                            <?php echo form_input('SEO_URL', set_value('SEO_URL', $category->getSEOURL()), 'class=\'large\''); ?>
                         </li>
                         
                         <li>
-                            <?php echo form_label('Robots', 'seo_robots'); ?>
-                            <?php $selected_robots = ($this->input->post('seo_robots'))?$this->input->post('seo_robots'):$category->getSEORobots(); ?>
-                            <select class="medium-2" name="seo_robots">
+                            <?php echo form_label('Robots', 'SEO_robots'); ?>
+                            <?php $selected_robots = ($this->input->post('SEO_robots'))?$this->input->post('SEO_robots'):$category->getSEORobots(); ?>
+                            <select class="medium-2" name="SEO_robots">
                                 <option value="1" <?php if($selected_robots == 1){ ?> selected="selected" <?php } ?>>Yes</option>
                                 <option value="0" <?php if($selected_robots == 0){ ?> selected="selected" <?php } ?>>No</option>
                             </select>
@@ -87,56 +87,11 @@
                 <div class="half">
                     <ul>
                         <li>
-                            <?php echo form_label('Keywords', 'seo_keywords'); ?>
-                            <?php echo form_textarea('seo_keywords', set_value('seo_keywords', $category->getSEOKeywords()), 'class=\'large-2\''); ?>
+                            <?php echo form_label('Keywords', 'SEO_keywords'); ?>
+                            <?php echo form_textarea('SEO_keywords', set_value('SEO_keywords', $category->getSEOKeywords()), 'class=\'large-2\''); ?>
                         </li>
                     </ul>
                 </div>
-            <?php echo form_fieldset_close(); ?>
-            
-            
-            <?php echo form_fieldset('Images'); ?>
-                <table id="image-input">
-                    <tr>
-                        <th class="medium">File</th>
-                        <th class="small">Name</th>
-                        <th class="small">Alt</th>
-                        <th class="xxsmall">Order</th>
-                        <th class="xsmall">Main</th>
-                        <th class="xxsmall"><a href="#" class="btn-add"></a></th>
-                    </tr>
-                    
-                    <?php foreach($category->getImages() as $image) { ?>
-                    <tr>
-                        <td><img width="35" height="35" src="<?php echo site_url($image->getPath()); ?>">
-                            <?php echo form_hidden('current_category_images['.$image->getId().'][path]', $image->getPath(), 'class=\'medium\''); ?>
-                        </td>
-                        <td><?php echo form_input('current_category_images['.$image->getId().'][name]', $image->getName(), 'class=\'small\''); ?></td>
-                        <td><?php echo form_input('current_category_images['.$image->getId().'][alt]', $image->getAlt(), 'class=\'small\''); ?></td>
-                        <td><?php echo form_input('current_category_images['.$image->getId().'][arrange]', $image->getArrange(), 'class=\'xxsmall\''); ?></td>
-                        <td>
-                            <select class="xsmall" name="current_category_images[<?php echo $image->getId(); ?>][main]">
-                                <option value="1" <?php if($image->getMain() == 1){ ?> selected="selected" <?php } ?>>Yes</option>
-                                <option value="0" <?php if($image->getMain() == 0){ ?> selected="selected" <?php } ?>>No</option>
-                            </select>
-                        </td>
-                        <td><a href="#" class="btn-remove-current"></a></td>
-                    </tr>
-                    <?php } ?>
-                    <tr id="row-0">
-                        <td><?php echo form_upload('image_file_0', '', 'class=\'medium\''); ?></td>
-                        <td><?php echo form_input('category_images[0][name]', '', 'class=\'small\''); ?></td>
-                        <td><?php echo form_input('category_images[0][alt]', '', 'class=\'small\''); ?></td>
-                        <td><?php echo form_input('category_images[0][arrange]', '', 'class=\'xxsmall\''); ?></td>
-                        <td>
-                            <select class="xsmall" name="category_images[0][main]">
-                                <option value="1" <?php echo set_select('category_images[0][main]', '1', TRUE); ?>>Yes</option>
-                                <option value="0" <?php echo set_select('category_images[0][main]', '0'); ?>>No</option>
-                            </select>
-                        </td>
-                        <td><a href="#" class="btn-remove"></a></td>
-                    </tr>
-                </table>
             <?php echo form_fieldset_close(); ?>
             
             

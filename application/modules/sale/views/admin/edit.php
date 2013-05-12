@@ -85,7 +85,7 @@
                 <div class="full" id="product-ajax-search">
                     <ul>
                         <li>
-                            <?php echo form_input('search[name]', set_value('search[name]'), 'class=\'medium\' id=\'search-name\' placeholder=\'Name\''); ?>
+                            <?php echo form_input('search[name]', set_value('search[name]'), 'class=\'small\' id=\'search-name\' placeholder=\'Name\''); ?>
                         </li>
                         <li>
                             <?php echo form_input('search[barcode]', set_value('search[barcode]'), 'class=\'medium\' id=\'search-barcode\' placeholder=\'Barcode\''); ?>
@@ -110,7 +110,7 @@
                             </select>
                         </li>
                         <li>
-                            <a href="<?php echo site_url('admin/product/ajax_search/'); ?>" id="product-ajax-search-btn" class="btn-filter"></a>
+                            <a data-url='<?php echo site_url('admin/product/ajax_search/'); ?>' href="#" id="product-ajax-search-btn" class="btn-filter"></a>
                         </li>
                     </ul>
                 </div>
@@ -131,7 +131,7 @@
                     </thead>
                     <tbody>
                         <?php foreach($sale->getItems() as $item) { ?>
-                        <tr>
+                        <tr data-id="<?php echo $item->getProduct()->getId(); ?>">
                             <td><?php echo $item->getProduct()->getName(); ?></td>
                             <td><?php echo $item->getProduct()->getBarcode(); ?></td>
                             <td><?php echo $item->getProduct()->getCategory()->getName(); ?></td>
@@ -140,35 +140,11 @@
                             <td><?php echo $item->getProduct()->getCost(); ?></td>
                             <td><input type="text" name="products[<?php echo $item->getProduct()->getId(); ?>][discount]" value="<?php echo $item->getDiscount(); ?>" class="xxsmall item-update-field" /></td>
                             <td><input type="text" name="products[<?php echo $item->getProduct()->getId(); ?>][comment]" value="<?php echo $item->getComment(); ?>" class="small" /></td>
-                            <td><a href="<?php echo $item->getProduct()->getId(); ?>" class="product-remove btn-remove-current"></a></td>
+                            <td><a href="#" class="btn-remove show-inline"></a></td>
                         </tr>
                     <?php } ?>
                     </tbody>
                 </table>
-            <?php echo form_fieldset_close(); ?>
-            
-            <?php echo form_fieldset(''); ?>
-                <div id="summary-table-wrapper">
-                    <table id="summary">
-                        <tr>
-                            <td class="subtotal-title">Sub Total:</td>
-                            <td class="subtotal">$<?php echo $summary['sub_total']; ?></td>
-                        </tr>
-                        <tr>
-                            <td class="discount-title">Discount:</td>
-                            <td class="discount">$-<?php echo $summary['discount']; ?></td>
-                        </tr>
-                        <tr>
-                            <td class="tax-title">Tax:</td>
-                            <td class="tax">$<?php echo $summary['tax']; ?></td>
-                        </tr>
-                        <tr>
-                            <td class="total-title">TOTAL:</td>
-                            <td class="total">$<?php echo $summary['total']; ?></td>
-                        </tr>
-                    </table>
-                    <div id="summary-table-overlay" class="hide"></div>
-                </div>
             <?php echo form_fieldset_close(); ?>
             
             <?php echo form_hidden('id', $sale->getId()); ?>
@@ -181,99 +157,3 @@
         <?php echo form_close(); ?>
     </div>
 </section>
-
-<script>
-    $(document).ready(function() {
-        var selected_products = <?php echo $current_product_ids; ?>;
-        
-        function hideTotalTable() {
-            $('#summary').fadeTo(200, 0.2, function() {
-                $('#summary-table-overlay').removeClass('hide');
-            });
-        }
-        
-        $(".product-remove").live("click", function(){
-            var id = $(this).attr('href');
-            
-            // remove from local storage
-            selected_products = $.grep(selected_products, function(value) {
-                return value != id;
-            });
-            
-            hideTotalTable();
-        });
-        
-        $('.item-update-field').live('keyup', function() {
-            hideTotalTable();
-        });
-        
-        $('#product-ajax-search-btn').click(function() {
-            var url = $(this).attr('href');
-            var post_data = $("#product-ajax-search :input").serialize();
-            var content = '';
-            
-            $.ajax({
-                type: 'POST',
-                url: url,
-                data: post_data + "&selected_products=" + selected_products.join(','),
-                dataType: 'json',
-                success: function(data) {
-                    // remove the highlight css from the exsiting product table rows
-                    $.each(selected_products , function(index, value){
-                        $('#row-' + value).removeClass('highlight');
-                    });
-                    
-                    // Check if data is not empty
-                    if (data.length !== 0) {
-                        $.each(data, function(index, product) {
-                            content += "<tr class='highlight' id=row-" + product.id + ">" +
-                                            "<td>" + product.name + "</td>" +
-                                            "<td>" + product.barcode + "</td>" +
-                                            "<td>" + product.category + "</td>" +
-                                            "<td><input type='text' name='products[" + product.id + "][qty]' class='xxsmall item-update-field' value='1' /></td>" +
-                                            "<td>" + product.qty + "[" + product.unit + "]</td>" +
-                                            "<td>" + product.cost + "</td>" +
-                                            "<td><input type='text' name='products[" + product.id + "][discount]' class='xxsmall item-update-field' /></td>" +
-                                            "<td><input type='text' name='products[" + product.id + "][comment]' class='small' /></td>" +
-                                            "<td><a href='" + product.id + "' class='product-remove btn-remove'></a></td>" +
-                                        "</tr>";
-                            
-                            // add new product ids to localstore
-                            selected_products.push(product.id);
-                        });
-                        
-                        // add new table rows and fade out the total table
-                        $('#summary').fadeTo(200, 0.2, function() {
-                            $('#summary-table-overlay').removeClass('hide');
-                            $(content).hide().prependTo('table#search-products').fadeIn('slow');
-                        });
-                    }
-                    
-                }
-            });
-            
-            return false;
-        });
-        
-        // For update total button
-        $('#summary-table-overlay').click(function() {
-            $.ajax({
-                type: 'POST',
-                url: '<?php echo base_url('admin/sale/ajax_refresh_total'); ?>',
-                data: $('#transaction-edit-form').serialize() + '&type=ajax',
-                dataType: 'json',
-                success: function(data) {
-                    $('.total').html('$' + data.total);
-                    $('.subtotal').html('$' + data.sub_total);
-                    $('.tax').html('$' + data.tax);
-                    $('.discount').html('$-' + data.discount);
-                    
-                    $('#summary').fadeTo(200, 1);
-                    $('#summary-table-overlay').addClass('hide');
-                }
-            });
-            
-            return false;
-        });
-    });
-</script>

@@ -38,7 +38,7 @@
                         
                         <li>
                             <label for="tag">Tags <span>[<a class="add-tag" data-fancybox-type="iframe" href="<?php echo site_url('admin/tag/create/');?>/ajax">Add New</a>]</span></label>
-                            <input name="tags" class="large" id="tags" data-prefill="<?php echo $current_tags; ?>" >
+                            <input name="tags" class="large" id="tags" data-url="<?php echo site_url('admin/tag/ajax_search/'); ?>" data-prefill="<?php echo $current_tags; ?>" >
                         </li>
                         
                         <li>

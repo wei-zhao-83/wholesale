@@ -31,7 +31,7 @@ class Admin extends Admin_Controller {
 	}
 	
 	public function edit($id) {
-		$purchase = $this->em->getRepository('purchase\models\Purchase')->findOneById($id);
+		$purchase = $this->em->getRepository('purchase\models\Purchase')->findOneById($id);		
 		
 		if (!$purchase) {
 			$this->session->set_flashdata('message', array('type' => 'error', 'content' => 'Can not find this purchase - #' . $id));
@@ -54,15 +54,12 @@ class Admin extends Admin_Controller {
 			}
 		}
 		
-		// Get summary
-		$summary = $this->_get_summary($purchase);
-		
 		// Assign data to the template
 		$data = array('purchase' 			=> $purchase,
+					  'summary'				=> $purchase->getSummary(),
 					  'selected_vendor' 	=> $selected_vendor,
 					  'categories'  		=> $this->em->getRepository('category\models\Category')->getCategories(),
 					  'vendors' 			=> $this->em->getRepository('vendor\models\Vendor')->getVendors(),
-					  'summary'				=> $summary,
 					  'current_product_ids' => json_encode($current_product_ids),
 					  'statuses' 			=> $this->em->getRepository('transaction_status\models\TransactionStatus')->getStatuses(),
 					  'product_frequency' 	=> $this->em->getRepository('purchase\models\Purchase')->getOrderFrequency($selected_vendor, $current_product_ids),
@@ -158,23 +155,6 @@ class Admin extends Admin_Controller {
 		return $this->form_validation->run();
 	}
 	
-	private function _get_summary(purchase\models\Purchase $purchase) {
-		$sub_total = $discount = $tax = 0;
-		
-		$items = $purchase->getItems();
-		
-		if(!empty($items)) {
-			foreach($items as $item) {
-				$sub_total += $item->getCost() * $item->getQty();
-				$tax += $item->getTax() * $item->getCost() * $item->getQty();				
-			}
-		}
-		
-		return array('sub_total' => number_format((float)$sub_total, 2, '.', ''),
-					 'tax' => number_format((float)($tax), 2, '.', ''),
-					 'total' => number_format((float)($sub_total + $tax), 2, '.', ''));
-	}
-	
 	private function _do(purchase\models\Purchase $purchase) {
 		// Set the Vendor
 		$vendor = $this->em->getRepository('vendor\models\Vendor')->findOneById($this->input->post('vendor'));
@@ -217,7 +197,7 @@ class Admin extends Admin_Controller {
 			}
 		}
 		
-		$summary = $this->_get_summary($purchase);
+		$summary = $purchase->getSummary();
 		
 		$purchase->setTotal($summary['total']);
 		$purchase->setUser($this->current_user);

@@ -21,7 +21,7 @@
             </ul>
             <ul class="filter-fields-list">
                 <li>
-                    <input name="tags" class="large" id="tags" data-never-submit="false" data-prefill="<?php echo $this->input->post('as_values_tags'); ?>" >
+                    <input name="tags" class="large" id="tags" data-url="<?php echo site_url('admin/tag/ajax_search/'); ?>" data-never-submit="false" data-prefill="<?php echo $this->input->post('as_values_tags'); ?>" >
                 </li>
             </ul>
             <?php echo form_submit('filter', '', 'class=\'btn-filter\''); ?>

@@ -26,9 +26,10 @@
                         <option value="0" <?php echo set_select('active', '0'); ?>>No</option>
                     </select>
                 </li>
-                
+            </ul>
+            <ul class="filter-fields-list">
                 <li>
-                    <?php echo form_input('tags', set_value(''), 'class=\'medium\' id=\'tags\''); ?>
+                    <input name="tags" class="large" id="tags" data-url="<?php echo site_url('admin/tag/ajax_search/'); ?>" data-never-submit="false" data-prefill="<?php echo $this->input->post('as_values_tags'); ?>" >
                 </li>
             </ul>
             
@@ -60,9 +61,3 @@
         </table>
     </div>
 </section>
-
-<script>
-    $(document).ready(function() {
-        $("#tags").autoSuggest("<?php echo site_url('admin/tag/ajax_search');?>", {minChars: 2, startText: "Tags", asHtmlID: "tags"});
-    });
-</script>
