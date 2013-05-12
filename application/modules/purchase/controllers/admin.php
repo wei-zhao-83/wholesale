@@ -60,7 +60,6 @@ class Admin extends Admin_Controller {
 					  'selected_vendor' 	=> $selected_vendor,
 					  'categories'  		=> $this->em->getRepository('category\models\Category')->getCategories(),
 					  'vendors' 			=> $this->em->getRepository('vendor\models\Vendor')->getVendors(),
-					  'current_product_ids' => json_encode($current_product_ids),
 					  'statuses' 			=> $this->em->getRepository('transaction_status\models\TransactionStatus')->getStatuses(),
 					  'product_frequency' 	=> $this->em->getRepository('purchase\models\Purchase')->getOrderFrequency($selected_vendor, $current_product_ids),
 					  'product_pending' 	=> $this->em->getRepository('purchase\models\Purchase')->getSalePendingProd($current_product_ids));
@@ -69,17 +68,15 @@ class Admin extends Admin_Controller {
 		if ($this->_purchase_validate() !== FALSE) {
 			try {
 				$this->_do($purchase);
-				
-				$this->session->set_flashdata('message', array('type' => 'success', 'content' => 'Purchase successfully updated.'));
-				redirect('admin/purchase/edit/' . $purchase->getId());
+				$data['message'] = array('type' => 'success', 'content' => 'Successfully updated.');
 			} catch(Exception $e) {
 				$this->session->set_flashdata('message', array('type' => 'error', 'content' => $e->getMessage()));
 				redirect('admin/purchase/');
 			}
-		} else {
-			if ($this->form_validation->error_array()) {
-				$data += array('message' => array('type' => 'error', 'content' => $this->form_validation->error_array()));
-			}
+		}
+		
+		if ($this->form_validation->error_array()) {
+			$data = array('message' => array('type' => 'error', 'content' => $this->form_validation->error_array()));
 		}
 		
 		$this->load->view('admin/header');
@@ -103,39 +100,6 @@ class Admin extends Admin_Controller {
 		}
 		
 		redirect('admin/purchase');
-	}
-	
-	public function ajax_refresh_total() {
-		$type		= $this->input->post('type');
-		$products 	= $this->input->post('products');
-		
-		$status = 200;
-		$result = $errors = array();
-		$sub_total = $total = $tax = 0;
-		
-		if ($products && $type && $type == 'ajax') {
-			$_products = $this->em->getRepository('product\models\Product')->getProducts(array('ids' => array_keys($products)));
-			
-			foreach ($_products as $_product) {
-				$_qty = (!empty($products[$_product->getId()]['qty'])) ? $products[$_product->getId()]['qty'] : 1;
-				
-				$sub_total += $_product->getCost() * $_qty;
-				$tax += $_product->getCost() * $this->tax * $_qty;				
-			}
-			
-			$result = array('sub_total' => number_format((float)$sub_total, 2, '.', ''),
-							'tax' => number_format((float)($tax), 2, '.', ''),
-							'total' => number_format((float)($sub_total + $tax), 2, '.', ''));
-		} else {
-			$status = 400;
-			
-			if (!$type) { $errors[] = 'Not Ajax call'; }
-			if (!$products) { $errors[] = 'No products sent'; }
-		}
-		
-		echo json_encode(array('status' => $status,
-							   'result' => $result,
-							   'errors' => $errors));
 	}
 	
 	private function _purchase_validate() {

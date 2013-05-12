@@ -61,7 +61,6 @@ class Admin extends Admin_Controller {
 		if ($this->_sale_validate() !== FALSE) {
 			try {
 				$this->_do($sale);
-				
 				$data['message'] = array('type' => 'success', 'content' => 'Successfully updated.');
 			} catch(Exception $e) {
 				$this->session->set_flashdata('message', array('type' => 'error', 'content' => $e->getMessage()));
@@ -137,6 +136,7 @@ class Admin extends Admin_Controller {
 				
 				$item = new transaction\models\TransactionItem;
 				$item->setProduct($product);
+				$item->setCost($product->getCost());
 				$item->setSuggestedPrice($product->getSuggestedPrice());
 				$item->setNoServicePrice($product->getNoServicePrice());
 				$item->setFullServicePrice($product->getFullServicePrice());

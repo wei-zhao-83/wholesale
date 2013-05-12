@@ -25,8 +25,8 @@
             <ul>
                 <li><a  class="<?php if($this->router->fetch_module() == 'sale') { ?>active<?php } ?>" href="<?php echo base_url('admin/sale'); ?>">Sale</a></li>
 				<li><a  class="<?php if($this->router->fetch_module() == 'purchase') { ?>active<?php } ?>" href="<?php echo base_url('admin/purchase'); ?>">Purchase</a></li>
-				<li><a  class="<?php if($this->router->fetch_module() == 'quote') { ?>active<?php } ?>" href="<?php echo base_url('admin/quote'); ?>">Quote</a></li>
-                <li><a  class="<?php if($this->router->fetch_module() == 'returns') { ?>active<?php } ?>" href="<?php echo base_url('admin/returns'); ?>">Return</a></li>
+				<!--<li><a  class="<?php if($this->router->fetch_module() == 'quote') { ?>active<?php } ?>" href="<?php echo base_url('admin/quote'); ?>">Quote</a></li>
+                <li><a  class="<?php if($this->router->fetch_module() == 'returns') { ?>active<?php } ?>" href="<?php echo base_url('admin/returns'); ?>">Return</a></li>-->
                 <li><a class="<?php if($this->router->fetch_module() == 'transaction_status') { ?>active<?php } ?>" href="<?php echo base_url('admin/transaction_status'); ?>">status</a></li>
             </ul>
         </li>
