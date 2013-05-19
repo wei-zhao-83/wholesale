@@ -117,6 +117,18 @@ class Product extends \product\models\Product implements \Doctrine\ORM\Proxy\Pro
         return parent::setActive($active);
     }
 
+    public function getNoDiscount()
+    {
+        $this->__load();
+        return parent::getNoDiscount();
+    }
+
+    public function setNoDiscount($discount)
+    {
+        $this->__load();
+        return parent::setNoDiscount($discount);
+    }
+
     public function getDescription()
     {
         $this->__load();
@@ -187,18 +199,6 @@ class Product extends \product\models\Product implements \Doctrine\ORM\Proxy\Pro
     {
         $this->__load();
         return parent::setFullServicePrice($price);
-    }
-
-    public function getDiscount()
-    {
-        $this->__load();
-        return parent::getDiscount();
-    }
-
-    public function setDiscount($price)
-    {
-        $this->__load();
-        return parent::setDiscount($price);
     }
 
     public function getCNC()
@@ -360,7 +360,7 @@ class Product extends \product\models\Product implements \Doctrine\ORM\Proxy\Pro
 
     public function __sleep()
     {
-        return array('__isInitialized__', 'id', 'name', 'barcode', 'sku', 'section', 'active', 'description', 'comment', 'cost', 'suggested_price', 'no_service_price', 'full_service_price', 'discount', 'cash_and_carry', 'total_qty', 'qty_unit', 'unit', 'unit_case', 'deleted_at', 'tags', 'images', 'category', 'transaction_items', 'product_changes', 'vendors');
+        return array('__isInitialized__', 'id', 'name', 'barcode', 'sku', 'section', 'active', 'no_discount', 'description', 'comment', 'cost', 'suggested_price', 'no_service_price', 'full_service_price', 'cash_and_carry', 'total_qty', 'qty_unit', 'unit', 'unit_case', 'deleted_at', 'tags', 'images', 'category', 'transaction_items', 'product_changes', 'vendors');
     }
 
     public function __clone()

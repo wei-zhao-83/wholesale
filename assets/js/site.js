@@ -32,7 +32,13 @@
             prodTemplate: '#product-search-template',
             prodSearchForm: '#product-ajax-search',
             prodSearchBtn: '#product-ajax-search-btn',
-            prodTable: '#search-products'
+            prodTable: '#search-products',
+            
+            defaultDiscount: '#default-discount',
+            discountField: '.field-discount',
+            saleType: '#sale-type',
+            
+            notification: '#notification'
         },
         
         init: function(config) {
@@ -68,28 +74,106 @@
                 $(this).parents('ul').find(':checkbox').attr('checked', this.checked);
             });
             
+            // Search the product
             $(config.prodSearchBtn).on('click', function(e) {
                 var result = self.prodSearch.call(this);
                 
                 result.done(function(data) {
                     if (data) {
+                        console.log(data);
+                        
                         self.renderProdRows(data);
                     }
                 });
                 
                 e.preventDefault();
             });
+            
+            $(config.defaultDiscount).on('change', function(e) {
+                // Update discount
+                self.updateDiscount();
+                
+                // Show notification
+                $(config.notification).html('Discount updated').delay(3000).queue(function() {
+                    $(this).empty();
+                    $.dequeue(this);
+                 });
+                
+                e.preventDefault();
+            });
+            
+            $(config.saleType).on('change', function(e) {
+                var selectedType = $(this).val().replace(/_/g, '-');
+                
+                self.updateCurrentPrice(selectedType);
+                
+                self.updateDiscount();
+                
+                // Show notification
+                $(config.notification).html('Price and discount updated').delay(3000).queue(function() {
+                    $(this).empty();
+                    $.dequeue(this);
+                 });
+                
+                e.preventDefault();
+            });
+        },
+        
+        updateCurrentPrice: function(type) {
+            $(this.config.prodTable).find('tr').each(function() {
+                var $prodRow = $(this);
+                
+                if ($prodRow.data('id') != undefined) {
+                    // update the current price
+                    $prodRow.find('.field-price').html($prodRow.data(type));
+                    // updsate the current price in data
+                    $prodRow.data('current-price', $prodRow.data(type));
+                }
+            });
+        },
+        
+        updateDiscount: function() {
+            var self = this,
+                discount = this.getDefaultDiscount();
+                
+            $(this.config.prodTable).find('tr').each(function() {
+                var $prodRow = $(this);
+                
+                if ($prodRow.data('id') != undefined) {
+                    $prodRow.data('discount', ($prodRow.data('current-price') * discount).toFixed(2));
+                    $prodRow.find(self.config.discountField).val(($prodRow.data('current-price') * discount).toFixed(2));
+                }
+            });
+        },
+        
+        getDefaultDiscount: function() {
+            return $(this.config.defaultDiscount).val() || 0;
+        },
+        
+        getSaleType: function() {
+            return $(this.config.saleType).val();
         },
         
         renderProdRows: function(prods) {
-            var config = this.config,
+            var self = this,
+                config = this.config,
                 source   = $(config.prodTemplate).html(),
                 template = Handlebars.compile(source),
                 _currentIds = this.getCurrentProdIDs();
-                _products = [];            
+                _products = [];
             
-            $.each(prods, function() {                
-                if ($.inArray(this.id, _currentIds) < 0) {
+            $.each(prods, function() {
+                if ($.inArray(this.id, _currentIds) < 0) {                    
+                    // Update the discount and price
+                    // if current product discount is true, calculate the discount and reasign to itself.
+                    if (!this.no_discount) {
+                        this.discount = (self.getDefaultDiscount() * this.cost).toFixed(2);
+                    }
+                    
+                    console.log(this);
+                    
+                    this.price = this[self.getSaleType()];
+                    
                     _products.push(this);
                 }
             });

@@ -42,48 +42,50 @@ class Admin extends Admin_Controller {
 				if (!in_array($product->getId(), $selected_product_ids)) {
 					$return[$product->getId()] = array('name' => $product->getName(),
 														'id' => $product->getId(),
+														'no_discount' => $product->getNoDiscount(),
+														'active' => $product->getActive(),
 														'category' => $product->getCategory()->getName(),
 														'barcode' => $product->getBarcode(),
 														'sku' => $product->getSKU(),
 														'cost' => $product->getCost(),
 														'suggested_price' => $product->getSuggestedPrice(),
-														'no_service_price' => $product->getNoServicePrice(),
-														'full_service_price' => $product->getFullServicePrice(),
+														'standard_service' => $product->getNoServicePrice(),
+														'full_service' => $product->getFullServicePrice(),
 														'cash_and_carry' => $product->getCNC(),
 														'qty_unit' => $product->getQtyUnit(),
 														'qty' => $product->getTotalQty(),
-														'unit' => $product->getUnit(),
-														'order_frequency' => 0,
-														'num_of_pending' => 0);
+														'unit' => $product->getUnit());
+														//'order_frequency' => 0,
+														//'num_of_pending' => 0);
 				}
 			}
 			
 			// pending products
-			if (!empty($return)) {
-				$_product_pending = $this->em->getRepository('purchase\models\Purchase')->getSalePendingProd(array_keys($return));
-				
-				if (!empty($_product_pending)) {
-					foreach($_product_pending as $_prod_id => $_number_of_pending) {
-						if(!empty($return[$_prod_id])) {
-							$return[$_prod_id]['num_of_pending'] = '-' . $_number_of_pending;
-						}
-					}
-				}
-			}
+			//if (!empty($return)) {
+			//	$_product_pending = $this->em->getRepository('purchase\models\Purchase')->getSalePendingProd(array_keys($return));
+			//	
+			//	if (!empty($_product_pending)) {
+			//		foreach($_product_pending as $_prod_id => $_number_of_pending) {
+			//			if(!empty($return[$_prod_id])) {
+			//				$return[$_prod_id]['num_of_pending'] = '-' . $_number_of_pending;
+			//			}
+			//		}
+			//	}
+			//}
 			
 			// order frequency
-			if(!empty($return) && $this->input->post('vendor_id')) {
-				$selected_vendor = $this->em->getRepository('vendor\models\Vendor')->findOneById($this->input->post('vendor_id'));
-				$_order_frequency = $this->em->getRepository('purchase\models\Purchase')->getOrderFrequency($selected_vendor, array_keys($return));
-				
-				if (!empty($_order_frequency)) {
-					foreach($_order_frequency as $_prod_id => $_number_of_order) {
-						if(!empty($return[$_prod_id])) {
-							$return[$_prod_id]['order_frequency'] = $_number_of_order;
-						}
-					}
-				}
-			}
+			//if(!empty($return) && $this->input->post('vendor_id')) {
+			//	$selected_vendor = $this->em->getRepository('vendor\models\Vendor')->findOneById($this->input->post('vendor_id'));
+			//	$_order_frequency = $this->em->getRepository('purchase\models\Purchase')->getOrderFrequency($selected_vendor, array_keys($return));
+			//	
+			//	if (!empty($_order_frequency)) {
+			//		foreach($_order_frequency as $_prod_id => $_number_of_order) {
+			//			if(!empty($return[$_prod_id])) {
+			//				$return[$_prod_id]['order_frequency'] = $_number_of_order;
+			//			}
+			//		}
+			//	}
+			//}
 		}
 		
 		echo json_encode($return);
@@ -95,7 +97,7 @@ class Admin extends Admin_Controller {
 			$_filter = $this->input->post();
 			
 			if ($this->input->post('as_values_tags')) {
-				$_filter['tags'] = explode(',', $this->input->post('as_values_tags'));
+				$_filter['tags'] = array_filter(explode(',', $this->input->post('as_values_tags')));
 			}
 			
 			// Set current filter to session
@@ -112,7 +114,7 @@ class Admin extends Admin_Controller {
 		}
 		
 		// Get all the products by filter
-		$products = $this->em->getRepository('product\models\Product')->getproducts($filter);
+		$products = $this->em->getRepository('product\models\Product')->getproducts($filter);		
 		
 		$_per_page = !empty($filter['per_page']) ? $filter['per_page'] : false;
 		$pagination	= create_pagination('admin/product/index/', count($products), $_per_page);		
@@ -280,7 +282,7 @@ class Admin extends Admin_Controller {
 			if ($reflected_model->hasMethod($_method)) {
 				$product->$_method($value);
 			}
-		}			
+		}
 		
 		$this->em->persist($product);
 		$this->em->flush();

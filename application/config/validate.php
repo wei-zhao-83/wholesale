@@ -135,7 +135,7 @@ $config['rule_product'] = array(
           'rules'=>'is_money'),
     'discount' => array('field'=>'discount',
           'label'=>'Discount',
-          'rules'=>'is_money'),
+          'rules'=>''),
     'CNC' => array('field'=>'CNC',
           'label'=>'CNC',
           'rules'=>'is_money'),

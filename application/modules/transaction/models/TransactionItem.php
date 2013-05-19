@@ -120,6 +120,18 @@ class TransactionItem {
 		$this->cash_and_carry = $price;
 	}
 	
+	public function getSalePrice() {		
+		if ($this->getCNC() !== null) {
+			return $this->getCNC();
+		}
+		if ($this->getFullServicePrice() !== null) {
+			return $this->getFullServicePrice();
+		}
+		if ($this->getNoServicePrice() !== null) {
+			return $this->getNoServicePrice();
+		}
+	}
+	
 	public function getDiscount() {
 		return $this->discount;
 	}

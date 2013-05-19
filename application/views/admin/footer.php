@@ -12,14 +12,18 @@
         
         <script id="product-search-template" type="text/x-handlebars-template">
             {{#products}}
-            <tr class="highlight" data-id="{{id}}">
+            <tr class="highlight" data-id="{{id}}" data-current-price="{{price}}" data-cash-and-carry="{{cash_and_carry}}" data-full-service="{{full_service}}" data-standard-service="{{standard_service}}">
                 <td>{{name}}</td>
                 <td>{{barcode}}</td>
                 <td>{{category}}</td>
-                <td><input type="text" name="products[{{id}}][qty]" value="1" class="xxsmall item-update-field"></td>
+                <td><input type="text" name="products[{{id}}][qty]" value="1" class="xxsmall"></td>
                 <td>{{qty}}[{{unit}}]</td>
-                <td>{{cost}}</td>
-                <td><input type="text" name="products[{{id}}][discount]" value="0.00" class="xxsmall item-update-field"></td>
+                <td class="field-price">{{price}}</td>
+                <td>
+                    {{#if discount }}
+                    <input type="text" name="products[{{id}}][discount]" value="{{discount}}" class="xxsmall field-discount">
+                    {{/if}}
+                </td>
                 <td><input type="text" name="products[{{id}}][comment]" value="" class="small"></td>
                 <td><a href="#" class="btn-remove show-inline"></a></td>
             </tr>

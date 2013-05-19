@@ -43,6 +43,19 @@ body {
     list-style: none;
 }
 
+#notification {
+	position: fixed;
+    z-index: 101;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #FDE073;
+    text-align: center;
+    line-height: 40px;
+    overflow: hidden; 
+}
+
+
 #header-wrapper {
     background-color: #3B3B3B;
     border-bottom: solid 1px white;

@@ -37,6 +37,8 @@
         </header>
     </div>
     
+    <div id="notification"></div>
+    
     <div id="content-wrapper">
         <div class="container">
             <?php if($this->auth->is_logged_in()) { ?>

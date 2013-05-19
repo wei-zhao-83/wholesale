@@ -31,6 +31,11 @@ class Sale extends Transaction {
     /**
      * @Column(type="decimal", scale=2)
 	 */
+	private $default_discount = 0.00;
+    
+    /**
+     * @Column(type="decimal", scale=2)
+	 */
 	private $credits = 0.00;
     
     /**
@@ -78,17 +83,44 @@ class Sale extends Transaction {
 		$this->customer = $customer;
 	}
     
+    public function setDefaultDiscount($discount) {
+        $this->default_discount = $discount;
+    }
+    
+    public function getDefaultDiscount() {
+        return $this->default_discount;
+    }
+    
+    public function getSummary() {
+        $sub_total = $discount = $tax = 0;
+		
+		$items = $this->getItems();        
+        
+		if(!empty($items)) {
+			foreach($items as $item) {
+				$sub_total += $item->getSalePrice() * $item->getQty();
+				$discount  += $item->getDiscount() * $item->getQty();
+				$tax       += $item->getTax() * ($item->getSalePrice() -  $item->getDiscount()) * $item->getQty();				
+			}
+		}
+		
+		return array('sub_total' => number_format((float)$sub_total, 2, '.', ''),
+					 'discount'  => number_format((float)($discount), 2, '.', ''),
+					 'tax' 		 => number_format((float)($tax), 2, '.', ''),
+					 'total' 	 => number_format((float)($sub_total + $tax - $discount), 2, '.', ''));
+    }
+    
     public static function getPaymentTypes() {
-        return array(self::PAYMENT_CASH => get_full_name(self::PAYMENT_CASH),
+        return array(self::PAYMENT_CASH       => get_full_name(self::PAYMENT_CASH),
                      self::PAYMENT_CREDITCARD => get_full_name(self::PAYMENT_CREDITCARD),
-                     self::PAYMENT_DEBIT => get_full_name(self::PAYMENT_DEBIT),
-                     self::PAYMENT_CREDITS => get_full_name(self::PAYMENT_CREDITS),
-                     self::PAYMENT_CHEQUE => get_full_name(self::PAYMENT_CHEQUE));
+                     self::PAYMENT_DEBIT      => get_full_name(self::PAYMENT_DEBIT),
+                     self::PAYMENT_CREDITS    => get_full_name(self::PAYMENT_CREDITS),
+                     self::PAYMENT_CHEQUE     => get_full_name(self::PAYMENT_CHEQUE));
     }
     
     public static function getTypes() {
-        return array(self::TYPE_CNC => get_full_name(self::TYPE_CNC),
-                     self::TYPE_FULL => get_full_name(self::TYPE_FULL),
+        return array(self::TYPE_CNC      => get_full_name(self::TYPE_CNC),
+                     self::TYPE_FULL     => get_full_name(self::TYPE_FULL),
                      self::TYPE_STANDARD => get_full_name(self::TYPE_STANDARD));
     }
 }

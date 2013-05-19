@@ -1,0 +1,1 @@
+ALTER TABLE  `sales` ADD  `default_discount` DECIMAL( 10, 2 ) NOT NULL AFTER  `credits`;

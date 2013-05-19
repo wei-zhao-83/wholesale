@@ -46,6 +46,15 @@
                         </li>
                         
                         <li>
+                            <?php echo form_label('No Discount', 'no_discount'); ?>
+                            <?php $selected_discount = ($this->input->post('no_discount'))?$this->input->post('no_discount'):$product->getNoDiscount(); ?>
+                            <select class="medium-2" name="no_discount">
+                                <option value="1" <?php if($selected_discount == 1){ ?> selected="selected" <?php } ?>>Yes</option>
+                                <option value="0" <?php if($selected_discount == 0){ ?> selected="selected" <?php } ?>>No</option>
+                            </select>
+                        </li>
+                        
+                        <li>
                             <?php echo form_label('Category', 'category'); ?>
                             <?php $selected_category = ($this->input->post('category'))?$this->input->post('category'):$product->getCategory()->getId(); ?>
                             <select class="medium-2" name="category">
@@ -112,11 +121,6 @@
                         <li>
                             <?php echo form_label('CNC', 'CNC'); ?>
                             <?php echo form_input('CNC', set_value('CNC', $product->getCNC()), 'class=\'medium\''); ?>
-                        </li>
-                        
-                        <li>
-                            <?php echo form_label('Discount', 'discount'); ?>
-                            <?php echo form_input('discount', set_value('discount', $product->getDiscount()), 'class=\'medium\''); ?>
                         </li>
                     </ul>
             </div>

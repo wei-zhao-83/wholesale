@@ -48,12 +48,11 @@ class Admin extends Admin_Controller {
 		
 		// Assign data to the template
 		$data = array('sale' 				=> $sale,
-					  'summary'				=> $sale->getSummary(),
+					  'selected_customer' 	=> $selected_customer,
 					  'categories'  		=> $this->em->getRepository('category\models\Category')->getCategories(),
 					  'customers' 			=> $this->em->getRepository('customer\models\Customer')->getCustomers(),
 					  'vendors'				=> $this->em->getRepository('vendor\models\Vendor')->getVendors(),
 					  'statuses' 			=> $this->em->getRepository('transaction_status\models\TransactionStatus')->getStatuses(),
-					  'selected_customer' 	=> $selected_customer,
 					  'types'				=> sale\models\Sale::getTypes(),
 					  'payment_types'		=> sale\models\Sale::getPaymentTypes());
 		
@@ -70,7 +69,7 @@ class Admin extends Admin_Controller {
 		
 		if ($validation_error = $this->form_validation->error_array()) {
 			$data += array('message' => array('type' => 'error', 'content' => $validation_error));
-		}
+		}		
 		
 		$this->load->view('admin/header');
 		$this->load->view('admin/edit', $data);
@@ -137,15 +136,24 @@ class Admin extends Admin_Controller {
 				$item = new transaction\models\TransactionItem;
 				$item->setProduct($product);
 				$item->setCost($product->getCost());
-				$item->setSuggestedPrice($product->getSuggestedPrice());
-				$item->setNoServicePrice($product->getNoServicePrice());
-				$item->setFullServicePrice($product->getFullServicePrice());
-				$item->setCNC($product->getCNC());
+				$item->setSuggestedPrice($product->getSuggestedPrice());				
+				
+				if ($this->input->post('type') == sale\models\Sale::TYPE_CNC) {
+					$item->setCNC($product->getCNC());
+				} elseif ($this->input->post('type') == sale\models\Sale::TYPE_FULL) {
+					$item->setFullServicePrice($product->getFullServicePrice());
+				} elseif ($this->input->post('type') == sale\models\Sale::TYPE_STANDARD) {
+					$item->setNoServicePrice($product->getNoServicePrice());
+				}
+				
 				$item->setTax($this->tax);
 				
 				$item->setQty($prod['qty']);
 				$item->setComment($prod['comment']);
-				$item->setDiscount($prod['discount']);
+				
+				if (!$product->getNoDiscount()) {
+					$item->setDiscount($prod['discount']);
+				}
 				
 				$sale->addItem($item);
 			}
@@ -159,6 +167,7 @@ class Admin extends Admin_Controller {
 		$sale->setStatus($status);
 		
 		if ($_POST) {
+			$sale->setDefaultDiscount($this->input->post('default_discount'));
 			$sale->setPayment($this->input->post('payment'));
 			$sale->setType($this->input->post('type'));
 			$sale->setComment($this->input->post('comment'));

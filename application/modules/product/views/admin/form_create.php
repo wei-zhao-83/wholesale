@@ -44,6 +44,14 @@
                         </li>
                         
                         <li>
+                            <?php echo form_label('No Discount', 'no_discount'); ?>
+                            <select class="medium-2" name="no_discount">
+                                <option value="1" <?php echo set_select('no_discount', '1', TRUE); ?>>Yes</option>
+                                <option value="0" <?php echo set_select('no_discount', '0'); ?>>No</option>
+                            </select>
+                        </li>
+                        
+                        <li>
                             <?php echo form_label('Category', 'category'); ?>
                             <select class="medium-2" name="category">
                                 <?php foreach($categories as $category): ?>
@@ -109,11 +117,6 @@
                     <li>
                         <?php echo form_label('CNC', 'CNC'); ?>
                         <?php echo form_input('CNC', set_value('CNC'), 'class=\'medium\''); ?>
-                    </li>
-                    
-                    <li>
-                        <?php echo form_label('Discount', 'discount'); ?>
-                        <?php echo form_input('discount', set_value('discount'), 'class=\'medium\''); ?>
                     </li>
                 </ul>
             </div>

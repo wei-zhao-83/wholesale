@@ -48,12 +48,13 @@
         
         <table>
             <tr>
-                <th class="small">Order #</th>
+                <th class="xsmall">Order #</th>
                 <th class="small">Order Date</th>
                 <th class="medium">Customer</th>
-                <th class="small">Status</th>
+                <th class="xsmall">Status</th>
                 <th class="small">Type</th>
                 <th class="small">Payment</th>
+                <th class="xsmall">Discount</th>
                 <th class="small">Total</th>
                 <th class="xxsmall"></th>
             </tr>
@@ -65,6 +66,7 @@
                 <td><?php echo $sale->getStatus()->getName(); ?></td>
                 <td><?php echo get_full_name($sale->getType()); ?></td>
                 <td><?php echo get_full_name($sale->getPayment()); ?></td>
+                <td><?php echo $sale->getDefaultDiscount() * 100; ?>%</td>
                 <td><?php echo $sale->getTotal(); ?></td>
                 <td>
                     <a class="btn-edit" href="sale/edit/<?php echo $sale->getId(); ?>"></a>

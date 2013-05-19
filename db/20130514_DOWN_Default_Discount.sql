@@ -1,0 +1,1 @@
+ALTER TABLE `sales` DROP `default_discount`;

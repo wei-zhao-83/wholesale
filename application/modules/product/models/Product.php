@@ -48,6 +48,11 @@ class Product {
 	private $active = 1;
 	
     /**
+     * @Column(type="boolean", nullable=false)
+	 */
+	private $no_discount = 0;
+    
+    /**
 	 * @Column(type="string", length=255)
 	 */
 	private $description;
@@ -76,11 +81,6 @@ class Product {
      * @Column(type="decimal", scale=2)
 	 */
 	private $full_service_price = 0.00;
-    
-    /**
-     * @Column(type="decimal", scale=2)
-	 */
-	private $discount = 0.00;
     
     /**
      * @Column(type="decimal", scale=2)
@@ -204,6 +204,14 @@ class Product {
 		$this->active = $active;
 	}
 
+    public function getNoDiscount() {
+		return $this->no_discount;
+	}
+	
+	public function setNoDiscount($discount) {
+		$this->no_discount = empty($discount) ? 0 : $discount;
+	}
+    
 	public function getDescription() {
 		return $this->description;
 	}
@@ -250,14 +258,6 @@ class Product {
 	
 	public function setFullServicePrice($price) {
 		$this->full_service_price = $price;
-	}
-    
-    public function getDiscount() {
-		return $this->discount;
-	}
-	
-	public function setDiscount($price) {
-		$this->discount = $price;
 	}
     
     public function getCNC() {

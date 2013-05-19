@@ -9,7 +9,7 @@
     </div>
     
     <div id="white-bg-container">
-        <?php echo form_open('admin/product', array('class' => 'search')); ?>
+        <form class="search" method="POST" action="<?php echo site_url(); ?>admin/product">
             <ul class="filter-fields-list">
                 <li>
                     <input placeholder="Name" class="small" name="name" value="<?php echo !empty($filter['name']) ? $filter['name'] : ''; ?>" >
@@ -49,14 +49,13 @@
                     </select>
                 </li>
             </ul>
-            
             <ul class="filter-fields-list">
                 <li>
-                    <input name="tags" class="large" id="tags" data-url="<?php echo site_url('admin/tag/ajax_search/'); ?>" data-never-submit="false" data-prefill="<?php echo !empty($filter['tags']) ? implode(',', $filter['tags']) : ''; ?>" >
+                    <input name="tags" class="large" id="tags" data-url="<?php echo site_url('admin/tag/ajax_search/'); ?>" data-never-submit="false" data-prefill="<?php echo (!empty($filter['tags']) && is_array($filter['tags'])) ? implode(',', $filter['tags']) : ''; ?>" >
                 </li>
             </ul>
             <?php echo form_submit('filter', '', 'class=\'btn-filter\''); ?>
-        <?php echo form_close(); ?>
+        </form>
         
         <?php $this->load->view('admin/message'); ?>
         <table>

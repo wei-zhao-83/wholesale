@@ -8,7 +8,7 @@
             <li><a class="action-edit active" href=""></a></li>
         </ul>
     </div>
-
+    
     <div id="white-bg-container">
         <?php $this->load->view('admin/message'); ?>
         
@@ -63,10 +63,24 @@
                         <li>
                             <label for="type">Type</label>
                             
-                            <select class="medium-2" name="type">
+                            <select class="medium-2" name="type" id="sale-type">
                                 <?php foreach($types as $type => $type_name) { ?>
                                     <option value="<?php echo $type; ?>" <?php if($type == $sale->getType()){ ?> selected="selected" <?php } ?> ><?php echo $type_name; ?></option>
                                 <?php } ?>
+                            </select>
+                        </li>
+                        
+                        <li>
+                            <label for="default_discount">Discount</label>
+                            
+                            <select class="medium-2" name="default_discount" id="default-discount">
+                                
+                                <?php $_discount = ($this->input->post('default_discount')) ? $this->input->post('default_discount') : $sale->getDefaultDiscount(); ?>
+                                
+                                <option value="0" <?php if ($_discount == '0.00') { ?> selected="selected" <?php } ?> >None</option>
+                                <option value="0.01" <?php if ($_discount == '0.01') { ?> selected="selected" <?php } ?> >1%</option>
+                                <option value="0.02" <?php if($_discount == '0.02'){ ?> selected="selected" <?php } ?> >2%</option>
+                                <option value="0.05" <?php if($_discount == '0.05'){ ?> selected="selected" <?php } ?> >5%</option>
                             </select>
                         </li>
                     </ul>
@@ -123,7 +137,7 @@
                             <th class="xsmall">Category</th>
                             <th class="xsmall">Qty</th>
                             <th class="xsmall">Stock</th>
-                            <th class="xsmall">Cost</th>
+                            <th class="xsmall">Price</th>
                             <th class="xsmall">Discount</th>
                             <th class="small">Comment</th>
                             <th class="xxsmall"></th>
@@ -131,14 +145,25 @@
                     </thead>
                     <tbody>
                         <?php foreach($sale->getItems() as $item) { ?>
-                        <tr data-id="<?php echo $item->getProduct()->getId(); ?>">
+                        
+                        <tr data-id="<?php echo $item->getProduct()->getId(); ?>"
+                            data-cash-and-carry="<?php echo $item->getProduct()->getCNC(); ?>"
+                            data-full-service="<?php echo $item->getProduct()->getFullServicePrice(); ?>"
+                            data-standard-service="<?php echo $item->getProduct()->getNoServicePrice(); ?>"
+                            data-current-price="<?php echo $item->getSalePrice(); ?>">
+                            
                             <td><?php echo $item->getProduct()->getName(); ?></td>
                             <td><?php echo $item->getProduct()->getBarcode(); ?></td>
                             <td><?php echo $item->getProduct()->getCategory()->getName(); ?></td>
-                            <td><input type="text" name="products[<?php echo $item->getProduct()->getId(); ?>][qty]" value="<?php echo $item->getQty(); ?>" class="xxsmall item-update-field" /></td>
+                            <td><input type="text" name="products[<?php echo $item->getProduct()->getId(); ?>][qty]" value="<?php echo $item->getQty(); ?>" class="xxsmall" /></td>
                             <td><?php echo $item->getProduct()->getTotalQty(); ?>[<?php echo $item->getProduct()->getUnit() ?>]</td>
-                            <td><?php echo $item->getProduct()->getCost(); ?></td>
-                            <td><input type="text" name="products[<?php echo $item->getProduct()->getId(); ?>][discount]" value="<?php echo $item->getDiscount(); ?>" class="xxsmall item-update-field" /></td>
+                            <td class="field-price"><?php echo $item->getSalePrice(); ?></td>
+                            
+                            <td>
+                                <?php if (!$item->getProduct()->getNoDiscount()) { ?>
+                                <input type="text" name="products[<?php echo $item->getProduct()->getId(); ?>][discount]" value="<?php echo $item->getDiscount(); ?>" class="xxsmall field-discount" />
+                                <?php } ?>
+                            </td>
                             <td><input type="text" name="products[<?php echo $item->getProduct()->getId(); ?>][comment]" value="<?php echo $item->getComment(); ?>" class="small" /></td>
                             <td><a href="#" class="btn-remove show-inline"></a></td>
                         </tr>
