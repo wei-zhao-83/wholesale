@@ -1,0 +1,1 @@
+ALTER TABLE  `sales` DROP  `ship_date`;

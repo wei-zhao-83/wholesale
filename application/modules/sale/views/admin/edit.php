@@ -1,6 +1,6 @@
 <section id="content">
     <div id="content-head">
-        <h2>Sale</h2>
+        <h2>Sale #<?php echo $sale->getId(); ?></h2>
         
         <ul>
             <li><a class="action-list" href="<?php echo base_url('admin/sale'); ?>"></a></li>
@@ -26,14 +26,14 @@
                         <li>
                             <?php echo form_label('Order Date', ''); ?>
                             <div class="text">
-                                <div class="medium"><?php echo date('F d, Y', time()) ?></div>
+                                <div class="medium"><?php echo $sale->getCreatedAt(); ?></div>
                             </div>
                         </li>
                         
                         <li>
                             <?php echo form_label('Customer', 'customer'); ?>
                             <select class="medium-2" name="customer">
-                                <option></option>
+                                <option>Select a Customer</option>
                                 <?php foreach($customers as $customer): ?>
                                 <option value="<?php echo $customer->getId(); ?>" <?php if($selected_customer == $customer->getId()){ ?> selected="selected" <?php } ?> ><?php echo $customer->getName(); ?></option>
                                 <?php endforeach; ?>
@@ -82,6 +82,11 @@
                                 <option value="0.02" <?php if($_discount == '0.02'){ ?> selected="selected" <?php } ?> >2%</option>
                                 <option value="0.05" <?php if($_discount == '0.05'){ ?> selected="selected" <?php } ?> >5%</option>
                             </select>
+                        </li>
+                        
+                        <li>
+                            <label for="ship_date">Ship Date</label>
+                            <input name="ship_date" value="<?php echo $sale->getShipDate() ?>" class="medium">
                         </li>
                     </ul>
                 </div>
@@ -135,8 +140,8 @@
                             <th class="medium">Name</th>
                             <th class="small">Barcode</th>
                             <th class="xsmall">Category</th>
-                            <th class="xsmall">Qty</th>
-                            <th class="xsmall">Stock</th>
+                            <th class="xsmall">Qty**</th>
+                            <th class="xsmall">BOH*</th>
                             <th class="xsmall">Price</th>
                             <th class="xsmall">Discount</th>
                             <th class="small">Comment</th>
@@ -152,16 +157,18 @@
                             data-standard-service="<?php echo $item->getProduct()->getNoServicePrice(); ?>"
                             data-current-price="<?php echo $item->getSalePrice(); ?>">
                             
-                            <td><?php echo $item->getProduct()->getName(); ?></td>
+                            <td><a target="_blank" href="<?php echo site_url('admin/product/edit/' . $item->getProduct()->getId()); ?>"><?php echo $item->getProduct()->getName(); ?></a></td>
                             <td><?php echo $item->getProduct()->getBarcode(); ?></td>
                             <td><?php echo $item->getProduct()->getCategory()->getName(); ?></td>
-                            <td><input type="text" name="products[<?php echo $item->getProduct()->getId(); ?>][qty]" value="<?php echo $item->getQty(); ?>" class="xxsmall" /></td>
+                            <td><input type="text" name="products[<?php echo $item->getProduct()->getId(); ?>][qty]" value="<?php echo $item->getQty(); ?>" class="xxsmall field-qty" /></td>
                             <td><?php echo $item->getProduct()->getTotalQty(); ?>[<?php echo $item->getProduct()->getUnit() ?>]</td>
                             <td class="field-price"><?php echo $item->getSalePrice(); ?></td>
                             
                             <td>
                                 <?php if (!$item->getProduct()->getNoDiscount()) { ?>
                                 <input type="text" name="products[<?php echo $item->getProduct()->getId(); ?>][discount]" value="<?php echo $item->getDiscount(); ?>" class="xxsmall field-discount" />
+                                <?php } else { ?>
+                                -
                                 <?php } ?>
                             </td>
                             <td><input type="text" name="products[<?php echo $item->getProduct()->getId(); ?>][comment]" value="<?php echo $item->getComment(); ?>" class="small" /></td>
@@ -172,11 +179,16 @@
                 </table>
             <?php echo form_fieldset_close(); ?>
             
+            <p class="note">* Banlance on Hand</p>
+            <p class="note">** Use &uarr; and &darr; to change the qty</p>
+            
             <?php echo form_hidden('id', $sale->getId()); ?>
             <?php echo form_hidden('edit', 1); ?>
             <div class="btn-box">
                 <ul>
                     <li><?php echo form_submit('sale_create', '', 'class=\'btn-create\''); ?></li>
+                    <li><a href="<?php echo site_url('admin/sale/invoice/' . $sale->getId()); ?>" class="button">Invoice</a></li>
+                    <li><a href="<?php echo site_url('admin/sale/picklist/' . $sale->getId()); ?>" class="button" target="_blank">Picklist</a></li>
                 </ul>
             </div>
         <?php echo form_close(); ?>

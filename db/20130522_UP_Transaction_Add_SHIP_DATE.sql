@@ -1,0 +1,1 @@
+ALTER TABLE  `sales` ADD  `ship_date` DATETIME NULL AFTER `default_discount`;

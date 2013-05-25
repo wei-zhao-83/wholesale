@@ -213,18 +213,6 @@ class Product extends \product\models\Product implements \Doctrine\ORM\Proxy\Pro
         return parent::setCNC($price);
     }
 
-    public function getTotalQty()
-    {
-        $this->__load();
-        return parent::getTotalQty();
-    }
-
-    public function setTotalQty($total_qty)
-    {
-        $this->__load();
-        return parent::setTotalQty($total_qty);
-    }
-
     public function getDeletedAt()
     {
         $this->__load();
@@ -331,6 +319,18 @@ class Product extends \product\models\Product implements \Doctrine\ORM\Proxy\Pro
     {
         $this->__load();
         return parent::setQtyUnit($qty_unit);
+    }
+
+    public function getTotalQty()
+    {
+        $this->__load();
+        return parent::getTotalQty();
+    }
+
+    public function setTotalQty($total_qty)
+    {
+        $this->__load();
+        return parent::setTotalQty($total_qty);
     }
 
     public function getUnit()

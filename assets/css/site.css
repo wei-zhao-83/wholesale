@@ -1,5 +1,6 @@
 body {
-    background-image: url('../images/subtle-pattern/subtle-pattern-1.jpg'); 
+    background-image: url('../images/subtle-pattern/subtle-pattern-1.jpg');
+	-webkit-print-color-adjust: exact;
 }
 
 .btn-box {
@@ -41,6 +42,21 @@ body {
 }
 .success ul li, .error ul li{
     list-style: none;
+}
+
+.button {
+	color: #000000;
+	line-height: 30px;
+	text-decoration: none;
+}
+.button:hover {
+	color: #CC6655;
+}
+
+p.note {
+	margin: 0;
+	font-size: 11px;
+	color: #666666;
 }
 
 #notification {
@@ -481,7 +497,8 @@ table {
     table th, table td{
         text-align: center;
     }
-    table th{
+    table th,
+	table tfoot td {
         padding: 20px 0;
         background: #f2f2f2;
         color: #CC6655;
@@ -490,6 +507,14 @@ table {
     table td{
         padding: 10px 0;
     }
+	table td a {
+		color: #000000;
+		text-decoration: none;
+	}
+	table td a:hover {
+		text-decoration: underline;
+	}
+	
 	table tr.highlight,
     table tr:hover{
         background: #FCF7D1;
@@ -523,7 +548,7 @@ table {
 			display: none;
             background-position: -40px 0px;
         }
-        a.btn-remove:hove {
+        a.btn-remove:hover {
             background-position: -40px -20px;
         }
         a.btn-add {
@@ -545,6 +570,44 @@ table {
 			background-position: -120px -20px;
 		}
     
+table#picklist tr:nth-child(even) {
+	background: #f8f8f8;
+}
+
+.pl-heading-row {
+	display: block;
+	clear: both;
+}
+
+.pl-heading-row .pl-elment {
+	float: left;
+	padding: 0;
+	margin: 0;
+}
+.pl-heading-row .pl-elment h5 {
+	font-size: 13px;
+	background: #f2f2f2;
+	padding: 10px 10px;
+	margin: 0 4% 10px 0;
+}
+.pl-heading-row .pl-elment p,
+.pl-heading-row .pl-elment h3 {
+	padding: 0 10px;
+}
+.pl-heading-row .pl-elment p span {
+	font-weight: bold;
+	width: 90px;
+	display: inline-block;
+}
+p.pick-list-summary {
+	margin: 20px 0 0 0;
+}
+p.pick-list-summary span {
+	font-weight: bold;
+	width: 160px;
+	display: inline-block;
+}
+
 .history-element {
     width: 275px;
     float: left;
@@ -798,4 +861,14 @@ ul.as-selections li.as-original input {
 }
 .xlarge{
     width: 810px;
+}
+
+.half {
+	width: 50%;
+}
+.third {
+	width: 33%;
+}
+.quarter {
+	width: 25%;
 }

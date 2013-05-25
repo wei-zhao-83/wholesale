@@ -91,7 +91,7 @@ class Product {
      * @Column(type="integer")
 	 */
 	private $total_qty = 0;
-    
+	
     /**
      * @Column(type="integer")
 	 */
@@ -268,14 +268,6 @@ class Product {
 		$this->cash_and_carry = $price;
 	}
     
-    public function getTotalQty() {
-		return $this->total_qty;
-	}
-	
-	public function setTotalQty($total_qty) {
-		$this->total_qty = $total_qty;
-	}
-    
     public function getDeletedAt() {
 		return $this->deleted_at->format('Y-m-d H:i:s');
 	}
@@ -354,6 +346,14 @@ class Product {
 		$this->qty_unit = $qty_unit;
 	}
     
+	public function getTotalQty() {
+		return $this->total_qty;
+	}
+	
+	public function setTotalQty($total_qty) {
+		$this->total_qty = $total_qty;
+	}
+	
     public function getUnit() {
 		return $this->unit;
 	}

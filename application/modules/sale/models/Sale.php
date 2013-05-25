@@ -39,6 +39,11 @@ class Sale extends Transaction {
 	private $credits = 0.00;
     
     /**
+     * @Column(type="datetime", nullable=true)
+     */
+    private $ship_date;
+    
+    /**
      * @ManyToOne(targetEntity="customer\models\Customer", inversedBy="sales")
      */
 	private $customer;
@@ -91,10 +96,18 @@ class Sale extends Transaction {
         return $this->default_discount;
     }
     
+    public function getShipDate() {
+        return $this->ship_date->format('Y-m-d');
+    }
+    
+    public function setShipDate($date) {
+        $this->ship_date = new \DateTime($date);
+    }
+    
     public function getSummary() {
         $sub_total = $discount = $tax = 0;
 		
-		$items = $this->getItems();        
+		$items = $this->getItems();
         
 		if(!empty($items)) {
 			foreach($items as $item) {
@@ -109,6 +122,20 @@ class Sale extends Transaction {
 					 'tax' 		 => number_format((float)($tax), 2, '.', ''),
 					 'total' 	 => number_format((float)($sub_total + $tax - $discount), 2, '.', ''));
     }
+    
+    // override the parent class method
+    public function addItem($item) {
+        if ($this->type == self::TYPE_CNC) {
+        	$item->setCNC($item->getProduct()->getCNC());
+        } elseif ($this->type == self::TYPE_FULL) {
+        	$item->setFullServicePrice($item->getProduct()->getFullServicePrice());
+        } elseif ($this->type == self::TYPE_STANDARD) {
+        	$item->setNoServicePrice($item->getProduct()->getNoServicePrice());
+        }        
+        
+		$this->items[] = $item;
+		$item->setTransaction($this);
+	}
     
     public static function getPaymentTypes() {
         return array(self::PAYMENT_CASH       => get_full_name(self::PAYMENT_CASH),

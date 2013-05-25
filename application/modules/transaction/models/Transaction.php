@@ -61,7 +61,7 @@ class Transaction {
     }
 	
 	public function getId() {
-		return $this->id;
+		return str_pad($this->id, 6, '0', STR_PAD_LEFT);
 	}
 	
 	public function getUser() {

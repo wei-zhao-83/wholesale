@@ -17,6 +17,38 @@ class Admin extends Admin_Controller {
 		$this->load->view('admin/footer');
 	}
 	
+	public function invoice($id) {
+		
+	}
+	
+	public function picklist($id) {
+		$sale = $this->em->getRepository('sale\models\Sale')->findOneById($id);
+		$settings = $this->em->getRepository('setting\models\Setting');		
+		
+		$data = array('sale' => $sale,
+					  'company' => $settings->findOneByName('company')->getValue());		
+		
+		if ($_POST) {
+			$picked = $this->input->post('picked');
+			$shipped = $this->input->post('shipped');
+			
+			foreach($sale->getItems() as $item) {
+				if (isset($picked[$item->getID()])) {
+					$item->setPicked($picked[$item->getID()]);
+				}
+				if (isset($shipped[$item->getID()])) {
+					$item->setShipped($shipped[$item->getID()]);
+				}
+				
+				$this->em->persist($item);
+			}
+			
+			$this->em->flush();
+		}
+		
+		$this->load->view('admin/picklist', $data);
+	}
+	
 	public function create() {
 		$sale = new sale\models\Sale;
 		
@@ -44,7 +76,7 @@ class Admin extends Admin_Controller {
 			if ($sale->getCustomer()) {
 				$selected_customer = $sale->getCustomer()->getId();
 			}
-		}
+		}		
 		
 		// Assign data to the template
 		$data = array('sale' 				=> $sale,
@@ -116,38 +148,67 @@ class Admin extends Admin_Controller {
 		$post_status_id = $this->input->post('status');
 		$status = $this->em->getRepository('transaction_status\models\TransactionStatus')->findOneById(!empty($post_status_id)? $post_status_id : 1);
 		
-		if ($this->input->post('edit')) {
-			// Remove the current products
-			$current_items = $sale->getItems();
-			if (!empty($current_items)) {
-				foreach ($current_items as $current_item) {
+		$sale->setUser($this->current_user);
+		$sale->setCustomer($customer);
+		$sale->setStatus($status);
+		$sale->setShipDate($this->input->post('ship_date'));
+		
+		if ($_POST) {
+			$sale->setDefaultDiscount($this->input->post('default_discount'));
+			$sale->setPayment($this->input->post('payment'));
+			$sale->setType($this->input->post('type'));
+			$sale->setComment($this->input->post('comment'));
+		}
+		
+		$current_items = $sale->getItems();
+		$products = $this->input->post('products');
+		
+		if (!empty($current_items)) {
+			foreach($current_items as $current_item) {
+				// Update the current items, if current item exists in the post products array
+				if(isset($products[$current_item->getProduct()->getID()])) {
+					$current_item->setQty($products[$current_item->getProduct()->getID()]['qty']);
+					$current_item->setComment($products[$current_item->getProduct()->getID()]['comment']);
+					
+					if (!$current_item->getProduct()->getNoDiscount()) {
+						$current_item->setDiscount($products[$current_item->getProduct()->getID()]['discount']);
+					}					
+					
+					$current_item->setCNC(null);
+					$current_item->setFullServicePrice(null);
+					$current_item->setNoServicePrice(null);
+					
+					if ($sale->getType() == sale\models\Sale::TYPE_CNC) {
+						$current_item->setCNC($current_item->getProduct()->getCNC());
+					} elseif ($sale->getType() == sale\models\Sale::TYPE_FULL) {
+						$current_item->setFullServicePrice($current_item->getProduct()->getFullServicePrice());
+					} elseif ($sale->getType() == sale\models\Sale::TYPE_STANDARD) {
+						$current_item->setNoServicePrice($current_item->getProduct()->getNoServicePrice());
+					}
+					
+					$this->em->persist($current_item);
+					
+					// Unset it from the post products array
+					unset($products[$current_item->getProduct()->getID()]);
+				// Delete the removed items
+				} else {
 					$sale->removeItem($current_item);
 					$this->em->remove($current_item);
 				}
 			}
 		}
 		
-		// Set the products
-		$products = $this->input->post('products');
+		// Add new item
 		if (!empty($products)) {
 			foreach ($products as $prod_id => $prod) {
 				$product = $this->em->getRepository('product\models\Product')->findOneById($prod_id);
 				
 				$item = new transaction\models\TransactionItem;
+				
 				$item->setProduct($product);
 				$item->setCost($product->getCost());
-				$item->setSuggestedPrice($product->getSuggestedPrice());				
-				
-				if ($this->input->post('type') == sale\models\Sale::TYPE_CNC) {
-					$item->setCNC($product->getCNC());
-				} elseif ($this->input->post('type') == sale\models\Sale::TYPE_FULL) {
-					$item->setFullServicePrice($product->getFullServicePrice());
-				} elseif ($this->input->post('type') == sale\models\Sale::TYPE_STANDARD) {
-					$item->setNoServicePrice($product->getNoServicePrice());
-				}
-				
+				$item->setSuggestedPrice($product->getSuggestedPrice());
 				$item->setTax($this->tax);
-				
 				$item->setQty($prod['qty']);
 				$item->setComment($prod['comment']);
 				
@@ -159,19 +220,9 @@ class Admin extends Admin_Controller {
 			}
 		}
 		
+		// Set the total
 		$summary = $sale->getSummary();
-		
 		$sale->setTotal($summary['total']);
-		$sale->setUser($this->current_user);
-		$sale->setCustomer($customer);
-		$sale->setStatus($status);
-		
-		if ($_POST) {
-			$sale->setDefaultDiscount($this->input->post('default_discount'));
-			$sale->setPayment($this->input->post('payment'));
-			$sale->setType($this->input->post('type'));
-			$sale->setComment($this->input->post('comment'));
-		}
 		
 		$this->em->persist($sale);
 		$this->em->flush();

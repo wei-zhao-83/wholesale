@@ -61,6 +61,16 @@ class TransactionItem {
 	private $qty = 0;
 	
 	/**
+     * @Column(type="integer")
+	 */
+	private $picked = 0;
+	
+	/**
+     * @Column(type="integer")
+	 */
+	private $shipped = 0;
+	
+	/**
 	 * @Column(type="string", length=128, nullable=true)
 	 */
 	private $comment;
@@ -162,6 +172,22 @@ class TransactionItem {
 	
 	public function setQty($qty) {
 		$this->qty = $qty;
+	}
+	
+	public function getPicked() {
+		return $this->picked;
+	}
+	
+	public function setPicked($qty) {
+		$this->picked = $qty;
+	}
+	
+	public function getShipped() {
+		return $this->shipped;
+	}
+	
+	public function setShipped($qty) {
+		$this->shipped = $qty;
 	}
 	
 	public function getComment() {

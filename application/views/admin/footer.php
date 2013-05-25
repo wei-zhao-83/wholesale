@@ -13,10 +13,10 @@
         <script id="product-search-template" type="text/x-handlebars-template">
             {{#products}}
             <tr class="highlight" data-id="{{id}}" data-current-price="{{price}}" data-cash-and-carry="{{cash_and_carry}}" data-full-service="{{full_service}}" data-standard-service="{{standard_service}}">
-                <td>{{name}}</td>
+                <td><a target="_blank" href="/admin/product/edit/{{id}}">{{name}}</a></td>
                 <td>{{barcode}}</td>
                 <td>{{category}}</td>
-                <td><input type="text" name="products[{{id}}][qty]" value="1" class="xxsmall"></td>
+                <td><input type="text" name="products[{{id}}][qty]" value="1" class="xxsmall field-qty"></td>
                 <td>{{qty}}[{{unit}}]</td>
                 <td class="field-price">{{price}}</td>
                 <td>

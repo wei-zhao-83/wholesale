@@ -1,5 +1,5 @@
 // Tag
-(function($) {
+;(function($) {
     // Tag Adding
     $('.add-tag').fancybox({ maxWidth: 495, maxHeight: 395 });
     // Product History
@@ -22,7 +22,7 @@
 }(jQuery));
 
 // Form
-(function($) {
+;(function($) {
     var siteForm = {
         config: {
             addRowBtn:    '.btn-add',
@@ -37,6 +37,10 @@
             defaultDiscount: '#default-discount',
             discountField: '.field-discount',
             saleType: '#sale-type',
+            
+            qtyField: '.field-qty',
+            
+            picklistField: '.picklist-field',
             
             notification: '#notification'
         },
@@ -65,13 +69,34 @@
                 e.preventDefault();
             });
             
+            $(config.picklistField).on('dblclick', function(e) {
+                var qty = $(this).closest('tr').data('qty');
+                
+                $(this).val(qty);
+                
+                e.preventDefault();
+            });
+            
             $('body').on('click', config.removeRowBtn, function(e) {
                 $(this).closest('tr').remove();
-                 e.preventDefault();
+                e.preventDefault();
             });
             
             $(config.checkAllBtn).on('click', function() {
                 $(this).parents('ul').find(':checkbox').attr('checked', this.checked);
+            });
+            
+            $('body').on('keydown', config.qtyField, function(e) {
+                var qty = $(this).val();
+                
+                if (e.which == 38) { // up
+                    qty++;
+                } else if (e.which == 40 && qty > 1) { // down
+                    qty--;
+                }
+                
+                $(this).val(qty);
+                e.preventDefault();
             });
             
             // Search the product
@@ -79,9 +104,7 @@
                 var result = self.prodSearch.call(this);
                 
                 result.done(function(data) {
-                    if (data) {
-                        console.log(data);
-                        
+                    if (data) {                        
                         self.renderProdRows(data);
                     }
                 });
@@ -169,8 +192,6 @@
                     if (!this.no_discount) {
                         this.discount = (self.getDefaultDiscount() * this.cost).toFixed(2);
                     }
-                    
-                    console.log(this);
                     
                     this.price = this[self.getSaleType()];
                     
