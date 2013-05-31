@@ -17,8 +17,21 @@ class Admin extends Admin_Controller {
 		$this->load->view('admin/footer');
 	}
 	
-	public function invoice($id) {
+	public function payment() {
 		
+	}
+	
+	public function invoice($id) {
+		$sale = $this->em->getRepository('sale\models\Sale')->findOneById($id);
+		$settings = $this->em->getRepository('setting\models\Setting');		
+		
+		$data = array('sale' => $sale,
+					  'summary' => $sale->getSummary(true),
+					  'hst' => $settings->findOneByName('hst')->getValue(),
+					  'company' => $settings->findOneByName('company')->getValue(),
+					  'tax' => $settings->findOneByName('tax')->getValue());
+		
+		$this->load->view('admin/invoice', $data);
 	}
 	
 	public function picklist($id) {
@@ -61,7 +74,7 @@ class Admin extends Admin_Controller {
 	}
 	
 	public function edit($id) {
-		$sale = $this->em->getRepository('sale\models\Sale')->findOneById($id);
+		$sale = $this->em->getRepository('sale\models\Sale')->findOneById($id);		
 		
 		if (!$sale) {
 			$this->session->set_flashdata('message', array('type' => 'error', 'content' => 'Can not find this sale - #' . $id));
@@ -80,6 +93,7 @@ class Admin extends Admin_Controller {
 		
 		// Assign data to the template
 		$data = array('sale' 				=> $sale,
+					  'payments'			=> $sale->getPayments(),
 					  'selected_customer' 	=> $selected_customer,
 					  'categories'  		=> $this->em->getRepository('category\models\Category')->getCategories(),
 					  'customers' 			=> $this->em->getRepository('customer\models\Customer')->getCustomers(),
@@ -194,6 +208,36 @@ class Admin extends Admin_Controller {
 				} else {
 					$sale->removeItem($current_item);
 					$this->em->remove($current_item);
+				}
+			}
+		}
+		
+		// Update the current payments
+		$current_payments = $sale->getPayments();
+		$payments = $this->input->post('payments');
+		
+		if ($current_payments) {
+			foreach ($current_payments as $current_payment) {
+				if(isset($payments[$current_payment->getID()])) {
+					$current_payment->setStatus($payments[$current_payment->getID()]['status']);
+					
+					unset($payments[$current_payment->getID()]);
+				}
+			}
+		}
+		
+		// Add new payments
+		if ($payments) {
+			foreach ($payments as $p) {
+				if (!empty($p['amount'])) {
+					$payment = new sale\models\SalePayment;
+					
+					$payment->setPaymentType($p['payment_type']);
+					$payment->setStatus($p['status']);
+					$payment->setAmount($p['amount']);
+					$payment->setComment($p['comment']);
+					
+					$sale->addPayment($payment);
 				}
 			}
 		}

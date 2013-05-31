@@ -100,7 +100,62 @@
                 </div>
             <?php echo form_fieldset_close(); ?>
             
-            <?php echo form_fieldset('Product'); ?>
+            <?php echo form_fieldset('Payment History'); ?>
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="small">Date</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Amount</th>
+                            <th>Comment</th>
+                            <th class="xxsmall"><a href="#" class="btn-add"></a></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if($payments->count() > 0) { ?>
+                            <?php foreach($payments as $payment) { ?>
+                                <tr>
+                                    <td><?php echo $payment->getCreatedAt(); ?></td>
+                                    <td><?php echo get_full_name($payment->getPaymentType()); ?></td>
+                                    <td>
+                                        <select class="small" name="payments[<?php echo $payment->getID(); ?>][status]">
+                                            <?php foreach(sale\models\SalePayment::getStatuses() as $status) { ?>
+                                                <option value="<?php echo $status; ?>" <?php if($payment->getStatus() == $status) { ?> selected="selected" <?php } ?>><?php echo ucfirst($status); ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </td>
+                                    <td>$<?php echo $payment->getAmount(); ?></td>
+                                    <td><?php echo $payment->getComment(); ?></td>
+                                    <td></td>
+                                </tr>
+                            <?php } ?>
+                        <?php } ?>
+                        <tr id="row-0">
+                            <td>-</td>
+                            <td>
+                                <select class="small" name="payments[0][payment_type]">
+                                    <?php foreach($payment_types as $payment => $payment_name) { ?>
+                                        <option value="<?php echo $payment; ?>"><?php echo $payment_name; ?></option>
+                                    <?php } ?>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="small" name="payments[0][status]">
+                                    <?php foreach(sale\models\SalePayment::getStatuses() as $status) { ?>
+                                        <option value="<?php echo $status; ?>"><?php echo ucfirst($status); ?></option>
+                                    <?php } ?>
+                                </select>
+                            </td>
+                            <td><?php echo form_input('payments[0][amount]', '', 'class=\'small\''); ?></td>
+                            <td><?php echo form_input('payments[0][comment]', '', 'class=\'medium\''); ?></td>
+                            <td><a href="#" class="btn-remove"></a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            <?php echo form_fieldset_close(); ?>
+            
+            <?php echo form_fieldset('Products'); ?>
                 <div class="full" id="product-ajax-search">
                     <ul>
                         <li>
@@ -187,8 +242,8 @@
             <div class="btn-box">
                 <ul>
                     <li><?php echo form_submit('sale_create', '', 'class=\'btn-create\''); ?></li>
-                    <li><a href="<?php echo site_url('admin/sale/invoice/' . $sale->getId()); ?>" class="button">Invoice</a></li>
                     <li><a href="<?php echo site_url('admin/sale/picklist/' . $sale->getId()); ?>" class="button" target="_blank">Picklist</a></li>
+                    <li><a href="<?php echo site_url('admin/sale/invoice/' . $sale->getId()); ?>" class="button">Invoice</a></li>
                 </ul>
             </div>
         <?php echo form_close(); ?>

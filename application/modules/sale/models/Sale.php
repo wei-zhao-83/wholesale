@@ -48,6 +48,11 @@ class Sale extends Transaction {
      */
 	private $customer;
     
+    /**
+     * @OneToMany(targetEntity="sale\models\SalePayment", mappedBy="sale", cascade={"persist"})
+     */
+    protected $payments;
+    
     public function getPayment() {
         return $this->payment;
     }
@@ -104,23 +109,36 @@ class Sale extends Transaction {
         $this->ship_date = new \DateTime($date);
     }
     
-    public function getSummary() {
-        $sub_total = $discount = $tax = 0;
+    public function getSummary($is_picked = false) {
+        $sub_total = $discount = $tax = $total_paid = 0;
 		
 		$items = $this->getItems();
+        $payments = $this->getPayments();
+        
+        if(!empty($payments)) {
+            foreach($payments as $payment) {
+                if($payment->getStatus() == SalePayment::STATUS_COMPLETED) {
+                    $total_paid += $payment->getAmount();
+                }
+            }
+        }
         
 		if(!empty($items)) {
 			foreach($items as $item) {
-				$sub_total += $item->getSalePrice() * $item->getQty();
-				$discount  += $item->getDiscount() * $item->getQty();
-				$tax       += $item->getTax() * ($item->getSalePrice() -  $item->getDiscount()) * $item->getQty();				
+                $qty = ($is_picked) ? $item->getPicked() : $item->getQty();
+                
+				$sub_total += ($item->getSalePrice() -  $item->getDiscount()) * $qty;
+				$discount  += $item->getDiscount() * $qty;
 			}
+            
+            $tax = $item->getTax() * $sub_total;
 		}
 		
-		return array('sub_total' => number_format((float)$sub_total, 2, '.', ''),
-					 'discount'  => number_format((float)($discount), 2, '.', ''),
-					 'tax' 		 => number_format((float)($tax), 2, '.', ''),
-					 'total' 	 => number_format((float)($sub_total + $tax - $discount), 2, '.', ''));
+		return array('sub_total' => number_format($sub_total, 2),
+					 'discount'  => number_format($discount, 2),
+					 'tax' 		 => number_format($tax, 2),
+					 'total' 	 => number_format($sub_total + $tax, 2),
+                     'total_due' => number_format($sub_total + $tax - $total_paid, 2));
     }
     
     // override the parent class method
@@ -131,10 +149,23 @@ class Sale extends Transaction {
         	$item->setFullServicePrice($item->getProduct()->getFullServicePrice());
         } elseif ($this->type == self::TYPE_STANDARD) {
         	$item->setNoServicePrice($item->getProduct()->getNoServicePrice());
-        }        
+        }
         
 		$this->items[] = $item;
 		$item->setTransaction($this);
+	}
+    
+    public function addPayment(SalePayment $payment) {
+		$this->payments[] = $payment;
+		$payment->setSale($this);
+	}
+	
+	public function getPayments() {
+		return $this->payments;
+	}
+	
+	public function removePayment($payment) {
+		$this->payments->removeElement($payment);
 	}
     
     public static function getPaymentTypes() {

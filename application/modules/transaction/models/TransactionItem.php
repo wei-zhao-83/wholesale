@@ -142,6 +142,12 @@ class TransactionItem {
 		}
 	}
 	
+	public function getSaleAmount() {
+		$amount = ($this->getSalePrice() - $this->getDiscount()) * $this->getPicked();
+		
+		return $amount;
+	}
+	
 	public function getDiscount() {
 		return $this->discount;
 	}

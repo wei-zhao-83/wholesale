@@ -62,7 +62,7 @@
                 
                 _last_row.clone(true).appendTo(_tbl)
                        .find('.btn-remove').css('display', 'inline-block').end()
-                       .find('input').each(function() {
+                       .find('input, select').each(function() {
                             $(this).attr('name', $(this).attr('name').replace(/\[\d+\]/, '[' + _random + ']'));
                         });
                 

@@ -53,6 +53,8 @@ body {
 	color: #CC6655;
 }
 
+
+
 p.note {
 	margin: 0;
 	font-size: 11px;
@@ -497,8 +499,7 @@ table {
     table th, table td{
         text-align: center;
     }
-    table th,
-	table tfoot td {
+    table th {
         padding: 20px 0;
         background: #f2f2f2;
         color: #CC6655;
@@ -516,7 +517,7 @@ table {
 	}
 	
 	table tr.highlight,
-    table tr:hover{
+    table tbody tr:hover{
         background: #FCF7D1;
     }
 	
@@ -569,8 +570,16 @@ table {
 		a.btn-move:hover {
 			background-position: -120px -20px;
 		}
-    
-table#picklist tr:nth-child(even) {
+
+table#picklist th {
+	color: #000000;
+	font-size: 13px;
+	font-weight: bold;
+}
+table#picklist tfoot td {
+	background: none;
+}
+table#picklist tbody tr:nth-child(even) {
 	background: #f8f8f8;
 }
 
@@ -826,6 +835,14 @@ ul.as-selections li.as-original input {
 /* Utility */
 .text-center {
 	text-align: center;
+}
+
+.text-rgt {
+	text-align: right;
+}
+
+.text-lft {
+	text-align: left;
 }
 
 .hide {
