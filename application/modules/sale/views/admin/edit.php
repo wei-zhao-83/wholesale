@@ -50,15 +50,15 @@
                             </select>
                         </li>
                         
-                        <li>
+                        <!--<li>
                             <label for="payment">Payment</label>
                             
                             <select class="medium-2" name="payment">
-                                <?php foreach($payment_types as $payment => $payment_name) { ?>
-                                    <option value="<?php echo $payment; ?>" <?php if($payment == $sale->getPayment()){ ?> selected="selected" <?php } ?> ><?php echo $payment_name; ?></option>
-                                <?php } ?>
+                                <?php // foreach($payment_types as $payment => $payment_name) { ?>
+                                    <option value="<?php //echo $payment; ?>" <?php // if($payment == $sale->getPayment()){ ?> selected="selected" <?php // } ?> ><?php // echo $payment_name; ?></option>
+                                <?php // } ?>
                             </select>
-                        </li>
+                        </li>-->
                         
                         <li>
                             <label for="type">Type</label>
@@ -184,7 +184,7 @@
                             </select>
                         </li>
                         <li>
-                            <a data-url='<?php echo site_url('admin/product/ajax_search/'); ?>' href="#" id="product-ajax-search-btn" class="btn-filter"></a>
+                            <a data-url='<?php echo site_url('admin/product/ajax_search/'); ?>' href="#" id="product-ajax-search-btn" class="btn-filter" data-type="sale"></a>
                         </li>
                     </ul>
                 </div>
@@ -195,7 +195,7 @@
                             <th class="medium">Name</th>
                             <th class="small">Barcode</th>
                             <th class="xsmall">Category</th>
-                            <th class="xsmall">Qty**</th>
+                            <th class="xsmall">Qty</th>
                             <th class="xsmall">BOH*</th>
                             <th class="xsmall">Price</th>
                             <th class="xsmall">Discount</th>
@@ -235,15 +235,13 @@
             <?php echo form_fieldset_close(); ?>
             
             <p class="note">* Banlance on Hand</p>
-            <p class="note">** Use &uarr; and &darr; to change the qty</p>
             
             <?php echo form_hidden('id', $sale->getId()); ?>
             <?php echo form_hidden('edit', 1); ?>
             <div class="btn-box">
                 <ul>
                     <li><?php echo form_submit('sale_create', '', 'class=\'btn-create\''); ?></li>
-                    <li><a href="<?php echo site_url('admin/sale/picklist/' . $sale->getId()); ?>" class="button" target="_blank">Picklist</a></li>
-                    <li><a href="<?php echo site_url('admin/sale/invoice/' . $sale->getId()); ?>" class="button">Invoice</a></li>
+                    <li><a href="<?php echo site_url('admin/sale/picklist/' . $sale->getId()); ?>" class="button">Picklist</a></li>
                 </ul>
             </div>
         <?php echo form_close(); ?>

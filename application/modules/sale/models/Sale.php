@@ -21,7 +21,7 @@ class Sale extends Transaction {
     /**
       * @Column(type="string")
       */
-    private $payment = self::PAYMENT_CASH;
+    //private $payment = self::PAYMENT_CASH;
     
     /**
       * @Column(type="string")
@@ -123,15 +123,14 @@ class Sale extends Transaction {
             }
         }
         
-		if(!empty($items)) {
+		if($items->count() > 0) {            
 			foreach($items as $item) {
                 $qty = ($is_picked) ? $item->getPicked() : $item->getQty();
                 
 				$sub_total += ($item->getSalePrice() -  $item->getDiscount()) * $qty;
 				$discount  += $item->getDiscount() * $qty;
-			}
-            
-            $tax = $item->getTax() * $sub_total;
+                $tax += ($item->getSalePrice() -  $item->getDiscount()) * $qty * $item->getTax();
+			}            
 		}
 		
 		return array('sub_total' => number_format($sub_total, 2),

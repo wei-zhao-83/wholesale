@@ -29,5 +29,20 @@
             </tr>
             {{/products}}
         </script>
+        
+        <script id="purchase-search-template" type="text/x-handlebars-template">
+            {{#products}}
+            <tr class="highlight" data-id="{{id}}">
+                <td><a target="_blank" href="/admin/product/edit/{{id}}">{{name}}</a></td>
+                <td>{{barcode}}</td>
+                <td>{{category}}</td>
+                <td><input type="text" name="products[{{id}}][qty]" value="1" class="xxsmall field-qty"></td>
+                <td>{{qty}}[{{unit}}]</td>
+                <td class="field-price">{{price}}</td>
+                <td><input type="text" name="products[{{id}}][comment]" value="" class="small"></td>
+                <td><a href="#" class="btn-remove show-inline"></a></td>
+            </tr>
+            {{/products}}
+        </script>
     </body>
 </html>

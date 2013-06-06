@@ -21,7 +21,7 @@ class SaleRepository extends EntityRepository {
 		}
 		
 		if (!empty($filter['customer'])) {
-			$qry_array[] = 'c.id = \'' . $filter['vendor'] . '\' ';
+			$qry_array[] = 'c.id = \'' . $filter['customer'] . '\' ';
 		}
 		
 		if (!empty($filter['status'])) {

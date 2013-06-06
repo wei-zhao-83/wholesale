@@ -169,7 +169,7 @@ class Admin extends Admin_Controller {
 		
 		if ($_POST) {
 			$sale->setDefaultDiscount($this->input->post('default_discount'));
-			$sale->setPayment($this->input->post('payment'));
+			//$sale->setPayment($this->input->post('payment'));
 			$sale->setType($this->input->post('type'));
 			$sale->setComment($this->input->post('comment'));
 		}

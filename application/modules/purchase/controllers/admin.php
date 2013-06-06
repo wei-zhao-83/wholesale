@@ -17,11 +17,16 @@ class Admin extends Admin_Controller {
 		$this->load->view('admin/footer');
 	}
 	
-	public function create() {
+	public function create($vendor_id) {
+		$vendor = null;
 		$purchase = new purchase\models\Purchase;
 		
 		try {
+			$vendor = $this->em->getRepository('vendor\models\Vendor')->findOneById($vendor_id);
+			
+			$purchase->setVendor($vendor);
 			$this->_do($purchase);
+			
 			redirect('admin/purchase/edit/' . $purchase->getId());
 		} catch(Exception $e) {
 			$this->session->set_flashdata('message', array('type' => 'error', 'content' => 'Can not create this purchase.'));
@@ -31,7 +36,7 @@ class Admin extends Admin_Controller {
 	}
 	
 	public function edit($id) {
-		$purchase = $this->em->getRepository('purchase\models\Purchase')->findOneById($id);		
+		$purchase = $this->em->getRepository('purchase\models\Purchase')->findOneById($id);
 		
 		if (!$purchase) {
 			$this->session->set_flashdata('message', array('type' => 'error', 'content' => 'Can not find this purchase - #' . $id));
@@ -43,26 +48,18 @@ class Admin extends Admin_Controller {
 			$selected_vendor = $this->em->getRepository('vendor\models\Vendor')->findOneById($this->input->post('vendor'));
 		} else {
 			$selected_vendor = $purchase->getVendor();
-		}		
-		
-		// Get all the current product ids, load it in the js localstore $selected_products, when this page is loaded
-		$current_transaction_items = $purchase->getItems();
-		$current_product_ids = array();
-		if(!empty($current_transaction_items)) {
-			foreach ($current_transaction_items as $current_item) {
-				$current_product_ids[] = $current_item->getProduct()->getId();
-			}
 		}
+		
+		$this->em->getRepository('purchase\models\Purchase')->getOrderFrequency($selected_vendor);
 		
 		// Assign data to the template
 		$data = array('purchase' 			=> $purchase,
-					  'summary'				=> $purchase->getSummary(),
+					  //'summary'				=> $purchase->getSummary(),
 					  'selected_vendor' 	=> $selected_vendor,
-					  'categories'  		=> $this->em->getRepository('category\models\Category')->getCategories(),
-					  'vendors' 			=> $this->em->getRepository('vendor\models\Vendor')->getVendors(),
-					  'statuses' 			=> $this->em->getRepository('transaction_status\models\TransactionStatus')->getStatuses(),
-					  'product_frequency' 	=> $this->em->getRepository('purchase\models\Purchase')->getOrderFrequency($selected_vendor, $current_product_ids),
-					  'product_pending' 	=> $this->em->getRepository('purchase\models\Purchase')->getSalePendingProd($current_product_ids));
+					  //'vendors' 			=> $this->em->getRepository('vendor\models\Vendor')->getVendors(),
+					  'statuses' 			=> $this->em->getRepository('transaction_status\models\TransactionStatus')->getStatuses());
+					  //'product_frequency' 	=> $this->em->getRepository('purchase\models\Purchase')->getOrderFrequency($selected_vendor, $current_product_ids),
+					  //'product_pending' 	=> $this->em->getRepository('purchase\models\Purchase')->getSalePendingProd($current_product_ids));
 		
 		// Form validation
 		if ($this->_purchase_validate() !== FALSE) {
@@ -121,39 +118,48 @@ class Admin extends Admin_Controller {
 	
 	private function _do(purchase\models\Purchase $purchase) {
 		// Set the Vendor
-		$vendor = $this->em->getRepository('vendor\models\Vendor')->findOneById($this->input->post('vendor'));
+		//$vendor = $this->em->getRepository('vendor\models\Vendor')->findOneById($this->input->post('vendor'));
 		
 		// Set default transaction status to "Draft"
 		$post_status_id = $this->input->post('status');
 		$status = $this->em->getRepository('transaction_status\models\TransactionStatus')->findOneById(!empty($post_status_id)? $post_status_id : 1);
 		
-		if ($this->input->post('edit')) {
-			// Remove the current products
-			$current_items = $purchase->getItems();
-			if (!empty($current_items)) {
-				foreach ($current_items as $current_item) {
+		$purchase->setUser($this->current_user);
+		$purchase->setStatus($status);
+		$purchase->setComment($this->input->post('comment'));
+		
+		$current_items = $purchase->getItems();
+		$products = $this->input->post('products');
+		
+		if (!empty($current_items)) {
+			foreach($current_items as $current_item) {
+				// Update the current items, if current item exists in the post products array
+				if(isset($products[$current_item->getProduct()->getID()])) {
+					$current_item->setQty($products[$current_item->getProduct()->getID()]['qty']);
+					$current_item->setComment($products[$current_item->getProduct()->getID()]['comment']);	
+					
+					$this->em->persist($current_item);
+					
+					// Unset it from the post products array
+					unset($products[$current_item->getProduct()->getID()]);
+				// Delete the removed items
+				} else {
 					$purchase->removeItem($current_item);
 					$this->em->remove($current_item);
 				}
 			}
 		}
 		
-		// Set the products
-		$products = $this->input->post('products');
+		// Add new item
 		if (!empty($products)) {
 			foreach ($products as $prod_id => $prod) {
 				$product = $this->em->getRepository('product\models\Product')->findOneById($prod_id);
 				
 				$item = new transaction\models\TransactionItem;
+				
 				$item->setProduct($product);
 				$item->setCost($product->getCost());
-				$item->setSuggestedPrice($product->getSuggestedPrice());
-				$item->setNoServicePrice($product->getNoServicePrice());
-				$item->setFullServicePrice($product->getFullServicePrice());
-				$item->setCNC($product->getCNC());
-				
 				$item->setTax($this->tax);
-				
 				$item->setQty($prod['qty']);
 				$item->setComment($prod['comment']);
 				
@@ -164,10 +170,6 @@ class Admin extends Admin_Controller {
 		$summary = $purchase->getSummary();
 		
 		$purchase->setTotal($summary['total']);
-		$purchase->setUser($this->current_user);
-		$purchase->setVendor($vendor);
-		$purchase->setStatus($status);
-		$purchase->setComment($this->input->post('comment'));
 		
 		$this->em->persist($purchase);
 		$this->em->flush();

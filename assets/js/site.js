@@ -29,14 +29,23 @@
             removeRowBtn: '.btn-remove',
             checkAllBtn:  '.check-all',
             
-            prodTemplate: '#product-search-template',
-            prodSearchForm: '#product-ajax-search',
-            prodSearchBtn: '#product-ajax-search-btn',
-            prodTable: '#search-products',
+            // Handlebar templates
+            prodTemplate:     '#product-search-template',
+            purchaseTemplate: '#purchase-search-template',
             
+            // Products ajax search
+            prodSearchForm:   '#product-ajax-search',
+            prodSearchBtn:    '#product-ajax-search-btn',
+            
+            // Products list table
+            prodTable:        '#search-products',
+            
+            prodSearchTrigger: '#product-search-trigger',
+            
+            // Sale table
             defaultDiscount: '#default-discount',
-            discountField: '.field-discount',
-            saleType: '#sale-type',
+            discountField:   '.field-discount',
+            saleType:        '#sale-type',
             
             qtyField: '.field-qty',
             
@@ -86,26 +95,45 @@
                 $(this).parents('ul').find(':checkbox').attr('checked', this.checked);
             });
             
-            $('body').on('keydown', config.qtyField, function(e) {
-                var qty = $(this).val();
-                
-                if (e.which == 38) { // up
-                    qty++;
-                } else if (e.which == 40 && qty > 1) { // down
-                    qty--;
-                }
-                
-                $(this).val(qty);
-                e.preventDefault();
-            });
+            //$('body').on('keydown', config.qtyField, function(e) {
+            //    var qty = $(this).val();
+            //    
+            //    if (e.which == 38) { // up
+            //        qty++;
+            //    } else if (e.which == 40 && qty > 1) { // down
+            //        qty--;
+            //    }
+            //    
+            //    $(this).val(qty);
+            //    e.preventDefault();
+            //});
             
             // Search the product
             $(config.prodSearchBtn).on('click', function(e) {
-                var result = self.prodSearch.call(this);
+                var result = self.prodSearch.call(this),
+                    type = $(this).data('type');
                 
                 result.done(function(data) {
-                    if (data) {                        
-                        self.renderProdRows(data);
+                    if (data) {
+                        self.renderProdRows(data, type);
+                    }
+                });
+                
+                e.preventDefault();
+            });
+            
+            $(config.prodSearchTrigger).on('change', function(e) {
+                var $this = $(this),
+                    type = $this.data('type');
+                
+                $.ajax({
+                    type:     siteForm.METHODS.POST,
+                    url:      $this.data('url'),
+                    data:     $.param({search: {vendor: $this.val()}}),
+                    dataType: 'json'
+                }).done(function(data) {
+                    if (data) {
+                        self.renderProdRows(data, type);
                     }
                 });
                 
@@ -120,7 +148,7 @@
                 $(config.notification).html('Discount updated').delay(3000).queue(function() {
                     $(this).empty();
                     $.dequeue(this);
-                 });
+                });
                 
                 e.preventDefault();
             });
@@ -177,29 +205,52 @@
             return $(this.config.saleType).val();
         },
         
-        renderProdRows: function(prods) {
+        getPriceByType: function(product, type) {
+            var self = this;
+            
+            if (type === 'sale') {
+                return product[self.getSaleType()] || 0;
+            }
+            
+            if (type === 'purchase') {
+                return product.cost;
+            }
+        },
+        
+        renderProdRows: function(prods, type) {
             var self = this,
                 config = this.config,
-                source   = $(config.prodTemplate).html(),
-                template = Handlebars.compile(source),
-                _currentIds = this.getCurrentProdIDs();
-                _products = [];
+                current_ids = this.getCurrentProdIDs();
+                products = [],
+                template = this.loadProdTemplate(type);
             
             $.each(prods, function() {
-                if ($.inArray(this.id, _currentIds) < 0) {                    
+                if ($.inArray(this.id, current_ids) < 0) {
                     // Update the discount and price
                     // if current product discount is true, calculate the discount and reasign to itself.
-                    if (!this.no_discount) {
+                    if (!this.no_discount && type === 'sale') {
                         this.discount = (self.getDefaultDiscount() * this.cost).toFixed(2);
                     }
+                    // todo set price and discount
+                    this.price = self.getPriceByType(this, type);
                     
-                    this.price = this[self.getSaleType()];
-                    
-                    _products.push(this);
+                    products.push(this);
                 }
             });
             
-            $(config.prodTable + ' > tbody').find('tr').removeClass('highlight').end().prepend(template({ products: _products }));
+            $(config.prodTable + ' > tbody').find('tr').removeClass('highlight').end().prepend(template({ products: products }));
+        },
+        
+        loadProdTemplate: function(type) {            
+            if (type === 'sale') {
+                source = $(this.config.prodTemplate).html();
+            }
+            
+            if (type === 'purchase') {
+                source = $(this.config.purchaseTemplate).html();
+            }
+            
+            return Handlebars.compile(source);
         },
         
         getCurrentProdIDs: function() {

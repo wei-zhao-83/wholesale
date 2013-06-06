@@ -93,6 +93,10 @@ class Vendor extends Dealer {
 		$this->bank_account = $bank_account;
 	}
     
+	public function getProducts() {
+		return $this->products;
+	}
+	
     public function addProduct($product) {
         $product->addVendor($this);
         $this->products[] = $product;

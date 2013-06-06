@@ -47,22 +47,26 @@
                         
                         <div class="pl-elment third">
                             <h5>Customer</h5>
+                            <?php if ($sale->getCustomer()) { ?>
                             <p>
                                 <?php echo $sale->getCustomer()->getName(); ?><br>
                                 <?php echo $sale->getCustomer()->getPhone(); ?><br>
                                 <?php echo $sale->getCustomer()->getEmail(); ?><br>
                                 <?php echo $sale->getCustomer()->getFax(); ?>
                             </p>
+                            <?php } ?>
                         </div>
                         
                         <div class="pl-elment third">
                             <h5>Ship To</h5>
+                            <?php if ($sale->getCustomer()) { ?>
                             <p>
                                 <?php echo $sale->getCustomer()->getShippingAddress(); ?><br>
                                 <?php echo $sale->getCustomer()->getShippingCity(); ?>
                                 <?php echo $sale->getCustomer()->getShippingProvinceAbbr(); ?><br>
                                 <?php echo $sale->getCustomer()->getShippingPostal(); ?><br>
                             </p>
+                            <?php } ?>
                             <p>
                                 <span>Ship Date:</span> <?php echo $sale->getShipDate(); ?><br>
                             </p>
@@ -74,6 +78,7 @@
                         <table id="picklist">
                             <thead>
                                 <tr>
+                                    <th class="xxsmall"></th>
                                     <th class="medium">Barcode</tthd>
                                     <th>Name</th>
                                     <th class="xsmall">Location</th>
@@ -87,10 +92,11 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php $counter_qty = 0; ?>
+                                <?php $counter = 0; ?>
                                 <?php foreach($sale->getItems() as $item) { ?>
-                                <?php $counter_qty += $item->getQty(); ?>
+                                <?php $counter++; ?>
                                 <tr data-qty="<?php echo $item->getQty(); ?>">
+                                    <td><?php echo $counter; ?></td>
                                     <td><?php echo ($item->getProduct()->getBarcode()) ? $item->getProduct()->getBarcode() : '-'; ?></td>
                                     <td><?php echo $item->getProduct()->getName(); ?></td>
                                     <td><?php echo $item->getProduct()->getSection(); ?></td>
@@ -107,21 +113,20 @@
                         </table>
                         
                         <p class="pick-list-summary quarter">
-                            <span>Total Quantity to Pick:</span> <?php echo $counter_qty; ?><br>
+                            <!--<span>Total Quantity to Pick:</span> <?php // echo $counter_qty; ?><br>-->
                             <span>Total Items on list:</span> <?php echo $sale->getItems()->count(); ?>
                         </p>
-                        
                         
                         </fieldset>
                         <div class="btn-box">
                             <ul>
                                 <li><?php echo form_submit('picklist-update', '', 'class=\'btn-create\''); ?></li>
+                                <li><a href="<?php echo site_url('admin/sale/invoice/' . $sale->getId()); ?>" class="button">Invoice</a></li>
                             </ul>
                         </div>
                     </form>
                 </div>
-                <p></p>
-                <p class="note">* "Double Click" the input field to copy the ordered qty</p>
+                <p class="note"><br>* "Double Click" the input field to copy the ordered qty<br><br></p>
             </section>
         </div>
     </div>

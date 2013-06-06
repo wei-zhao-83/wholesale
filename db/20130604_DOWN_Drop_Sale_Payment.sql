@@ -1,0 +1,1 @@
+ALTER TABLE  `sales` ADD  `payment` VARCHAR(255) NOT NULL AFTER  `customer_id`;

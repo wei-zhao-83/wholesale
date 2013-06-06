@@ -43,12 +43,13 @@
                                 <span>Ship Date:</span> <?php echo $sale->getShipDate(); ?><br><br>
                                 <span>Salesperson:</span> <?php echo $sale->getUser()->getUsername(); ?><br>
                                 <span>Type:</span> <?php echo get_full_name($sale->getType()) ?><br>
-                                <span>Payment:</span> <?php echo ucfirst($sale->getPayment()); ?><br>
+                                <!--<span>Payment:</span> <?php // echo ucfirst($sale->getPayment()); ?><br>-->
                             </p>
                         </div>
                         
                         <div class="pl-elment third">
                             <h5>Bill To</h5>
+                            <?php if ($sale->getCustomer()) { ?>
                             <p>
                                 <?php echo $sale->getCustomer()->getName(); ?><br>
                                 <?php echo $sale->getCustomer()->getBillingAddress(); ?><br>
@@ -57,10 +58,12 @@
                                 <?php echo $sale->getCustomer()->getBillingPostal(); ?><br>
                                 <?php echo $sale->getCustomer()->getPhone(); ?>
                             </p>
+                            <?php } ?>
                         </div>
                         
                         <div class="pl-elment third">
                             <h5>Ship To</h5>
+                            <?php if ($sale->getCustomer()) { ?>
                             <p>
                                 <?php echo $sale->getCustomer()->getName(); ?><br>
                                 <?php echo $sale->getCustomer()->getShippingAddress(); ?><br>
@@ -68,6 +71,7 @@
                                 <?php echo $sale->getCustomer()->getShippingProvinceAbbr(); ?><br>
                                 <?php echo $sale->getCustomer()->getShippingPostal(); ?>
                             </p>
+                            <?php } ?>
                         </div>
                     </div>
                     
@@ -80,7 +84,7 @@
                                 <th class="xsmall">Unit</th>
                                 <th class="small">Unit Price</th>
                                 <th class="small">Discount</th>
-                                <th class="xsmall">Qty</th>
+                                <th class="xsmall">Qty*</th>
                                 <th class="small">Amount</th>
                             </tr>
                         </thead>
@@ -93,7 +97,7 @@
                                 <td><?php echo $item->getProduct()->getUnit(); ?></td>
                                 <td>$<?php echo $item->getSalePrice(); ?></td>
                                 <td><?php echo ($item->getDiscount() != '0.00') ? '-$' . $item->getDiscount() : '-'; ?></td>
-                                <td><?php echo $item->getPicked(); ?></td>
+                                <td><?php echo $item->getPicked(); ?><?php echo ($item->getPicked() !== $item->getQty()) ? '/' . $item->getQty() : ''; ?></td>
                                 <td>$<?php echo $item->getSaleAmount(); ?></td>
                             </tr>
                             <?php } ?>
@@ -111,18 +115,18 @@
                                 <td colspan="7" class="text-rgt"><strong>Total</strong></td>
                                 <td>$<?php echo $summary['total'] ?></td>
                             </tr>
-                            <!--<tr>
+                            <tr>
                                 <td colspan="7" class="text-rgt"><strong>Total Due</strong></td>
                                 <td>$<?php echo $summary['total_due'] ?></td>
-                            </tr>-->
+                            </tr>
                             <tr>
                                 <td colspan="7" class="text-rgt"><strong>Total Discount</strong></td>
-                                <td>($<?php echo $summary['discount'] ?>)</td>
+                                <td>$<?php echo $summary['discount'] ?></td>
                             </tr>
                         </tfoot>
                     </table>
-                    <h3 class="text-center">Thank You</h3>
                 </div>
+                <p class="note"><br>* Total of Picked Items / Total of Ordered Items<br><br></p>
             </section>
         </div>
     </div>

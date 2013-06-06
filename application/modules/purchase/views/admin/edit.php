@@ -32,7 +32,7 @@
                         
                         <li>
                             <?php echo form_label('Vendor', 'vendor'); ?>
-                            <select class="medium-2" name="vendor">
+                            <select class="medium-2" id="product-search-trigger" data-url="<?php echo site_url('admin/product/ajax_search/'); ?>" data-type="purchase" name="vendor">
                                 <option></option>
                                 <?php foreach($vendors as $vendor): ?>
                                 <option value="<?php echo $vendor->getId(); ?>" <?php if(!empty($selected_vendor) && $selected_vendor->getId() == $vendor->getId()){ ?> selected="selected" <?php } ?> ><?php echo $vendor->getName(); ?></option>
@@ -61,39 +61,6 @@
                 </div>
             <?php echo form_fieldset_close(); ?>
             <?php echo form_fieldset('Product'); ?>
-                <div class="full" id="product-ajax-search">
-                    <ul>
-                        <li>
-                            <?php echo form_input('search[name]', set_value('search[name]'), 'class=\'small\' id=\'search-name\' placeholder=\'Name\''); ?>
-                        </li>
-                        <li>
-                            <?php echo form_input('search[barcode]', set_value('search[barcode]'), 'class=\'medium\' id=\'search-barcode\' placeholder=\'Barcode\''); ?>
-                        </li>
-                        <li>
-                            <?php echo form_input('search[section]', set_value('search[section]'), 'class=\'xxsmall\' id=\'search-section\'  placeholder=\'Section\''); ?>
-                        </li>
-                        <li>
-                            <select name="search[category]" id="search-category">
-                                <option value="">Category</option>
-                                <?php foreach($categories as $category): ?>
-                                <option value="<?php echo $category->getId(); ?>" <?php echo set_select('search[category]'); ?>><?php echo $category->getName(); ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </li>
-                        <li>
-                            <select name="search[vendor]" id="search-vendor">
-                                <option value="">Vendor</option>
-                                <?php foreach($vendors as $vendor): ?>
-                                <option value="<?php echo $vendor->getId(); ?>" <?php echo set_select('search[vendor]'); ?>><?php echo $vendor->getName(); ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </li>
-                        <li>
-                            <a data-url='<?php echo site_url('admin/product/ajax_search/'); ?>' href="#" id="product-ajax-search-btn" class="btn-filter"></a>
-                        </li>
-                    </ul>
-                </div>
-                
                 <table id="search-products">
                     <thead>
                         <tr>
@@ -103,7 +70,6 @@
                             <th class="xsmall">Qty</th>
                             <th class="xsmall">Stock</th>
                             <th class="xsmall">Cost</th>
-                            <th class="xsmall">Discount</th>
                             <th class="small">Comment</th>
                             <th class="xxsmall"></th>
                         </tr>
@@ -117,7 +83,6 @@
                             <td><input type="text" name="products[<?php echo $item->getProduct()->getId(); ?>][qty]" value="<?php echo $item->getQty(); ?>" class="xxsmall item-update-field" /></td>
                             <td><?php echo $item->getProduct()->getTotalQty(); ?>[<?php echo $item->getProduct()->getUnit() ?>]</td>
                             <td><?php echo $item->getProduct()->getCost(); ?></td>
-                            <td><input type="text" name="products[<?php echo $item->getProduct()->getId(); ?>][discount]" value="<?php echo $item->getDiscount(); ?>" class="xxsmall item-update-field" /></td>
                             <td><input type="text" name="products[<?php echo $item->getProduct()->getId(); ?>][comment]" value="<?php echo $item->getComment(); ?>" class="small" /></td>
                             <td><a href="#" class="btn-remove show-inline"></a></td>
                         </tr>
