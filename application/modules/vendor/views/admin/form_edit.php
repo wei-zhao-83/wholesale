@@ -183,6 +183,7 @@
                 <ul>
                     <li><?php echo form_submit('vendor_create', '', 'class=\'btn-create\''); ?></li>
                     <li><?php echo form_reset('reset', '', 'class=\'btn-reset\''); ?></li>
+                    <li><a href="<?php echo site_url('admin/purchase/create/' . $vendor->getId()); ?>" class="button">Create an Order</a></li>
                 </ul>
             </div>
         <?php echo form_close(); ?>

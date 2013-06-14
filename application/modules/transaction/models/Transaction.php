@@ -12,6 +12,14 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @DiscriminatorMap({"sale" = "sale\models\Sale", "purchase" = "purchase\models\Purchase", "returns" = "returns\models\Returns", "quote" = "quote\models\Quote"})
  */
 class Transaction {
+	//TODO
+	//const STATUS_DRAFT     = 'draft';
+	//const STATUS_PENDING   = 'pending';
+	//const STATUS_PICKED    = 'picked';
+	//const STATUS_SHIPPED   = 'shipped';
+	//const STATUS_COMPLETED = 'completed';
+	//const STATUS_CANCELLED = 'cancelled';
+	
     /**
      * @var integer $id
      * @Column(name="id", type="integer", nullable=false)

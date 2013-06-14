@@ -4,7 +4,6 @@
         
         <ul>
             <li><a class="action-list" href="<?php echo base_url('admin/purchase'); ?>"></a></li>
-            <li><a class="action-create" href="<?php echo base_url('admin/purchase/create'); ?>"></a></li>
             <li><a class="action-edit active" href=""></a></li>
         </ul>
     </div>
@@ -17,6 +16,13 @@
                 <div class="half">
                     <ul>
                         <li>
+                            <?php echo form_label('Vendor', ''); ?>
+                            <div class="text">
+                                <div class="medium"><?php echo $purchase->getVendor()->getName(); ?></div>
+                            </div>
+                        </li>
+                        
+                        <li>
                             <?php echo form_label('Purchases', ''); ?>
                             <div class="text">
                                 <div class="medium"><?php echo $this->session->userdata('username'); ?></div>
@@ -26,18 +32,8 @@
                         <li>
                             <?php echo form_label('Order Date', ''); ?>
                             <div class="text">
-                                <div class="medium"><?php echo date('F d, Y', time()) ?></div>
+                                <div class="medium"><?php echo $purchase->getCreatedAt(); ?></div>
                             </div>
-                        </li>
-                        
-                        <li>
-                            <?php echo form_label('Vendor', 'vendor'); ?>
-                            <select class="medium-2" id="product-search-trigger" data-url="<?php echo site_url('admin/product/ajax_search/'); ?>" data-type="purchase" name="vendor">
-                                <option></option>
-                                <?php foreach($vendors as $vendor): ?>
-                                <option value="<?php echo $vendor->getId(); ?>" <?php if(!empty($selected_vendor) && $selected_vendor->getId() == $vendor->getId()){ ?> selected="selected" <?php } ?> ><?php echo $vendor->getName(); ?></option>
-                                <?php endforeach; ?>
-                            </select>
                         </li>
                         
                         <li>
@@ -67,31 +63,39 @@
                             <th class="medium">Name</th>
                             <th class="small">Barcode</th>
                             <th class="xsmall">Category</th>
-                            <th class="xsmall">Qty</th>
-                            <th class="xsmall">Stock</th>
+                            <th class="xsmall">BOH</th>
+                            <th class="xsmall">In Transit</th>
+                            <th class="xsmall">Freq. (<?php echo $purchase->getVendor()->getOrderFrequency(); ?>)</th>
+                            <th class="xsmall">Qty.</th>                            
                             <th class="xsmall">Cost</th>
                             <th class="small">Comment</th>
-                            <th class="xxsmall"></th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach($purchase->getItems() as $item) { ?>
-                        <tr data-id="<?php echo $item->getProduct()->getId(); ?>">
-                            <td><?php echo $item->getProduct()->getName(); ?></td>
-                            <td><?php echo $item->getProduct()->getBarcode(); ?></td>
-                            <td><?php echo $item->getProduct()->getCategory()->getName(); ?></td>
-                            <td><input type="text" name="products[<?php echo $item->getProduct()->getId(); ?>][qty]" value="<?php echo $item->getQty(); ?>" class="xxsmall item-update-field" /></td>
-                            <td><?php echo $item->getProduct()->getTotalQty(); ?>[<?php echo $item->getProduct()->getUnit() ?>]</td>
-                            <td><?php echo $item->getProduct()->getCost(); ?></td>
-                            <td><input type="text" name="products[<?php echo $item->getProduct()->getId(); ?>][comment]" value="<?php echo $item->getComment(); ?>" class="small" /></td>
-                            <td><a href="#" class="btn-remove show-inline"></a></td>
-                        </tr>
-                    <?php } ?>
+                        <?php if(count($products) > 0) { ?>
+                            <?php foreach($products as $product) { ?>
+                                <tr>
+                                    <td><a href="<?php echo base_url('/admin/product/edit/' . $product->getID()); ?>"><?php echo $product->getName(); ?></a></td>
+                                    <td><?php echo $product->getBarcode(); ?></td>
+                                    <td><?php echo $product->getCategory()->getName(); ?></td>
+                                    <td><?php echo $product->getTotalQty(); ?></td>
+                                    <td><?php echo $product->getPickedQty(); ?></td>
+                                    <td><?php echo isset($frequency[$product->getID()]) ? $frequency[$product->getID()] : 0; ?></td>
+                                    <td><input type="text"
+                                               class="xxsmall item-update-field"
+                                               name="products[<?php echo $product->getId(); ?>][qty]"
+                                               value="<?php echo isset($purchased_items[$product->getID()]) ? $purchased_items[$product->getID()]->getQty() : 0; ?>" /></td>
+                                    <td><?php echo $product->getCost(); ?></td>
+                                    <td><input type="text"
+                                               class="small"
+                                               name="products[<?php echo $product->getId(); ?>][comment]"
+                                               value="<?php echo isset($purchased_items[$product->getID()]) ? $purchased_items[$product->getID()]->getComment() : ''; ?>" /></td>
+                                </tr>
+                            <?php } ?>
+                        <?php } ?>
                     </tbody>
                 </table>
             <?php echo form_fieldset_close(); ?>
-            
-            
             
             <?php echo form_hidden('id', $purchase->getId()); ?>
             <?php echo form_hidden('edit', 1); ?>

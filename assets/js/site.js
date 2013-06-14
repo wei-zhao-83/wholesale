@@ -40,7 +40,7 @@
             // Products list table
             prodTable:        '#search-products',
             
-            prodSearchTrigger: '#product-search-trigger',
+            //prodSearchTrigger: '#product-search-trigger',
             
             // Sale table
             defaultDiscount: '#default-discount',
@@ -64,7 +64,7 @@
             var self = this,
                 config = this.config;
             
-            $(config.addRowBtn).on('click', function(e) {
+            $('th ' + config.addRowBtn).on('click', function(e) {
                 var _tbl = $(this).closest('table'),
                     _last_row = _tbl.find('tr').eq(-1),
                     _random = Math.ceil(Math.random()*99999);
@@ -122,23 +122,23 @@
                 e.preventDefault();
             });
             
-            $(config.prodSearchTrigger).on('change', function(e) {
-                var $this = $(this),
-                    type = $this.data('type');
-                
-                $.ajax({
-                    type:     siteForm.METHODS.POST,
-                    url:      $this.data('url'),
-                    data:     $.param({search: {vendor: $this.val()}}),
-                    dataType: 'json'
-                }).done(function(data) {
-                    if (data) {
-                        self.renderProdRows(data, type);
-                    }
-                });
-                
-                e.preventDefault();
-            });
+            //$(config.prodSearchTrigger).on('change', function(e) {
+            //    var $this = $(this),
+            //        type = $this.data('type');
+            //    
+            //    $.ajax({
+            //        type:     siteForm.METHODS.POST,
+            //        url:      $this.data('url'),
+            //        data:     $.param({search: {vendor: $this.val()}}),
+            //        dataType: 'json'
+            //    }).done(function(data) {
+            //        if (data) {
+            //            self.renderProdRows(data, type);
+            //        }
+            //    });
+            //    
+            //    e.preventDefault();
+            //});
             
             $(config.defaultDiscount).on('change', function(e) {
                 // Update discount

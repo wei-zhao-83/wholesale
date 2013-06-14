@@ -4,7 +4,6 @@
 
         <ul>
             <li><a class="action-list active" href="<?php echo base_url('admin/purchase'); ?>"></a></li>
-            <li><a class="action-create" href="<?php echo base_url('admin/purchase/create'); ?>"></a></li>
         </ul>
     </div>
     

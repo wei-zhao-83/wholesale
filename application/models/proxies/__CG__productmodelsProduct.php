@@ -357,6 +357,12 @@ class Product extends \product\models\Product implements \Doctrine\ORM\Proxy\Pro
         return parent::setUnitCase($unit_case);
     }
 
+    public function getPickedQty()
+    {
+        $this->__load();
+        return parent::getPickedQty();
+    }
+
 
     public function __sleep()
     {

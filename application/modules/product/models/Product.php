@@ -374,6 +374,23 @@ class Product {
 		$this->unit_case = $unit_case;
 	}
     
+	public function getPickedQty() {
+		$transaction_items = $this->transaction_items;
+		$total_picked = 0;
+		
+		if ($transaction_items->count() > 0) {
+			foreach ($transaction_items as $item) {
+				$transaction = $item->getTransaction();
+				
+				if ($transaction instanceof \sale\models\Sale && !$transaction->getDeletedAt() && $transaction->getStatus()->getId() == 2) { // magic number here..Orz
+					$total_picked += $item->getPicked();
+				}
+			}
+		}
+		
+		return $total_picked;
+	}
+	
     // Get unit of measure
     public static function getUOM() {
         return array(self::UNIT_EACH, self::UNIT_DOZEN, self::UNIT_BOX, self::UNIT_SET, self::UNIT_CASE);

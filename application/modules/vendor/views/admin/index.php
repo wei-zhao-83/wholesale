@@ -35,7 +35,7 @@
                 <th class="small">Phone</th>
                 <th class="medium">Email</th>
                 <th class="small">Order Frequency</th>
-                <th class="xxsmall"></th>
+                <th class="small"></th>
             </tr>
             <?php foreach ($vendors as $vendor): ?>
             <tr>
@@ -44,6 +44,7 @@
                 <td><?php echo $vendor->getEmail(); ?></td>
                 <td><?php echo $vendor->getOrderFrequency(); ?></td>
                 <td>
+                    <a class="btn-add" href="<?php echo site_url('admin/purchase/create/' . $vendor->getId()); ?>"></a>
                     <a class="btn-edit" href="vendor/edit/<?php echo $vendor->getId(); ?>"></a>
                     <a class="btn-delete" href="vendor/delete/<?php echo $vendor->getId(); ?>"></a>
                 </td>
