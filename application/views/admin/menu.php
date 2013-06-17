@@ -27,7 +27,7 @@
 				<li><a  class="<?php if($this->router->fetch_module() == 'purchase') { ?>active<?php } ?>" href="<?php echo base_url('admin/purchase'); ?>">Purchase</a></li>
 				<!--<li><a  class="<?php if($this->router->fetch_module() == 'quote') { ?>active<?php } ?>" href="<?php echo base_url('admin/quote'); ?>">Quote</a></li>
                 <li><a  class="<?php if($this->router->fetch_module() == 'returns') { ?>active<?php } ?>" href="<?php echo base_url('admin/returns'); ?>">Return</a></li>-->
-                <li><a class="<?php if($this->router->fetch_module() == 'transaction_status') { ?>active<?php } ?>" href="<?php echo base_url('admin/transaction_status'); ?>">status</a></li>
+                <!--<li><a class="<?php if($this->router->fetch_module() == 'transaction_status') { ?>active<?php } ?>" href="<?php echo base_url('admin/transaction_status'); ?>">status</a></li>-->
             </ul>
         </li>
         <li><a class="<?php if($this->router->fetch_module() == 'tag') { ?>active<?php } ?>" href="<?php echo base_url('admin/tag'); ?>"><span class="icon-tag"></span>Tag</a></li>

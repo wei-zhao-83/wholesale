@@ -46,10 +46,9 @@ class PurchaseRepository extends EntityRepository {
 			$qry_str = 'SELECT pd.id, SUM(i.qty) AS qty
 						FROM transaction\models\TransactionItem i
 						LEFT JOIN i.transaction t
-						LEFT JOIN t.status s
 						LEFT JOIN i.product pd
 						WHERE pd.id IN(' . implode(',', $prod_ids) . ')
-							AND s.id = 3
+							AND t.status = \'' . \transaction\models\Transaction::STATUS_COMPLETED . '\' 
 							AND t.deleted_at IS NULL
 							AND t INSTANCE OF purchase\models\Purchase
 							AND t.created_at > DATE_SUB(CURRENT_DATE(), ' . $vendor->getOrderFrequency() . ', \'day\')
@@ -78,7 +77,6 @@ class PurchaseRepository extends EntityRepository {
 	public function getPurchases($filter = null) {
 		$qry_str = 'SELECT p 
 					FROM purchase\models\Purchase p
-					JOIN p.status s
 					LEFT JOIN p.vendor v';
 		
 		$qry_array = array();
@@ -94,7 +92,7 @@ class PurchaseRepository extends EntityRepository {
 		}
 		
 		if (!empty($filter['status'])) {
-			$qry_array[] = 's.id = \'' . $filter['status'] . '\' ';
+			$qry_array[] = 'p.status = \'' . $filter['status'] . '\' ';
 		}
 		
 		if (count($qry_array) > 0) {

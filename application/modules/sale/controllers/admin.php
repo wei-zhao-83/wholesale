@@ -10,7 +10,7 @@ class Admin extends Admin_Controller {
 		
 		$data = array('sales' 	  => $this->em->getRepository('sale\models\Sale')->getSales($filter),
 					  'customers' => $this->em->getRepository('customer\models\Customer')->getCustomers(),
-					  'statuses'  => $this->em->getRepository('transaction_status\models\TransactionStatus')->getStatuses());
+					  'statuses'  => transaction\models\Transaction::getSaleStatuses());
 		
 		$this->load->view('admin/header');
 		$this->load->view('admin/index', $data);
@@ -98,7 +98,7 @@ class Admin extends Admin_Controller {
 					  'categories'  		=> $this->em->getRepository('category\models\Category')->getCategories(),
 					  'customers' 			=> $this->em->getRepository('customer\models\Customer')->getCustomers(),
 					  'vendors'				=> $this->em->getRepository('vendor\models\Vendor')->getVendors(),
-					  'statuses' 			=> $this->em->getRepository('transaction_status\models\TransactionStatus')->getStatuses(),
+					  'statuses' 			=> transaction\models\Transaction::getSaleStatuses(),
 					  'types'				=> sale\models\Sale::getTypes(),
 					  'payment_types'		=> sale\models\Sale::getPaymentTypes());
 		
@@ -159,8 +159,7 @@ class Admin extends Admin_Controller {
 		$customer = $this->em->getRepository('customer\models\Customer')->findOneById($this->input->post('customer'));
 		
 		// Set default transaction status to "Draft"
-		$post_status_id = $this->input->post('status');
-		$status = $this->em->getRepository('transaction_status\models\TransactionStatus')->findOneById(!empty($post_status_id)? $post_status_id : 1);
+		$status = ($this->input->post('status')) ? $this->input->post('status') : transaction\models\Transaction::STATUS_DRAFT;
 		
 		$sale->setUser($this->current_user);
 		$sale->setCustomer($customer);

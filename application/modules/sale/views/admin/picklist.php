@@ -40,7 +40,7 @@
                             <p>
                                 <span>Order Date:</span> <?php echo $sale->getCreatedAt(); ?><br>
                                 <span>Salesperson:</span> <?php echo $sale->getUser()->getUsername(); ?><br>
-                                <span>Status:</span> <?php echo $sale->getStatus()->getName(); ?><br>
+                                <span>Status:</span> <?php echo get_full_name($sale->getStatus()); ?><br>
                                 <span>Type:</span> <?php echo get_full_name($sale->getType()) ?><br>
                             </p>
                         </div>

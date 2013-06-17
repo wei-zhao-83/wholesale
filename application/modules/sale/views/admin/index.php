@@ -27,7 +27,7 @@
                     <select name="status">
                         <option value="">Status</option>
                         <?php foreach($statuses as $status): ?>
-                        <option value="<?php echo $status->getId(); ?>" <?php echo set_select('status'); ?>><?php echo $status->getName(); ?></option>
+                        <option value="<?php echo $status; ?>" <?php echo set_select('status'); ?>><?php echo get_full_name($status); ?></option>
                         <?php endforeach; ?>
                     </select>
                 </li>
@@ -65,7 +65,7 @@
                 <td><?php echo $sale->getId(); ?></td>
                 <td><?php echo $sale->getCreatedAt(); ?></td>
                 <td><?php echo ($sale->getCustomer())? $sale->getCustomer()->getName() : ''; ?></td>
-                <td><?php echo $sale->getStatus()->getName(); ?></td>
+                <td><?php echo $sale->getStatus(); ?></td>
                 <td><?php echo get_full_name($sale->getType()); ?></td>
                 <!--<td><?php // echo get_full_name($sale->getPayment()); ?></td>-->
                 <td><?php echo $sale->getDefaultDiscount() * 100; ?>%</td>

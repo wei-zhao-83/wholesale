@@ -9,7 +9,6 @@ class SaleRepository extends EntityRepository {
 	public function getSales($filter = null) {
 		$qry_str = 'SELECT s 
 					FROM sale\models\Sale s
-					JOIN s.status st
 					LEFT JOIN s.customer c';
 		
 		$qry_array = array();
@@ -25,7 +24,7 @@ class SaleRepository extends EntityRepository {
 		}
 		
 		if (!empty($filter['status'])) {
-			$qry_array[] = 'st.id = \'' . $filter['status'] . '\' ';
+			$qry_array[] = 's.status = \'' . $filter['status'] . '\' ';
 		}
 		
 		if (count($qry_array) > 0) {

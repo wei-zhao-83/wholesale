@@ -26,7 +26,7 @@
                     <select name="status">
                         <option value="">Status</option>
                         <?php foreach($statuses as $status): ?>
-                        <option value="<?php echo $status->getId(); ?>" <?php echo set_select('status'); ?>><?php echo $status->getName(); ?></option>
+                        <option value="<?php echo $status; ?>" <?php echo set_select('status'); ?>><?php echo get_full_name($status); ?></option>
                         <?php endforeach; ?>
                     </select>
                 </li>
@@ -59,7 +59,7 @@
                 <td><?php echo $purchase->getId(); ?></td>
                 <td><?php echo $purchase->getCreatedAt(); ?></td>
                 <td><?php echo ($purchase->getVendor())? $purchase->getVendor()->getName() : ''; ?></td>
-                <td><?php echo $purchase->getStatus()->getName(); ?></td>
+                <td><?php echo get_full_name($purchase->getStatus()); ?></td>
                 <td><?php echo $purchase->getTotal(); ?></td>
                 <td>
                     <a class="btn-edit" href="purchase/edit/<?php echo $purchase->getId(); ?>"></a>

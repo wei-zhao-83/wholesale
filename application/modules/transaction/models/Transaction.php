@@ -12,13 +12,13 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @DiscriminatorMap({"sale" = "sale\models\Sale", "purchase" = "purchase\models\Purchase", "returns" = "returns\models\Returns", "quote" = "quote\models\Quote"})
  */
 class Transaction {
-	//TODO
-	//const STATUS_DRAFT     = 'draft';
-	//const STATUS_PENDING   = 'pending';
-	//const STATUS_PICKED    = 'picked';
-	//const STATUS_SHIPPED   = 'shipped';
-	//const STATUS_COMPLETED = 'completed';
-	//const STATUS_CANCELLED = 'cancelled';
+	const STATUS_DRAFT     = 'draft';
+	const STATUS_PENDING   = 'pending';
+	const STATUS_PICKED    = 'picked';
+	const STATUS_SHIPPED   = 'shipped';
+	const STATUS_COMPLETED = 'completed';
+	const STATUS_CANCELLED = 'cancelled';
+	const STATUS_IN_TRANSIT = 'in_transit';
 	
     /**
      * @var integer $id
@@ -27,6 +27,11 @@ class Transaction {
      * @GeneratedValue(strategy="IDENTITY")
      */
 	private $id;
+	
+	/**
+	 * @Column(type="string", length=125)
+	 */
+	private $status;
 	
 	/**
      * @Column(type="decimal", scale=2)
@@ -57,11 +62,6 @@ class Transaction {
      * @OneToMany(targetEntity="transaction\models\TransactionItem", mappedBy="transaction", cascade={"persist"})
      */
     protected $items;
-	
-	/**
-     * @ManyToOne(targetEntity="transaction_status\models\TransactionStatus", inversedBy="status")
-     */
-    protected $status;
 	
 	public function __construct() {
 		$this->created_at = new \DateTime("now");
@@ -131,5 +131,13 @@ class Transaction {
 	
 	public function removeItem($item) {
 		$this->items->removeElement($item);
+	}
+	
+	public static function getSaleStatuses() {
+		return array(self::STATUS_DRAFT, self::STATUS_PENDING, self::STATUS_PICKED, self::STATUS_IN_TRANSIT, self::STATUS_SHIPPED, self::STATUS_COMPLETED, self::STATUS_CANCELLED);
+	}
+	
+	public static function getPurchaseStatuses() {
+		return array(self::STATUS_DRAFT, self::STATUS_PENDING, self::STATUS_COMPLETED, self::STATUS_CANCELLED);
 	}
 }

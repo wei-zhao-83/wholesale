@@ -10,7 +10,7 @@ class Admin extends Admin_Controller {
 		
 		$data = array('purchases' => $this->em->getRepository('purchase\models\Purchase')->getPurchases($filter),
 					  'vendors' => $this->em->getRepository('vendor\models\Vendor')->getVendors(),
-					  'statuses' => $this->em->getRepository('transaction_status\models\TransactionStatus')->getStatuses());
+					  'statuses' => transaction\models\Transaction::getPurchaseStatuses());
 		
 		$this->load->view('admin/header');
 		$this->load->view('admin/index', $data);
@@ -78,7 +78,7 @@ class Admin extends Admin_Controller {
 					  'products'			=> $products,
 					  'frequency'			=> $frequency,
 					  'purchased_items'		=> $purchased_items,
-					  'statuses' 			=> $this->em->getRepository('transaction_status\models\TransactionStatus')->getStatuses());
+					  'statuses' 			=> transaction\models\Transaction::getPurchaseStatuses());
 		
 		$this->load->view('admin/header');
 		$this->load->view('admin/edit', $data);
@@ -119,8 +119,7 @@ class Admin extends Admin_Controller {
 	
 	private function _do(purchase\models\Purchase $purchase) {
 		// Set default transaction status to "Draft"
-		$post_status_id = $this->input->post('status');
-		$status = $this->em->getRepository('transaction_status\models\TransactionStatus')->findOneById(!empty($post_status_id)? $post_status_id : 1);
+		$status = ($this->input->post('status')) ? $this->input->post('status') : transaction\models\Transaction::STATUS_DRAFT;
 		
 		$purchase->setUser($this->current_user);
 		$purchase->setStatus($status);

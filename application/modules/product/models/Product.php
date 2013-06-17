@@ -382,7 +382,9 @@ class Product {
 			foreach ($transaction_items as $item) {
 				$transaction = $item->getTransaction();
 				
-				if ($transaction instanceof \sale\models\Sale && !$transaction->getDeletedAt() && $transaction->getStatus()->getId() == 2) { // magic number here..Orz
+				if ($transaction instanceof \sale\models\Sale
+					&& !$transaction->getDeletedAt()
+					&& $transaction->getStatus() == \transaction\models\Transaction::STATUS_PICKED) {
 					$total_picked += $item->getPicked();
 				}
 			}

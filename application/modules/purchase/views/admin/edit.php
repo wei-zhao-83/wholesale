@@ -39,9 +39,9 @@
                         <li>
                             <label for="status">Status</label>
                             <select class="medium-2" name="status">
-                                <?php $selected_status = ($this->input->post('status'))?$this->input->post('status'):$purchase->getStatus()->getId(); ?>
+                                <?php $selected_status = ($this->input->post('status'))?$this->input->post('status'):$purchase->getStatus(); ?>
                                 <?php foreach($statuses as $status): ?>
-                                <option value="<?php echo $status->getId(); ?>" <?php if($selected_status == $status->getId()){ ?> selected="selected" <?php } ?> ><?php echo $status->getName(); ?></option>
+                                <option value="<?php echo $status; ?>" <?php if($selected_status == $status){ ?> selected="selected" <?php } ?> ><?php echo get_full_name($status); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </li>

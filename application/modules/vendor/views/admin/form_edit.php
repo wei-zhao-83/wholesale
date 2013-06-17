@@ -169,7 +169,7 @@
                     <?php if(!$purchase->getDeletedAt()) { ?>
                         <div class="history-element">
                             <div class="history-time"><?php echo $purchase->getCreatedAt(); ?></div>
-                            <div class="history-status"><?php echo $purchase->getStatus()->getName(); ?></div>
+                            <div class="history-status"><?php echo $purchase->getStatus(); ?></div>
                             <div class="history-total">$<?php echo $purchase->getTotal(); ?></div>
                             <div class="history-view"><a class="view-history btn-view" href="<?php echo site_url('admin/purchase/edit/');?>/<?php echo $purchase->getId(); ?>"></a></div>
                         </div>
