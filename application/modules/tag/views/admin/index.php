@@ -20,20 +20,15 @@
         
         <?php $this->load->view('admin/message'); ?>
         
-        <table>
-            <tr>
-                <th class="large">Name</th>
-                <th class="xxsmall"></th>
-            </tr>
+        <ul id="tags-list">
             <?php foreach ($tags as $tag): ?>
-            <tr>
-                <td><?php echo $tag->getName(); ?></td>
-                <td>
-                    <a class="btn-edit" href="tag/edit/<?php echo $tag->getId(); ?>"></a>
-                    <a class="btn-delete" href="tag/delete/<?php echo $tag->getId(); ?>"></a>
-                </td>
-            </tr>
-        <?php endforeach; ?>
-        </table>
+                <li>
+                    <a href="tag/edit/<?php echo $tag->getId(); ?>"><?php echo $tag->getName(); ?></a>
+                    <span>
+                        <a class="btn-delete" href="tag/delete/<?php echo $tag->getId(); ?>"></a>
+                    </span>
+                </li>
+            <?php endforeach; ?>
+        </ul>
     </div>
 </section>

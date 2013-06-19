@@ -820,6 +820,32 @@ p.pick-list-summary span {
 	text-decoration:none;
 }
 
+/* Tags list */
+ul#tags-list {
+	display: inline-block;
+	list-style: none;
+}
+ul#tags-list li {
+	margin: 0 10px 10px 0;
+	padding: 8px 10px;
+	float: left;
+	background: #EEEEEE;
+}
+ul#tags-list li a {
+	color: #414141;
+	text-decoration: none;
+}
+ul#tags-list li a:hover {
+	text-decoration: underline;
+}
+ul#tags-list li span {
+	border-left: dotted 1px #888888;
+	margin: 0 0 0 10px;
+	padding: 0 0 0 10px;
+	height: 20px;
+	vertical-align: bottom;
+	display: inline-block;
+}
 
 /* AutoSuggest */
 ul.as-selections {
