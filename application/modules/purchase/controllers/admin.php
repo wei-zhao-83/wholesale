@@ -29,21 +29,35 @@ class Admin extends Admin_Controller {
 			
 			redirect('admin/purchase/edit/' . $purchase->getId());
 		} catch(Exception $e) {
-			$this->session->set_flashdata('message', array('type' => 'error', 'content' => 'Can not create this purchase.'));
+			$this->session->set_flashdata('message', array('type' => 'error', 'content' => $e->getMessage()));
 		}
 		
-		redirect('admin/purchase/');
-	}
+		redirect('admin/vendor/');
+	}	
 	
 	public function edit($id) {
 		$purchased_items = $products = $data = $frequency = array();
 		
 		try {
+			// Get the purchase by id
 			$purchase = $this->em->getRepository('purchase\models\Purchase')->findOneById($id);
 			if (!$purchase) {
 				throw new Exception('Can not find this purchase - #' . $id);
 			}
 			
+			if ($_POST) {
+				// Form validation
+				if ($this->_purchase_validate() !== FALSE) {
+					$this->_do($purchase);
+					$data['message'] = array('type' => 'success', 'content' => 'Successfully updated.');
+				}
+				
+				if ($this->form_validation->error_array()) {
+					$data['message'] = array('type' => 'error', 'content' => $this->form_validation->error_array());
+				}
+			}
+			
+			// Products
 			$products = $this->em->getRepository('product\models\Product')->getProducts(array('vendor' => $purchase->getVendor()->getID()));
 			
 			// Order Frequency
@@ -54,16 +68,6 @@ class Admin extends Admin_Controller {
 			foreach ($current_items as $item) {
 				$purchased_items[$item->getProduct()->getID()] = $item;			
 			}
-			
-			// Form validation
-			if ($this->_purchase_validate() !== FALSE) {
-				$this->_do($purchase);
-				$data['message'] = array('type' => 'success', 'content' => 'Successfully updated.');
-			}
-			
-			if ($this->form_validation->error_array()) {
-				$data['message'] = array('type' => 'error', 'content' => $this->form_validation->error_array());
-			}
 		} catch (Exception $e) {
 			$this->session->set_flashdata('message', array('type' => 'error', 'content' => $e->getMessage()));
 			redirect('admin/purchase');
@@ -71,10 +75,11 @@ class Admin extends Admin_Controller {
 		
 		if ($this->form_validation->error_array()) {
 			$data['message'] = array('type' => 'error', 'content' => $this->form_validation->error_array());
-		}
+		}		
 		
 		// Assign data to the template
 		$data += array('purchase' 			=> $purchase,
+					   'boh_updated'		=> $purchase->getBohUpdated(),
 					  'products'			=> $products,
 					  'frequency'			=> $frequency,
 					  'purchased_items'		=> $purchased_items,
@@ -120,6 +125,7 @@ class Admin extends Admin_Controller {
 	private function _do(purchase\models\Purchase $purchase) {
 		// Set default transaction status to "Draft"
 		$status = ($this->input->post('status')) ? $this->input->post('status') : transaction\models\Transaction::STATUS_DRAFT;
+		$boh_updated = $purchase->getBohUpdated();
 		
 		$purchase->setUser($this->current_user);
 		$purchase->setStatus($status);
@@ -133,6 +139,11 @@ class Admin extends Admin_Controller {
 				// Update the current items, if current item exists in the post products array
 				if(isset($products[$current_item->getProduct()->getID()]) && $products[$current_item->getProduct()->getID()]['qty'] > 0) {
 					$current_item->setQty($products[$current_item->getProduct()->getID()]['qty']);
+					
+					if ($boh_updated == 0) {
+						$current_item->setReceived($products[$current_item->getProduct()->getID()]['received']);
+					}
+					
 					$current_item->setComment($products[$current_item->getProduct()->getID()]['comment']);	
 					
 					$this->em->persist($current_item);
@@ -159,10 +170,31 @@ class Admin extends Admin_Controller {
 					$item->setCost($product->getCost());
 					$item->setTax($this->tax);
 					$item->setQty($prod['qty']);
+					$item->setReceived($prod['received']);
 					$item->setComment($prod['comment']);
 					
 					$purchase->addItem($item);
 				}
+			}
+		}		
+		
+		// Update the current BOH, if this purchase has not been updated yet
+		if ($this->input->post('update_boh') !== false) {
+			$purchase->setBohUpdated($this->input->post('update_boh')); // Set boh_updated to 1 or 0
+			$_updated_items = $purchase->getItems(); // Get all items			
+			
+			foreach($_updated_items as $_updated_item) {
+				$_product = $_updated_item->getProduct();
+				$_boh = $_product->getTotalQty();
+				
+				if ($this->input->post('update_boh') == 1) {
+					$_boh += $_updated_item->getReceived();
+				} else {
+					$_boh -= $_updated_item->getReceived();
+				}
+				
+				$_product->setTotalQty($_boh);
+				$this->em->persist($_product);
 			}
 		}
 		

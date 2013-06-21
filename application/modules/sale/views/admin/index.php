@@ -52,12 +52,12 @@
                 <th class="small">Order Date</th>
                 <th class="medium">Customer</th>
                 <th class="xsmall">Status</th>
+                <th class="small">BOH Updated</th>
                 <th class="small">Type</th>
                 <!--<th class="small">Payment</th>-->
                 <th class="xsmall">Discount</th>
-                <th class="small">Total</th>
-                <th class="small">Due</th>
-                <th class="xxsmall"></th>
+                <th class="small">Total/Due</th>
+                <th class="xsmall"></th>
             </tr>
             <?php foreach ($sales as $sale) { ?>
             <?php $_summary = $sale->getSummary(true); ?>
@@ -66,11 +66,11 @@
                 <td><?php echo $sale->getCreatedAt(); ?></td>
                 <td><?php echo ($sale->getCustomer())? $sale->getCustomer()->getName() : ''; ?></td>
                 <td><?php echo $sale->getStatus(); ?></td>
+                <td><?php echo ($sale->getBohUpdated() == 1) ? 'Yes' : 'No'; ?></td>
                 <td><?php echo get_full_name($sale->getType()); ?></td>
                 <!--<td><?php // echo get_full_name($sale->getPayment()); ?></td>-->
                 <td><?php echo $sale->getDefaultDiscount() * 100; ?>%</td>
-                <td>$<?php echo $_summary['total']; ?></td>
-                <td>$<?php echo $_summary['total_due']; ?></td>
+                <td>$<?php echo $_summary['total']; ?>/$<?php echo $_summary['total_due']; ?></td>
                 <td>
                     <a class="btn-edit" href="sale/edit/<?php echo $sale->getId(); ?>"></a>
                     <a class="btn-delete" href="sale/delete/<?php echo $sale->getId(); ?>"></a>

@@ -17,10 +17,6 @@ class Admin extends Admin_Controller {
 		$this->load->view('admin/footer');
 	}
 	
-	public function payment() {
-		
-	}
-	
 	public function invoice($id) {
 		$sale = $this->em->getRepository('sale\models\Sale')->findOneById($id);
 		$settings = $this->em->getRepository('setting\models\Setting');		
@@ -36,14 +32,16 @@ class Admin extends Admin_Controller {
 	
 	public function picklist($id) {
 		$sale = $this->em->getRepository('sale\models\Sale')->findOneById($id);
-		$settings = $this->em->getRepository('setting\models\Setting');		
-		
-		$data = array('sale' => $sale,
-					  'company' => $settings->findOneByName('company')->getValue());		
+		$settings = $this->em->getRepository('setting\models\Setting');
 		
 		if ($_POST) {
 			$picked = $this->input->post('picked');
 			$shipped = $this->input->post('shipped');
+			
+			// Update the current BOH, if this purchase has not been updated yet
+			if ($this->input->post('update_boh') !== false) {
+				$sale->setBohUpdated($this->input->post('update_boh')); // Set boh_updated to 1 or 0
+			}
 			
 			foreach($sale->getItems() as $item) {
 				if (isset($picked[$item->getID()])) {
@@ -53,11 +51,30 @@ class Admin extends Admin_Controller {
 					$item->setShipped($shipped[$item->getID()]);
 				}
 				
+				// Update the current BOH, if this purchase has not been updated yet
+				if ($this->input->post('update_boh') !== false) {
+					$_product = $item->getProduct();
+					$_boh = $_product->getTotalQty();
+					
+					if ($this->input->post('update_boh') == 1) {
+						$_boh -= $item->getPicked();
+					} else {
+						$_boh += $item->getPicked();
+					}
+					
+					$_product->setTotalQty($_boh);
+					$this->em->persist($_product);
+				}
+				
 				$this->em->persist($item);
 			}
 			
 			$this->em->flush();
-		}
+		} // end of post
+		
+		$data = array('sale' => $sale,
+					  'boh_updated' => $sale->getBohUpdated(),
+					  'company' => $settings->findOneByName('company')->getValue());	
 		
 		$this->load->view('admin/picklist', $data);
 	}
@@ -69,8 +86,10 @@ class Admin extends Admin_Controller {
 			$this->_do($sale);
 			redirect('admin/sale/edit/' . $sale->getId());
 		} catch(Exception $e) {
-			$this->session->set_flashdata('message', array('type' => 'error', 'content' => 'Can not create this sale.'));
+			$this->session->set_flashdata('message', array('type' => 'error', 'content' => $e->getMessage()));
 		}
+		
+		redirect('admin/sale');
 	}
 	
 	public function edit($id) {
@@ -93,6 +112,7 @@ class Admin extends Admin_Controller {
 		
 		// Assign data to the template
 		$data = array('sale' 				=> $sale,
+					  'boh_updated'			=> $sale->getBohUpdated(),
 					  'payments'			=> $sale->getPayments(),
 					  'selected_customer' 	=> $selected_customer,
 					  'categories'  		=> $this->em->getRepository('category\models\Category')->getCategories(),

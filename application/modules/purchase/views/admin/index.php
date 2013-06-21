@@ -51,6 +51,7 @@
                 <th class="medium">Order Date</th>
                 <th class="medium">Vendor</th>
                 <th class="small">Status</th>
+                <th class="small">BOH Updated</th>
                 <th class="small">Total</th>
                 <th class="xxsmall"></th>
             </tr>
@@ -60,6 +61,7 @@
                 <td><?php echo $purchase->getCreatedAt(); ?></td>
                 <td><?php echo ($purchase->getVendor())? $purchase->getVendor()->getName() : ''; ?></td>
                 <td><?php echo get_full_name($purchase->getStatus()); ?></td>
+                <td><?php echo ($purchase->getBohUpdated() == 1) ? 'Yes' : 'No'; ?></td>
                 <td><?php echo $purchase->getTotal(); ?></td>
                 <td>
                     <a class="btn-edit" href="purchase/edit/<?php echo $purchase->getId(); ?>"></a>

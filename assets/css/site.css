@@ -362,7 +362,7 @@ form {
 		-moz-border-radius:    0;
 	}
 	.text {
-        padding: 6px 8px;
+        padding: 3px 8px;
         border: 1px solid #CDCDCD;
         color: #616060;
 	}
@@ -393,6 +393,9 @@ form {
             padding: 0;
             margin: 0 8px 0 0;
         }
+		form input.checkbox.update-boh {
+			margin-left: 18px; 
+		}
         .btn-filter, form input.btn-create, form input.btn-reset, form input.btn-mail {
             background-image:url('../images/form-icon.png');
             width: 30px;
@@ -496,6 +499,10 @@ table {
     width: 100%;
     border: 1px solid #f2f2f2;
 }
+	table tfoot {
+		border-top: dotted 1px #f2f2f2;
+		background: #f2f2f2;
+	}
     table th, table td{
         text-align: center;
     }
@@ -605,7 +612,7 @@ table#picklist tbody tr:nth-child(even) {
 }
 .pl-heading-row .pl-elment p span {
 	font-weight: bold;
-	width: 90px;
+	width: 105px;
 	display: inline-block;
 }
 p.pick-list-summary {

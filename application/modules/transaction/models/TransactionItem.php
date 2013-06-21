@@ -71,6 +71,11 @@ class TransactionItem {
 	private $shipped = 0;
 	
 	/**
+     * @Column(type="integer")
+	 */
+	private $received = 0;
+	
+	/**
 	 * @Column(type="string", length=128, nullable=true)
 	 */
 	private $comment;
@@ -194,6 +199,14 @@ class TransactionItem {
 	
 	public function setShipped($qty) {
 		$this->shipped = $qty;
+	}
+	
+	public function getReceived() {
+		return $this->received;
+	}
+	
+	public function setReceived($received) {
+		$this->received = $received;
 	}
 	
 	public function getComment() {

@@ -1,0 +1,1 @@
+ALTER TABLE `transaction_item` ADD `received` INT(11) NOT NULL DEFAULT 0 AFTER `shipped`;

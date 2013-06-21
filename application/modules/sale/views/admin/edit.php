@@ -31,6 +31,13 @@
                         </li>
                         
                         <li>
+                            <?php echo form_label('BOH Updated?', ''); ?>
+                            <div class="text">
+                                <div class="medium"><?php echo ($boh_updated == 1)? 'Yes' : 'No'; ?></div>
+                            </div>
+                        </li>
+                        
+                        <li>
                             <?php echo form_label('Customer', 'customer'); ?>
                             <select class="medium-2" name="customer">
                                 <option>Select a Customer</option>
@@ -216,7 +223,7 @@
                             <td><?php echo $item->getProduct()->getBarcode(); ?></td>
                             <td><?php echo $item->getProduct()->getCategory()->getName(); ?></td>
                             <td><input type="text" name="products[<?php echo $item->getProduct()->getId(); ?>][qty]" value="<?php echo $item->getQty(); ?>" class="xxsmall field-qty" /></td>
-                            <td><?php echo $item->getProduct()->getTotalQty(); ?>[<?php echo $item->getProduct()->getUnit() ?>]</td>
+                            <td><?php echo $item->getProduct()->getTotalQty(); ?><?php // echo $item->getProduct()->getUnit() ?></td>
                             <td class="field-price"><?php echo $item->getSalePrice(); ?></td>
                             
                             <td>

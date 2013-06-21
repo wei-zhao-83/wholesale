@@ -42,6 +42,7 @@
                                 <span>Salesperson:</span> <?php echo $sale->getUser()->getUsername(); ?><br>
                                 <span>Status:</span> <?php echo get_full_name($sale->getStatus()); ?><br>
                                 <span>Type:</span> <?php echo get_full_name($sale->getType()) ?><br>
+                                <span>BOH Updated:</span> <?php echo ($boh_updated == 1)? 'Yes' : 'No'; ?>
                             </p>
                         </div>
                         
@@ -102,14 +103,37 @@
                                     <td><?php echo $item->getProduct()->getSection(); ?></td>
                                     <td><?php echo $item->getProduct()->getCategory()->getName(); ?></td>
                                     <td><?php echo $item->getProduct()->getUnit(); ?></td>
-                                    <td><?php echo $item->getProduct()->getTotalQty() * $item->getProduct()->getQtyUnit(); ?></td>
+                                    <td><?php echo $item->getProduct()->getTotalQty() ?>  <?php //echo $item->getProduct()->getQtyUnit(); ?></td>
                                     <td><?php echo $item->getQty(); ?></td>
-                                    <td><input name="picked[<?php echo $item->getID(); ?>]" value="<?php echo $item->getPicked(); ?>" class="xxsmall picklist-field"></td>
+                                    <td>
+                                        <?php if($boh_updated == 0) { ?>
+                                            <input name="picked[<?php echo $item->getID(); ?>]" value="<?php echo $item->getPicked(); ?>" class="xxsmall picklist-field">
+                                        <?php } else { ?>
+                                            <?php echo $item->getPicked(); ?>
+                                        <?php } ?>
+                                    </td>
                                     <td><input name="shipped[<?php echo $item->getID(); ?>]" value="<?php echo $item->getShipped(); ?>" class="xxsmall picklist-field"></td>
                                     <td><?php echo ($item->getComment()) ? $item->getComment() : '-'; ?></td>
                                 </tr>
                                 <?php } ?>
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="11" class="text-lft">
+                                        <?php if($boh_updated == 0) { ?>
+                                            <label>
+                                                <input type="checkbox" name="update_boh" value="1" class="checkbox update-boh">
+                                                Update BOH
+                                            </label>
+                                        <?php } else { ?>
+                                            <label>
+                                                <input type="checkbox" name="update_boh" value="0" class="checkbox update-boh">
+                                                <strong>UNDO</strong> BOH Update
+                                            </label>
+                                        <?php } ?>
+                                    </td>
+                                </tr>
+                            </tfoot>
                         </table>
                         
                         <p class="pick-list-summary quarter">

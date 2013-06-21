@@ -16,6 +16,7 @@ class Transaction {
 	const STATUS_PENDING   = 'pending';
 	const STATUS_PICKED    = 'picked';
 	const STATUS_SHIPPED   = 'shipped';
+	const STATUS_RECIEVED  = 'recieved';
 	const STATUS_COMPLETED = 'completed';
 	const STATUS_CANCELLED = 'cancelled';
 	const STATUS_IN_TRANSIT = 'in_transit';
@@ -32,6 +33,11 @@ class Transaction {
 	 * @Column(type="string", length=125)
 	 */
 	private $status;
+	
+	/**
+	 * @Column(type="boolean", nullable=false)
+	 */
+	private $boh_updated = 0;
 	
 	/**
      * @Column(type="decimal", scale=2)
@@ -88,6 +94,14 @@ class Transaction {
 		$this->status = $status;
 	}
 	
+	public function getBohUpdated() {
+		return $this->boh_updated;
+	}
+	
+	public function setBohUpdated($boh_updated) {
+		$this->boh_updated = $boh_updated;
+	}
+	
 	public function getTotal() {
 		return $this->total;
 	}
@@ -138,6 +152,6 @@ class Transaction {
 	}
 	
 	public static function getPurchaseStatuses() {
-		return array(self::STATUS_DRAFT, self::STATUS_PENDING, self::STATUS_COMPLETED, self::STATUS_CANCELLED);
+		return array(self::STATUS_DRAFT, self::STATUS_PENDING, self::STATUS_RECIEVED, self::STATUS_COMPLETED, self::STATUS_CANCELLED);
 	}
 }
