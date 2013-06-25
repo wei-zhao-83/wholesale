@@ -46,7 +46,7 @@
                         <li>
                             <?php echo form_label('YTD', ''); ?>
                             <div class="text">
-                                <div class="medium">$<?php echo ''; ?></div>
+                                <div class="medium">$<?php echo $ytd; ?></div>
                             </div>
                         </li>
                         

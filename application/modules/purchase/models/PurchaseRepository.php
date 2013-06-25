@@ -48,8 +48,9 @@ class PurchaseRepository extends EntityRepository {
 						AND t.deleted_at IS NULL ';
 						
 		$qry = $this->_em->createQuery($qry_str);
+		$result = $qry->getSingleScalarResult();
 		
-		var_dump($qry->getResult());
+		return !empty($result) ? number_format($result, 2, '.', '') : '0.00';
 	}
 	
 	public function getOrderFrequency(\vendor\models\Vendor $vendor, $prod_ids = array()) {

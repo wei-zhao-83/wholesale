@@ -66,13 +66,14 @@ class Admin extends Admin_Controller {
 	
 	public function edit($id) {
 		$purchased_items = $products = $data = $frequency = array();
+		$ytd = 0;
 		
 		try {
 			// Get the purchase by id
 			$purchase = $this->em->getRepository('purchase\models\Purchase')->findOneById($id);
 			
-			$this->em->getRepository('purchase\models\Purchase')->getYtd($purchase->getVendor());
-			
+			// Get the YTD
+			$ytd = $this->em->getRepository('purchase\models\Purchase')->getYtd($purchase->getVendor());
 			
 			if (!$purchase) {
 				throw new Exception('Can not find this purchase - #' . $id);
@@ -112,6 +113,7 @@ class Admin extends Admin_Controller {
 		
 		// Assign data to the template
 		$data += array('purchase' 			=> $purchase,
+					   'ytd'				=> $ytd,
 					   'summary'			=> $purchase->getSummary(),
 					   'boh_updated'		=> $purchase->getBohUpdated(),
 					  'products'			=> $products,
