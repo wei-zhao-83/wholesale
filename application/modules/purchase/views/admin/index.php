@@ -55,14 +55,15 @@
                 <th class="small">Total</th>
                 <th class="xxsmall"></th>
             </tr>
-            <?php foreach ($purchases as $purchase) { ?>
+            <?php foreach ($purchases as $purchase) { ?>            
+            
             <tr>
                 <td><?php echo $purchase->getId(); ?></td>
                 <td><?php echo $purchase->getCreatedAt(); ?></td>
                 <td><?php echo ($purchase->getVendor())? $purchase->getVendor()->getName() : ''; ?></td>
                 <td><?php echo get_full_name($purchase->getStatus()); ?></td>
                 <td><?php echo ($purchase->getBohUpdated() == 1) ? 'Yes' : 'No'; ?></td>
-                <td><?php echo $purchase->getTotal(); ?></td>
+                <td>$<?php echo $purchase->getTotal(); ?></td>
                 <td>
                     <a class="btn-edit" href="purchase/edit/<?php echo $purchase->getId(); ?>"></a>
                     <a class="btn-delete" href="purchase/delete/<?php echo $purchase->getId(); ?>"></a>

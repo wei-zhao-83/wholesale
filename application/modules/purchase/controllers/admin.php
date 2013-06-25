@@ -17,6 +17,35 @@ class Admin extends Admin_Controller {
 		$this->load->view('admin/footer');
 	}
 	
+	public function credit($id) {
+		try {
+			$results = array();
+			
+			$settings = $this->em->getRepository('setting\models\Setting');
+			$purchase = $this->em->getRepository('purchase\models\Purchase')->findOneById($id);
+			
+			$items = $purchase->getItems();
+			
+			foreach($items as $item) {
+				$different = $item->getQty() - $item->getReceived();
+				
+				if ($different > 0) {
+					$results[] = $item;
+				}
+			}
+			
+			$data = array('purchase' => $purchase,
+						  'items' => $results,
+						  'settings' => $settings,
+						  'company' => $settings->findOneByName('company')->getValue());
+			
+			$this->load->view('admin/credit', $data);
+		} catch(Exception $e) {
+			$this->session->set_flashdata('message', array('type' => 'error', 'content' => $e->getMessage()));
+			redirect('admin/purchase/edit/' . $id);
+		}		
+	}
+	
 	public function create($vendor_id) {
 		$vendor = null;
 		$purchase = new purchase\models\Purchase;
@@ -32,7 +61,7 @@ class Admin extends Admin_Controller {
 			$this->session->set_flashdata('message', array('type' => 'error', 'content' => $e->getMessage()));
 		}
 		
-		redirect('admin/vendor/');
+		redirect('admin/vendor');
 	}	
 	
 	public function edit($id) {
@@ -41,6 +70,10 @@ class Admin extends Admin_Controller {
 		try {
 			// Get the purchase by id
 			$purchase = $this->em->getRepository('purchase\models\Purchase')->findOneById($id);
+			
+			$this->em->getRepository('purchase\models\Purchase')->getYtd($purchase->getVendor());
+			
+			
 			if (!$purchase) {
 				throw new Exception('Can not find this purchase - #' . $id);
 			}
@@ -79,6 +112,7 @@ class Admin extends Admin_Controller {
 		
 		// Assign data to the template
 		$data += array('purchase' 			=> $purchase,
+					   'summary'			=> $purchase->getSummary(),
 					   'boh_updated'		=> $purchase->getBohUpdated(),
 					  'products'			=> $products,
 					  'frequency'			=> $frequency,
@@ -199,7 +233,7 @@ class Admin extends Admin_Controller {
 		}
 		
 		$summary = $purchase->getSummary();
-		$purchase->setTotal($summary['total']);
+		$purchase->setTotal($summary['sub_total']);
 		
 		$this->em->persist($purchase);
 		$this->em->flush();

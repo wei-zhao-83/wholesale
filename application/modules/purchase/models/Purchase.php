@@ -33,8 +33,8 @@ class Purchase extends Transaction {
 			}            
 		}
 		
-		return array('sub_total' => number_format($sub_total, 2),
-					 'tax' 		 => number_format($tax, 2),
-					 'total' 	 => number_format($sub_total + $tax, 2));
+		return array('sub_total' => number_format($sub_total, 2, '.', ''),
+					 'tax' 		 => number_format($tax, 2, '.', ''),
+					 'total' 	 => number_format($sub_total + $tax, 2, '.', ''));
     }
 }

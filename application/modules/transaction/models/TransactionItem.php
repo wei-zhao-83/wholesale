@@ -103,6 +103,19 @@ class TransactionItem {
 		$this->cost = $cost;
 	}
 	
+	public function getRowTotal() {
+		$row_total = 0;
+		
+		if ($this->transaction instanceof \sale\models\Sale) {
+			$row_total = $this->getQty() * ($this->getSalePrice() - $this->getDiscount());
+		}
+		if ($this->transaction instanceof \purchase\models\Purchase) {
+			$row_total = $this->getQty() * ($this->getCost() - $this->getDiscount());
+		}
+		
+		return number_format($row_total, 2, '.', '');
+	}
+	
     public function getSuggestedPrice() {
 		return $this->suggested_price;
 	}
@@ -150,7 +163,7 @@ class TransactionItem {
 	public function getSaleAmount() {
 		$amount = ($this->getSalePrice() - $this->getDiscount()) * $this->getPicked();
 		
-		return $amount;
+		return number_format($amount, 2, '.', '');
 	}
 	
 	public function getDiscount() {

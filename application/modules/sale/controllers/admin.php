@@ -21,11 +21,11 @@ class Admin extends Admin_Controller {
 		$sale = $this->em->getRepository('sale\models\Sale')->findOneById($id);
 		$settings = $this->em->getRepository('setting\models\Setting');		
 		
-		$data = array('sale' => $sale,
+		$data = array('sale' 	=> $sale,
 					  'summary' => $sale->getSummary(true),
-					  'hst' => $settings->findOneByName('hst')->getValue(),
+					  'hst' 	=> $settings->findOneByName('hst')->getValue(),
 					  'company' => $settings->findOneByName('company')->getValue(),
-					  'tax' => $settings->findOneByName('tax')->getValue());
+					  'tax' 	=> $settings->findOneByName('tax')->getValue());
 		
 		$this->load->view('admin/invoice', $data);
 	}
@@ -72,9 +72,9 @@ class Admin extends Admin_Controller {
 			$this->em->flush();
 		} // end of post
 		
-		$data = array('sale' => $sale,
+		$data = array('sale' 		=> $sale,
 					  'boh_updated' => $sale->getBohUpdated(),
-					  'company' => $settings->findOneByName('company')->getValue());	
+					  'company' 	=> $settings->findOneByName('company')->getValue());	
 		
 		$this->load->view('admin/picklist', $data);
 	}
@@ -285,7 +285,7 @@ class Admin extends Admin_Controller {
 		
 		// Set the total
 		$summary = $sale->getSummary();
-		$sale->setTotal($summary['total']);
+		$sale->setTotal($summary['sub_total']);
 		
 		$this->em->persist($sale);
 		$this->em->flush();

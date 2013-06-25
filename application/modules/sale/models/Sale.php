@@ -133,11 +133,11 @@ class Sale extends Transaction {
 			}            
 		}
 		
-		return array('sub_total' => number_format($sub_total, 2),
-					 'discount'  => number_format($discount, 2),
-					 'tax' 		 => number_format($tax, 2),
-					 'total' 	 => number_format($sub_total + $tax, 2),
-                     'total_due' => number_format($sub_total + $tax - $total_paid, 2));
+		return array('sub_total' => number_format($sub_total, 2, '.', ''),
+					 'discount'  => number_format($discount, 2, '.', ''),
+					 'tax' 		 => number_format($tax, 2, '.', ''),
+					 'total' 	 => number_format($sub_total + $tax, 2, '.', ''),
+                     'total_due' => number_format($sub_total + $tax - $total_paid, 2, '.', ''));
     }
     
     // override the parent class method

@@ -44,6 +44,13 @@
                         </li>
                         
                         <li>
+                            <?php echo form_label('YTD', ''); ?>
+                            <div class="text">
+                                <div class="medium">$<?php echo ''; ?></div>
+                            </div>
+                        </li>
+                        
+                        <li>
                             <label for="status">Status</label>
                             <select class="medium-2" name="status">
                                 <?php $selected_status = ($this->input->post('status'))?$this->input->post('status'):$purchase->getStatus(); ?>
@@ -67,7 +74,7 @@
                 <table id="search-products">
                     <thead>
                         <tr>
-                            <th class="medium">Name</th>
+                            <th class="small">Name</th>
                             <th class="xsmall">Category</th>
                             <th class="xsmall">BOH</th>
                             <!--<th class="xsmall">In Transit</th>-->
@@ -75,6 +82,7 @@
                             <th class="xsmall">Qty.</th>
                             <th class="xsmall">Recieved</th>
                             <th class="xsmall">Cost</th>
+                            <th class="xsmall">Sub Total</th>
                             <th class="small">Comment</th>
                         </tr>
                     </thead>
@@ -90,7 +98,6 @@
                                     </td>
                                     <td><?php echo $product->getCategory()->getName(); ?></td>
                                     <td><?php echo $product->getTotalQty(); ?></td>
-                                    <!--<td><?php // echo $product->getPickedQty(); ?> - </td>-->
                                     <td><?php echo isset($frequency[$product->getID()]) ? $frequency[$product->getID()] : 0; ?></td>
                                     <td><input type="text"
                                                class="xxsmall item-update-field"
@@ -106,18 +113,34 @@
                                             <?php echo $purchased_items[$product->getID()]->getReceived(); ?>
                                         <?php } ?>
                                     </td>
-                                    <td><?php echo $product->getCost(); ?></td>
+                                    <td>$<?php echo $product->getCost(); ?></td>
+                                    <td><?php echo isset($purchased_items[$product->getID()]) ? '$' . $purchased_items[$product->getID()]->getRowTotal() : '-'; ?></td>
                                     <td><input type="text"
                                                class="small"
                                                name="products[<?php echo $product->getId(); ?>][comment]"
                                                value="<?php echo isset($purchased_items[$product->getID()]) ? $purchased_items[$product->getID()]->getComment() : ''; ?>" /></td>
                                 </tr>
                             <?php } ?>
+                            <tr>
+                                <td colspan="7" class="text-rgt"><strong>Sub Total</strong></td>
+                                <td>$<?php echo $summary['sub_total'] ?></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td colspan="7" class="text-rgt"><strong>Tax</strong></td>
+                                <td>$<?php echo $summary['tax'] ?></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td colspan="7" class="text-rgt"><strong>Total</strong></td>
+                                <td>$<?php echo $summary['total'] ?></td>
+                                <td></td>
+                            </tr>
                         <?php } ?>
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="8" class="text-lft">
+                            <td colspan="9" class="text-lft">
                                 <?php if($boh_updated == 0) { ?>
                                     <label>
                                         <input type="checkbox" name="update_boh" value="1" class="checkbox update-boh">
@@ -140,6 +163,7 @@
             <div class="btn-box">
                 <ul>
                     <li><?php echo form_submit('purchase_create', '', 'class=\'btn-create\''); ?></li>
+                    <li><a class="button" href="<?php echo base_url('/admin/purchase/credit/' . $purchase->getId()); ?>">Credit Claim</a></li>
                 </ul>
             </div>
         <?php echo form_close(); ?>

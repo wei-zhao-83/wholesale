@@ -96,7 +96,7 @@
                                 <td><?php echo $item->getProduct()->getCategory()->getName(); ?></td>
                                 <td><?php echo $item->getProduct()->getUnit(); ?></td>
                                 <td>$<?php echo $item->getSalePrice(); ?></td>
-                                <td><?php echo ($item->getDiscount() != '0.00') ? '-$' . $item->getDiscount() : '-'; ?></td>
+                                <td><?php echo ($item->getDiscount() != '0.00') ? '($' . $item->getDiscount() . ')' : '-'; ?></td>
                                 <td><?php echo $item->getPicked(); ?><?php echo ($item->getPicked() !== $item->getQty()) ? '/' . $item->getQty() : ''; ?></td>
                                 <td>$<?php echo $item->getSaleAmount(); ?></td>
                             </tr>
@@ -121,7 +121,7 @@
                             </tr>
                             <tr>
                                 <td colspan="7" class="text-rgt"><strong>Total Discount</strong></td>
-                                <td>$<?php echo $summary['discount'] ?></td>
+                                <td>($<?php echo $summary['discount'] ?>)</td>
                             </tr>
                         </tfoot>
                     </table>

@@ -37,6 +37,21 @@ class PurchaseRepository extends EntityRepository {
 	//	return $result;
 	//}
 	
+	public function getYtd(\vendor\models\Vendor $vendor) {
+		$qry_str = '';
+		
+		$qry_str = 'SELECT SUM(t.total) 
+					FROM purchase\models\Purchase t 
+					LEFT JOIN t.vendor v 
+					WHERE v.id = ' . $vendor->getId() . ' 
+						AND t.status = \'' . \transaction\models\Transaction::STATUS_COMPLETED . '\' 
+						AND t.deleted_at IS NULL ';
+						
+		$qry = $this->_em->createQuery($qry_str);
+		
+		var_dump($qry->getResult());
+	}
+	
 	public function getOrderFrequency(\vendor\models\Vendor $vendor, $prod_ids = array()) {
 		$result = array();
 		
