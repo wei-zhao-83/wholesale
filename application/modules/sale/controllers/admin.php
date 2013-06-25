@@ -120,7 +120,7 @@ class Admin extends Admin_Controller {
 					  'vendors'				=> $this->em->getRepository('vendor\models\Vendor')->getVendors(),
 					  'statuses' 			=> transaction\models\Transaction::getSaleStatuses(),
 					  'types'				=> sale\models\Sale::getTypes(),
-					  'payment_types'		=> sale\models\Sale::getPaymentTypes());
+					  'payment_types'		=> transaction\models\Transaction::getPaymentTypes());
 		
 		// Form validation
 		if ($this->_sale_validate() !== FALSE) {
@@ -249,7 +249,7 @@ class Admin extends Admin_Controller {
 		if ($payments) {
 			foreach ($payments as $p) {
 				if (!empty($p['amount'])) {
-					$payment = new sale\models\SalePayment;
+					$payment = new transaction\models\TransactionPayment;
 					
 					$payment->setPaymentType($p['payment_type']);
 					$payment->setStatus($p['status']);

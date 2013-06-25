@@ -114,12 +114,14 @@ class Admin extends Admin_Controller {
 		// Assign data to the template
 		$data += array('purchase' 			=> $purchase,
 					   'ytd'				=> $ytd,
+					   'payments'			=> $purchase->getPayments(),
 					   'summary'			=> $purchase->getSummary(),
 					   'boh_updated'		=> $purchase->getBohUpdated(),
 					  'products'			=> $products,
 					  'frequency'			=> $frequency,
 					  'purchased_items'		=> $purchased_items,
-					  'statuses' 			=> transaction\models\Transaction::getPurchaseStatuses());
+					  'statuses' 			=> transaction\models\Transaction::getPurchaseStatuses(),
+					  'payment_types'		=> transaction\models\Transaction::getPaymentTypes());
 		
 		$this->load->view('admin/header');
 		$this->load->view('admin/edit', $data);
@@ -190,6 +192,36 @@ class Admin extends Admin_Controller {
 				} else {
 					$purchase->removeItem($current_item);
 					$this->em->remove($current_item);
+				}
+			}
+		}
+		
+		// Update the current payments
+		$current_payments = $purchase->getPayments();
+		$payments = $this->input->post('payments');
+		
+		if ($current_payments) {
+			foreach ($current_payments as $current_payment) {
+				if(isset($payments[$current_payment->getID()])) {
+					$current_payment->setStatus($payments[$current_payment->getID()]['status']);
+					
+					unset($payments[$current_payment->getID()]);
+				}
+			}
+		}
+		
+		// Add new payments
+		if ($payments) {
+			foreach ($payments as $p) {
+				if (!empty($p['amount'])) {
+					$payment = new transaction\models\TransactionPayment;
+					
+					$payment->setPaymentType($p['payment_type']);
+					$payment->setStatus($p['status']);
+					$payment->setAmount($p['amount']);
+					$payment->setComment($p['comment']);
+					
+					$purchase->addPayment($payment);
 				}
 			}
 		}

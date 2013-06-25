@@ -12,6 +12,12 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @DiscriminatorMap({"sale" = "sale\models\Sale", "purchase" = "purchase\models\Purchase", "returns" = "returns\models\Returns", "quote" = "quote\models\Quote"})
  */
 class Transaction {
+	const PAYMENT_CASH       = 'cash';
+    const PAYMENT_CREDITCARD = 'credit_card';
+    const PAYMENT_DEBIT      = 'debit';
+    const PAYMENT_CREDITS    = 'credits';
+    const PAYMENT_CHEQUE     = 'cheque';
+	
 	const STATUS_DRAFT     = 'draft';
 	const STATUS_PENDING   = 'pending';
 	const STATUS_PICKED    = 'picked';
@@ -68,6 +74,24 @@ class Transaction {
      * @OneToMany(targetEntity="transaction\models\TransactionItem", mappedBy="transaction", cascade={"persist"})
      */
     protected $items;
+	
+	/**
+     * @OneToMany(targetEntity="transaction\models\TransactionPayment", mappedBy="transaction", cascade={"persist"})
+     */
+    protected $payments;
+	
+	public function addPayment(transactionPayment $payment) {
+		$this->payments[] = $payment;
+		$payment->setTransaction($this);
+	}
+	
+	public function getPayments() {
+		return $this->payments;
+	}
+	
+	public function removePayment($payment) {
+		$this->payments->removeElement($payment);
+	}
 	
 	public function __construct() {
 		$this->created_at = new \DateTime("now");
@@ -146,6 +170,14 @@ class Transaction {
 	public function removeItem($item) {
 		$this->items->removeElement($item);
 	}
+	
+    public static function getPaymentTypes() {
+        return array(self::PAYMENT_CASH       => get_full_name(self::PAYMENT_CASH),
+                     self::PAYMENT_CREDITCARD => get_full_name(self::PAYMENT_CREDITCARD),
+                     self::PAYMENT_DEBIT      => get_full_name(self::PAYMENT_DEBIT),
+                     self::PAYMENT_CREDITS    => get_full_name(self::PAYMENT_CREDITS),
+                     self::PAYMENT_CHEQUE     => get_full_name(self::PAYMENT_CHEQUE));
+    }
 	
 	public static function getSaleStatuses() {
 		return array(self::STATUS_DRAFT, self::STATUS_PENDING, self::STATUS_PICKED, self::STATUS_IN_TRANSIT, self::STATUS_SHIPPED, self::STATUS_COMPLETED, self::STATUS_CANCELLED);

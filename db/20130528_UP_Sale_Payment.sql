@@ -1,6 +1,6 @@
-CREATE TABLE `sale_payments` (
+CREATE TABLE `transaction_payments` (
     id INT AUTO_INCREMENT NOT NULL,
-    sale_id INT DEFAULT NULL,
+    transaction_id INT DEFAULT NULL,
     payment_type VARCHAR(255),
     status VARCHAR(255),
     amount DECIMAL(10, 2),
@@ -8,4 +8,4 @@ CREATE TABLE `sale_payments` (
     created_at DATETIME DEFAULT NULL,
     PRIMARY KEY(id)
 ) ENGINE = InnoDB;
-ALTER TABLE `sale_payments` ADD FOREIGN KEY (sale_id) REFERENCES sales(id);
+ALTER TABLE `transaction_payments` ADD FOREIGN KEY (transaction_id) REFERENCES transactions(id);

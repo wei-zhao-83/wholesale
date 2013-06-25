@@ -2,26 +2,16 @@
 
 namespace sale\models;
 
-use transaction\models\Transaction AS Transaction;
+use transaction\models\Transaction,
+	transaction\models\TransactionPayment;
 
 /** @Entity(repositoryClass="sale\models\SaleRepository")
  *  @Table(name="sales")
  */
 class Sale extends Transaction {
-    const PAYMENT_CASH       = 'cash';
-    const PAYMENT_CREDITCARD = 'credit_card';
-    const PAYMENT_DEBIT      = 'debit';
-    const PAYMENT_CREDITS    = 'credits';
-    const PAYMENT_CHEQUE     = 'cheque';
-    
     const TYPE_CNC           = 'cash_and_carry';
     const TYPE_FULL          = 'full_service';
     const TYPE_STANDARD      = 'standard_service';
-    
-    /**
-      * @Column(type="string")
-      */
-    //private $payment = self::PAYMENT_CASH;
     
     /**
       * @Column(type="string")
@@ -47,23 +37,6 @@ class Sale extends Transaction {
      * @ManyToOne(targetEntity="customer\models\Customer", inversedBy="sales")
      */
 	private $customer;
-    
-    /**
-     * @OneToMany(targetEntity="sale\models\SalePayment", mappedBy="sale", cascade={"persist"})
-     */
-    protected $payments;
-    
-    public function getPayment() {
-        return $this->payment;
-    }
-    
-    public function setPayment($payment) {
-        if (!key_exists($payment, self::getPaymentTypes())) {
-            throw new \InvalidArgumentException("Invalid payment");
-        }
-        
-        $this->payment = $payment;
-    }
     
     public function getType() {
         return $this->type;
@@ -117,7 +90,7 @@ class Sale extends Transaction {
         
         if(!empty($payments)) {
             foreach($payments as $payment) {
-                if($payment->getStatus() == SalePayment::STATUS_COMPLETED) {
+                if($payment->getStatus() == TransactionPayment::STATUS_COMPLETED) {
                     $total_paid += $payment->getAmount();
                 }
             }
@@ -153,27 +126,6 @@ class Sale extends Transaction {
 		$this->items[] = $item;
 		$item->setTransaction($this);
 	}
-    
-    public function addPayment(SalePayment $payment) {
-		$this->payments[] = $payment;
-		$payment->setSale($this);
-	}
-	
-	public function getPayments() {
-		return $this->payments;
-	}
-	
-	public function removePayment($payment) {
-		$this->payments->removeElement($payment);
-	}
-    
-    public static function getPaymentTypes() {
-        return array(self::PAYMENT_CASH       => get_full_name(self::PAYMENT_CASH),
-                     self::PAYMENT_CREDITCARD => get_full_name(self::PAYMENT_CREDITCARD),
-                     self::PAYMENT_DEBIT      => get_full_name(self::PAYMENT_DEBIT),
-                     self::PAYMENT_CREDITS    => get_full_name(self::PAYMENT_CREDITS),
-                     self::PAYMENT_CHEQUE     => get_full_name(self::PAYMENT_CHEQUE));
-    }
     
     public static function getTypes() {
         return array(self::TYPE_CNC      => get_full_name(self::TYPE_CNC),

@@ -127,7 +127,7 @@
                                     <td><?php echo get_full_name($payment->getPaymentType()); ?></td>
                                     <td>
                                         <select class="small" name="payments[<?php echo $payment->getID(); ?>][status]">
-                                            <?php foreach(sale\models\SalePayment::getStatuses() as $status) { ?>
+                                            <?php foreach(transaction\models\TransactionPayment::getStatuses() as $status) { ?>
                                                 <option value="<?php echo $status; ?>" <?php if($payment->getStatus() == $status) { ?> selected="selected" <?php } ?>><?php echo ucfirst($status); ?></option>
                                             <?php } ?>
                                         </select>
@@ -149,7 +149,7 @@
                             </td>
                             <td>
                                 <select class="small" name="payments[0][status]">
-                                    <?php foreach(sale\models\SalePayment::getStatuses() as $status) { ?>
+                                    <?php foreach(transaction\models\TransactionPayment::getStatuses() as $status) { ?>
                                         <option value="<?php echo $status; ?>"><?php echo ucfirst($status); ?></option>
                                     <?php } ?>
                                 </select>

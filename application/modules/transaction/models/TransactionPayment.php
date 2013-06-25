@@ -1,11 +1,11 @@
 <?php
 
-namespace sale\models;
+namespace transaction\models;
 
 /** @Entity
- *  @Table(name="sale_payments")
+ *  @Table(name="transaction_payments")
  */
-class SalePayment {
+class TransactionPayment {
 	const STATUS_COMPLETED = 'completed';
     const STATUS_PENDING   = 'pending';
     const STATUS_FAILED    = 'failed';
@@ -21,7 +21,7 @@ class SalePayment {
     /**
       * @Column(type="string")
       */
-    private $payment_type = Sale::PAYMENT_CASH;
+    private $payment_type = Transaction::PAYMENT_CASH;
     
     /**
      * @Column(type="decimal", scale=2)
@@ -44,9 +44,9 @@ class SalePayment {
 	private $status;
 	
 	/**
-     * @ManyToOne(targetEntity="sale\models\Sale", inversedBy="payments")
+     * @ManyToOne(targetEntity="transaction\models\Transaction", inversedBy="payments")
      */
-    protected $sale;
+    protected $transaction;
 	
 	public function __construct() {
 		$this->created_at = new \DateTime("now");
@@ -69,7 +69,7 @@ class SalePayment {
     }
 	
     public function setPaymentType($payment_type) {
-        if (!key_exists($payment_type, Sale::getPaymentTypes())) {
+        if (!key_exists($payment_type, Transaction::getPaymentTypes())) {
             throw new \InvalidArgumentException("Invalid payment type");
         }
         
@@ -88,12 +88,12 @@ class SalePayment {
         return $this->created_at->format('Y-m-d');
     }
 	
-	public function setSale(Sale $sale) {
-		$this->sale = $sale;
+	public function setTransaction(transaction $transaction) {
+		$this->transaction = $transaction;
 	}
 	
-	public function getSale() {
-		return $this->sale;
+	public function getTransaction() {
+		return $this->transaction;
 	}
 	
 	public function getComment() {

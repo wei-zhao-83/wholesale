@@ -7,7 +7,7 @@ use transaction\models\Transaction AS Transaction;
 /** @Entity(repositoryClass="purchase\models\PurchaseRepository")
  *  @Table(name="purchases")
  */
-class Purchase extends Transaction {
+class Purchase extends Transaction {	
     /**
      * @ManyToOne(targetEntity="vendor\models\Vendor", inversedBy="purchases")
      */
