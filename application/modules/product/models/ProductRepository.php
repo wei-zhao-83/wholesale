@@ -38,6 +38,13 @@ class ProductRepository extends EntityRepository {
 			$qry_array[] = 'p.qty = \'' . $filter['qty'] . '\' ';
 		}
 		
+		if (empty($filter['qty']) && !empty($filter['max_qty'])) {
+			$qry_array[] = 'p.qty <= \'' . $filter['max_qty'] . '\' ';
+		}
+		if (empty($filter['qty']) && !empty($filter['min_qty'])) {
+			$qry_array[] = 'p.qty >= \'' . $filter['min_qty'] . '\' ';
+		}
+		
 		if (!empty($filter['category'])) {
 			$qry_array[] = 'c.id = \'' . $filter['category'] . '\' ';
 		}

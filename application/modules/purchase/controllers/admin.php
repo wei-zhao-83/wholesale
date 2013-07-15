@@ -182,7 +182,7 @@ class Admin extends Admin_Controller {
 						$current_item->setReceived($products[$current_item->getProduct()->getID()]['received']);
 					}
 					
-					$current_item->setComment($products[$current_item->getProduct()->getID()]['comment']);	
+					//$current_item->setComment($products[$current_item->getProduct()->getID()]['comment']);	
 					
 					$this->em->persist($current_item);
 					
@@ -239,7 +239,7 @@ class Admin extends Admin_Controller {
 					$item->setTax($this->tax);
 					$item->setQty($prod['qty']);
 					$item->setReceived($prod['received']);
-					$item->setComment($prod['comment']);
+					//$item->setComment($prod['comment']);
 					
 					$purchase->addItem($item);
 				}

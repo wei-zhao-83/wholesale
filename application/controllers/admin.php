@@ -4,11 +4,41 @@ class Admin extends Admin_Controller {
 	
     public function __construct() {
 		parent::__construct();
+		
+		$this->load->model('SalesReportFilter');
 	}
-    
+	
     public function index() {
-        $this->load->view('admin/header');
-		$this->load->view('admin/dashboard');
+		$data = $sales_matrix = array();
+		
+		// Set sales filter
+		$filter = new SalesReportFilter();
+		$filter->setSort(Filter::SORT_BY_ASC);
+		$filter->setStatus(transaction\models\Transaction::STATUS_COMPLETED);
+		
+		if (!empty($_GET['from'])) {
+			$filter->setFrom($_GET['from']);
+		}
+		if (!empty($_GET['to'])) {
+			$filter->setTo($_GET['to']);
+		}
+		if (!empty($_GET['range'])) {
+			$filter->setRange($_GET['range']);
+		}
+		
+		$sales_by_date = $this->em->getRepository('sale\models\Sale')->getSales($filter->toArray());		
+		
+		if (!empty($sales_by_date)) {
+			foreach($sales_by_date as $sale) {
+				$_datetime = new DateTime($sale->getCreatedAt());
+				$_micro_timestamp = $_datetime->getTimestamp() . '000';
+				
+				$sales_matrix[$_micro_timestamp] = $sale->getTotal();
+			}
+		}
+		
+        $this->load->view('admin/header', array('current_view' => 'dashboard'));
+		$this->load->view('admin/dashboard', array('sales_matrix' => json_encode($sales_matrix)));
 		$this->load->view('admin/footer');
     }
 	

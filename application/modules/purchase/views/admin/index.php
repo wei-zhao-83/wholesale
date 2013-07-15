@@ -48,22 +48,22 @@
         <table>
             <tr>
                 <th class="small">Order #</th>
-                <th class="medium">Order Date</th>
+                <th class="small">Order Date</th>
                 <th class="medium">Vendor</th>
                 <th class="small">Status</th>
                 <th class="small">BOH Updated</th>
-                <th class="small">Total</th>
+                <th class="small">Total/Due</th>
                 <th class="xxsmall"></th>
             </tr>
             <?php foreach ($purchases as $purchase) { ?>            
-            
+            <?php $_summary = $purchase->getSummary(); ?>
             <tr>
                 <td><?php echo $purchase->getId(); ?></td>
                 <td><?php echo $purchase->getCreatedAt(); ?></td>
                 <td><?php echo ($purchase->getVendor())? $purchase->getVendor()->getName() : ''; ?></td>
                 <td><?php echo get_full_name($purchase->getStatus()); ?></td>
                 <td><?php echo ($purchase->getBohUpdated() == 1) ? 'Yes' : 'No'; ?></td>
-                <td>$<?php echo $purchase->getTotal(); ?></td>
+                <td>$<?php echo $_summary['total']; ?>/<span class="text-highlight">$<?php echo $_summary['total_due']; ?></span></td>
                 <td>
                     <a class="btn-edit" href="purchase/edit/<?php echo $purchase->getId(); ?>"></a>
                     <a class="btn-delete" href="purchase/delete/<?php echo $purchase->getId(); ?>"></a>

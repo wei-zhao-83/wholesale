@@ -78,13 +78,13 @@
                     <table id="picklist">
                         <thead>
                             <tr>
-                                <th class="medium">Barcode</tthd>
-                                <th>Name</th>
-                                <th class="small">Category</th>
-                                <th class="xsmall">Unit</th>
+                                <th class="medium sortable" data-sort="int">Barcode</tthd>
+                                <th class="sortable" data-sort="string">Name</th>
+                                <th class="small sortable" data-sort="string">Category</th>
+                                <th class="xsmall sortable" data-sort="int">Unit</th>
                                 <th class="small">Unit Price</th>
                                 <th class="small">Discount</th>
-                                <th class="xsmall">Qty*</th>
+                                <th class="xsmall sortable" data-sort="int">Qty*</th>
                                 <th class="small">Amount</th>
                             </tr>
                         </thead>
@@ -117,7 +117,7 @@
                             </tr>
                             <tr>
                                 <td colspan="7" class="text-rgt"><strong>Total Due</strong></td>
-                                <td>$<?php echo $summary['total_due'] ?></td>
+                                <td class="text-highlight">$<?php echo $summary['total_due'] ?></td>
                             </tr>
                             <tr>
                                 <td colspan="7" class="text-rgt"><strong>Total Discount</strong></td>
@@ -135,6 +135,7 @@
     <script src="<?php echo site_url('assets/js/handlebars.js') ?>" type="text/javascript" charset="utf-8"></script>
     <script src="<?php echo site_url('assets/js/jquery.autoSuggest.js') ?>" type="text/javascript" charset="utf-8"></script>
     <script src="<?php echo site_url('assets/js/jquery.fancybox.js') ?>" type="text/javascript" charset="utf-8"></script>
+    <script src="<?php echo site_url('assets/js/stupidtable.min.js') ?>" type="text/javascript"></script>
     <script src="<?php echo site_url('assets/js/site.js') ?>" type="text/javascript"></script>
 </body>
 </html>

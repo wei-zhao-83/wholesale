@@ -1,6 +1,6 @@
 <section id="content">
     <div id="content-head">
-        <h2>Purchase</h2>
+        <h2>Purchase #<?php echo $purchase->getId(); ?></h2>
         
         <ul>
             <li><a class="action-list" href="<?php echo base_url('admin/purchase'); ?>"></a></li>
@@ -130,39 +130,43 @@
                 <table id="search-products">
                     <thead>
                         <tr>
-                            <th class="small">Name</th>
-                            <th class="xsmall">Category</th>
-                            <th class="xsmall">BOH</th>
+                            <th class="small sortable" data-sort="string">Name</th>
+                            <th class="small sortable" data-sort="string">SKU</th>
+                            <th class="xxsmall sortable" data-sort="string">Category</th>
+                            <th class="xxsmall sortable" data-sort="int">BOH</th>
                             <!--<th class="xsmall">In Transit</th>-->
-                            <th class="xsmall">Freq. (<?php echo $purchase->getVendor()->getOrderFrequency(); ?>)</th>
-                            <th class="xsmall">Qty.</th>
-                            <th class="xsmall">Recieved</th>
-                            <th class="xsmall">Cost</th>
+                            <th class="xxsmall sortable" data-sort="int">Freq. <?php echo $purchase->getVendor()->getOrderFrequency(); ?></th>
+                            <th class="xxsmall">Qty.</th>
+                            <th class="xxsmall">Recieved</th>
+                            <th class="xxsmall">Cost</th>
                             <th class="xsmall">Sub Total</th>
-                            <th class="small">Comment</th>
+                            <!--<th class="small">Comment</th>-->
                         </tr>
                     </thead>
                     <tbody>
                         <?php if(count($products) > 0) { ?>
                             <?php foreach($products as $product) { ?>
-                                <tr>
+                                <tr data-qty="<?php echo isset($purchased_items[$product->getID()]) ? $purchased_items[$product->getID()]->getQty() : 0; ?>">
                                     <td>
                                         <a href="<?php echo base_url('/admin/product/edit/' . $product->getID()); ?>">
                                             <?php echo $product->getName(); ?>
                                         </a>
                                         <br><?php echo $product->getBarcode(); ?>
                                     </td>
+                                    <td><?php echo $product->getSKU(); ?></td>
                                     <td><?php echo $product->getCategory()->getName(); ?></td>
                                     <td><?php echo $product->getTotalQty(); ?></td>
                                     <td><?php echo isset($frequency[$product->getID()]) ? $frequency[$product->getID()] : 0; ?></td>
                                     <td><input type="text"
-                                               class="xxsmall item-update-field"
+                                               autocomplete="off"
+                                               class="xxxsmall item-update-field"
                                                name="products[<?php echo $product->getId(); ?>][qty]"
                                                value="<?php echo isset($purchased_items[$product->getID()]) ? $purchased_items[$product->getID()]->getQty() : 0; ?>" /></td>
                                     <td>
                                         <?php if($boh_updated == 0) { ?>
                                             <input type="text"
-                                                   class="xxsmall"
+                                                   autocomplete="off"
+                                                   class="xxxsmall recieved-field"
                                                    name="products[<?php echo $product->getId(); ?>][received]"
                                                    value="<?php echo isset($purchased_items[$product->getID()]) ? $purchased_items[$product->getID()]->getReceived() : 0; ?>" />
                                         <?php } else { ?>
@@ -171,32 +175,39 @@
                                     </td>
                                     <td>$<?php echo $product->getCost(); ?></td>
                                     <td><?php echo isset($purchased_items[$product->getID()]) ? '$' . $purchased_items[$product->getID()]->getRowTotal() : '-'; ?></td>
-                                    <td><input type="text"
+                                    <!--<td><input type="text"
                                                class="small"
                                                name="products[<?php echo $product->getId(); ?>][comment]"
-                                               value="<?php echo isset($purchased_items[$product->getID()]) ? $purchased_items[$product->getID()]->getComment() : ''; ?>" /></td>
+                                               value="<?php echo isset($purchased_items[$product->getID()]) ? $purchased_items[$product->getID()]->getComment() : ''; ?>" /></td>-->
                                 </tr>
                             <?php } ?>
+                            </tbody>
+                    <?php } ?>
+                </table>
+                <table id="tbl-summary">
+                    <tbody>
+                        <?php if(count($products) > 0) { ?>
                             <tr>
                                 <td colspan="7" class="text-rgt"><strong>Sub Total</strong></td>
-                                <td>$<?php echo $summary['sub_total'] ?></td>
-                                <td></td>
+                                <td class="small">$<?php echo $summary['sub_total'] ?></td>
                             </tr>
                             <tr>
                                 <td colspan="7" class="text-rgt"><strong>Tax</strong></td>
                                 <td>$<?php echo $summary['tax'] ?></td>
-                                <td></td>
                             </tr>
                             <tr>
                                 <td colspan="7" class="text-rgt"><strong>Total</strong></td>
                                 <td>$<?php echo $summary['total'] ?></td>
-                                <td></td>
+                            </tr>
+                            <tr>
+                                <td colspan="7" class="text-rgt"><strong>Total Due</strong></td>
+                                <td class="text-highlight">$<?php echo $summary['total_due'] ?></td>
                             </tr>
                         <?php } ?>
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="9" class="text-lft">
+                            <td colspan="8" class="text-lft">
                                 <?php if($boh_updated == 0) { ?>
                                     <label>
                                         <input type="checkbox" name="update_boh" value="1" class="checkbox update-boh">

@@ -27,11 +27,21 @@ class SaleRepository extends EntityRepository {
 			$qry_array[] = 's.status = \'' . $filter['status'] . '\' ';
 		}
 		
+		if (!empty($filter['created_at_from'])) {
+			$datatime = new \DateTime($filter['created_at_from']);
+			$qry_array[] = 's.created_at >= \'' . $datatime->format('Y-m-d H:i:s') . '\' ';
+		}
+		
+		if (!empty($filter['created_at_to'])) {
+			$datatime = new \DateTime($filter['created_at_to']);
+			$qry_array[] = 's.created_at <= \'' . $datatime->format('Y-m-d H:i:s') . '\' ';
+		}
+		
 		if (count($qry_array) > 0) {
 			$qry_str .= ' WHERE ' . implode(' AND ', $qry_array);
 		}
 		
-		$qry_str .= ' ORDER BY s.created_at DESC';
+		$qry_str .= ' ORDER BY s.' . (!empty($filter['order']) ? $filter['order']: 'created_at') . ' ' . (!empty($filter['sort']) ? $filter['sort']: 'DESC');
 		
 		$qry = $this->_em->createQuery($qry_str);
 		$sales = $qry->getResult();

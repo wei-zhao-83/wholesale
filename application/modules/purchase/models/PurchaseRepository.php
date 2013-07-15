@@ -111,6 +111,16 @@ class PurchaseRepository extends EntityRepository {
 			$qry_array[] = 'p.status = \'' . $filter['status'] . '\' ';
 		}
 		
+		if (!empty($filter['created_at_from'])) {
+			$datatime = new \DateTime($filter['created_at_from']);
+			$qry_array[] = 'p.created_at >= \'' . $datatime->format('Y-m-d H:i:s') . '\' ';
+		}
+		
+		if (!empty($filter['created_at_to'])) {
+			$datatime = new \DateTime($filter['created_at_to']);
+			$qry_array[] = 'p.created_at <= \'' . $datatime->format('Y-m-d H:i:s') . '\' ';
+		}
+		
 		if (count($qry_array) > 0) {
 			$qry_str .= ' WHERE ' . implode(' AND ', $qry_array);
 		}
@@ -118,6 +128,11 @@ class PurchaseRepository extends EntityRepository {
 		$qry_str .= ' ORDER BY p.created_at DESC';
 		
 		$qry = $this->_em->createQuery($qry_str);
+		
+		if (!empty($filter['limit']) && is_numeric($filter['limit'])) {
+			$qry->setMaxResults($filter['limit']);
+		}
+		
 		$purchases = $qry->getResult();
 		
 		return $purchases;

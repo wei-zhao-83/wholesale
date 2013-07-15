@@ -88,6 +88,7 @@
                                 <option value="0.01" <?php if ($_discount == '0.01') { ?> selected="selected" <?php } ?> >1%</option>
                                 <option value="0.02" <?php if($_discount == '0.02'){ ?> selected="selected" <?php } ?> >2%</option>
                                 <option value="0.05" <?php if($_discount == '0.05'){ ?> selected="selected" <?php } ?> >5%</option>
+                                <option value="0.1" <?php if($_discount == '0.1'){ ?> selected="selected" <?php } ?> >10%</option>
                             </select>
                         </li>
                         
@@ -199,13 +200,13 @@
                 <table id="search-products">
                     <thead>
                         <tr>
-                            <th class="medium">Name</th>
-                            <th class="small">Barcode</th>
-                            <th class="xsmall">Category</th>
-                            <th class="xsmall">Qty</th>
-                            <th class="xsmall">BOH*</th>
-                            <th class="xsmall">Price</th>
-                            <th class="xsmall">Discount</th>
+                            <th class="medium sortable" data-sort="string">Name</th>
+                            <th class="small sortable" data-sort="string">Barcode</th>
+                            <th class="xsmall sortable" data-sort="string">Category</th>
+                            <th class="xxsmall">Qty</th>
+                            <th class="xxsmall sortable" data-sort="int">BOH*</th>
+                            <th class="xxsmall sortable" data-sort="float">Price</th>
+                            <th class="xxsmall">Discount</th>
                             <th class="small">Comment</th>
                             <th class="xxsmall"></th>
                         </tr>
@@ -222,13 +223,19 @@
                             <td><a target="_blank" href="<?php echo site_url('admin/product/edit/' . $item->getProduct()->getId()); ?>"><?php echo $item->getProduct()->getName(); ?></a></td>
                             <td><?php echo $item->getProduct()->getBarcode(); ?></td>
                             <td><?php echo $item->getProduct()->getCategory()->getName(); ?></td>
-                            <td><input type="text" name="products[<?php echo $item->getProduct()->getId(); ?>][qty]" value="<?php echo $item->getQty(); ?>" class="xxsmall field-qty" /></td>
+                            <td>
+                                <input type="text"
+                                       autocomplete="off"
+                                       name="products[<?php echo $item->getProduct()->getId(); ?>][qty]"
+                                       value="<?php echo $item->getQty(); ?>"
+                                       class="xxxsmall field-qty" />
+                            </td>
                             <td><?php echo $item->getProduct()->getTotalQty(); ?><?php // echo $item->getProduct()->getUnit() ?></td>
                             <td class="field-price"><?php echo $item->getSalePrice(); ?></td>
                             
                             <td>
                                 <?php if (!$item->getProduct()->getNoDiscount()) { ?>
-                                <input type="text" name="products[<?php echo $item->getProduct()->getId(); ?>][discount]" value="<?php echo $item->getDiscount(); ?>" class="xxsmall field-discount" />
+                                <input type="text" name="products[<?php echo $item->getProduct()->getId(); ?>][discount]" value="<?php echo $item->getDiscount(); ?>" class="xxxsmall field-discount" />
                                 <?php } else { ?>
                                 -
                                 <?php } ?>

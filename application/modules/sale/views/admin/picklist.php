@@ -79,14 +79,14 @@
                         <table id="picklist">
                             <thead>
                                 <tr>
-                                    <th class="xxsmall"></th>
-                                    <th class="medium">Barcode</tthd>
-                                    <th>Name</th>
-                                    <th class="xsmall">Location</th>
-                                    <th class="small">Category</th>
-                                    <th class="xxsmall">Unit</th>
-                                    <th class="xsmall">BOH</th>
-                                    <th class="xxsmall">Ordered</th>
+                                    <th class="xxxsmall"></th>
+                                    <th class="medium sortable" data-sort="int">Barcode</tthd>
+                                    <th class="sortable" data-sort="string">Name</th>
+                                    <th class="xsmall sortable" data-sort="int">Location</th>
+                                    <th class="small sortable" data-sort="string">Category</th>
+                                    <th class="xxsmall sortable" data-sort="string">Unit</th>
+                                    <th class="xsmall sortable" data-sort="int">BOH</th>
+                                    <th class="xxsmall sortable" data-sort="int">Ordered</th>
                                     <th class="xsmall">Picked*</th>
                                     <th class="xsmall">Shipped*</th>
                                     <th class="small">Comment</th>
@@ -107,12 +107,15 @@
                                     <td><?php echo $item->getQty(); ?></td>
                                     <td>
                                         <?php if($boh_updated == 0) { ?>
-                                            <input name="picked[<?php echo $item->getID(); ?>]" value="<?php echo $item->getPicked(); ?>" class="xxsmall picklist-field">
+                                            <input name="picked[<?php echo $item->getID(); ?>]"
+                                                   value="<?php echo $item->getPicked(); ?>"
+                                                   autocomplete="off"
+                                                   class="xxsmall picklist-field">
                                         <?php } else { ?>
                                             <?php echo $item->getPicked(); ?>
                                         <?php } ?>
                                     </td>
-                                    <td><input name="shipped[<?php echo $item->getID(); ?>]" value="<?php echo $item->getShipped(); ?>" class="xxsmall picklist-field"></td>
+                                    <td><input autocomplete="off" name="shipped[<?php echo $item->getID(); ?>]" value="<?php echo $item->getShipped(); ?>" class="xxsmall picklist-field"></td>
                                     <td><?php echo ($item->getComment()) ? $item->getComment() : '-'; ?></td>
                                 </tr>
                                 <?php } ?>
@@ -159,6 +162,7 @@
     <script src="<?php echo site_url('assets/js/handlebars.js') ?>" type="text/javascript" charset="utf-8"></script>
     <script src="<?php echo site_url('assets/js/jquery.autoSuggest.js') ?>" type="text/javascript" charset="utf-8"></script>
     <script src="<?php echo site_url('assets/js/jquery.fancybox.js') ?>" type="text/javascript" charset="utf-8"></script>
+    <script src="<?php echo site_url('assets/js/stupidtable.min.js') ?>" type="text/javascript"></script>
     <script src="<?php echo site_url('assets/js/site.js') ?>" type="text/javascript"></script>
 </body>
 </html>

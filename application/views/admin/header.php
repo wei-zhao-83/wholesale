@@ -9,8 +9,9 @@
     <link rel="stylesheet" href="<?php echo site_url('assets/css/autoSuggest.css') ?>">
     <link rel="stylesheet" href="<?php echo site_url('assets/css/jquery.fancybox.css') ?>">
     <link rel="stylesheet" href="<?php echo site_url('assets/css/site.css') ?>">
+    <link rel="stylesheet" href="<?php echo site_url('assets/css/flick/jquery-ui-1.10.3.custom.min.css') ?>">
 </head>
-<body>
+<body data-view="<?php echo !empty($current_view) ? $current_view : ''; ?>">
     <div id="header-wrapper">
         <header id="header" class="container">
             <a href="<?php echo site_url('admin'); ?>" id="logo">

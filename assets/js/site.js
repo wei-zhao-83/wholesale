@@ -21,6 +21,58 @@
     $tags.autoSuggest(_url, _settings);
 }(jQuery));
 
+// Sortable
+(function($) {
+    $('#search-products, #picklist').stupidtable();
+})(jQuery);
+
+// Dashboard
+(function($) {
+    var current_view = $('body').data('view');
+    
+    if (current_view === 'dashboard') {
+        $('.datepicker').datepicker({'dateFormat': 'yy-mm-dd'});
+        
+        var sales_by_date = $("#sales-flowchart").data('sales-by-date') || [];
+        var result = [];
+        
+        $.each(sales_by_date, function(idx, val) {
+            var timestamp = parseInt(idx);
+            var amount = parseFloat(val);
+            
+            result.push([timestamp, amount]);
+        });
+        
+        for (var i = 0; i < result.length; ++i) {
+			result[i][0] += 60 * 60 * 1000;
+		}
+        
+        var options = {
+            xaxis: {
+                mode: 'time',
+                minTickSize: [1, 'day'],
+            },
+            yaxis: {
+                tickFormatter: function(value, axis) {
+					return '$' + value.toFixed(axis.tickDecimals);
+				}
+            },
+            selection: {
+                mode: "x"
+            },
+            points: {
+                show: true
+            },
+            lines: {
+                show: true,
+                fill: true
+            }
+        };
+        
+        $.plot("#sales-flowchart", [result], options);
+    }
+}(jQuery));
+
 // Form
 ;(function($) {
     var siteForm = {
@@ -50,6 +102,7 @@
             qtyField: '.field-qty',
             
             picklistField: '.picklist-field',
+            recievedField: '.recieved-field',
             
             notification: '#notification'
         },
@@ -78,7 +131,7 @@
                 e.preventDefault();
             });
             
-            $(config.picklistField).on('dblclick', function(e) {
+            $(config.picklistField + ', ' + config.recievedField).on('dblclick', function(e) {
                 var qty = $(this).closest('tr').data('qty');
                 
                 $(this).val(qty);

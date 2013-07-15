@@ -199,7 +199,7 @@ class Admin extends Admin_Controller {
 		if (!empty($current_items)) {
 			foreach($current_items as $current_item) {
 				// Update the current items, if current item exists in the post products array
-				if(isset($products[$current_item->getProduct()->getID()])) {
+				if(isset($products[$current_item->getProduct()->getID()]) && !empty($products[$current_item->getProduct()->getID()]['qty'])) {
 					$current_item->setQty($products[$current_item->getProduct()->getID()]['qty']);
 					$current_item->setComment($products[$current_item->getProduct()->getID()]['comment']);
 					
@@ -264,22 +264,24 @@ class Admin extends Admin_Controller {
 		// Add new item
 		if (!empty($products)) {
 			foreach ($products as $prod_id => $prod) {
-				$product = $this->em->getRepository('product\models\Product')->findOneById($prod_id);
-				
-				$item = new transaction\models\TransactionItem;
-				
-				$item->setProduct($product);
-				$item->setCost($product->getCost());
-				$item->setSuggestedPrice($product->getSuggestedPrice());
-				$item->setTax($this->tax);
-				$item->setQty($prod['qty']);
-				$item->setComment($prod['comment']);
-				
-				if (!$product->getNoDiscount()) {
-					$item->setDiscount($prod['discount']);
+				if (!empty($prod['qty'])) {
+					$product = $this->em->getRepository('product\models\Product')->findOneById($prod_id);
+					
+					$item = new transaction\models\TransactionItem;
+					
+					$item->setProduct($product);
+					$item->setCost($product->getCost());
+					$item->setSuggestedPrice($product->getSuggestedPrice());
+					$item->setTax($this->tax);
+					$item->setQty($prod['qty']);
+					$item->setComment($prod['comment']);
+					
+					if (!$product->getNoDiscount()) {
+						$item->setDiscount($prod['discount']);
+					}
+					
+					$sale->addItem($item);
 				}
-				
-				$sale->addItem($item);
 			}
 		}
 		

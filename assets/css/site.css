@@ -331,7 +331,33 @@ form {
                 form.search .filter-fields-list li li{
                     margin: 0;
                 }
-    
+				
+	form.search.dashboard {
+		width: 100%;
+	}
+	form.search.dashboard ul.filter-fields-list {
+		width: auto;
+		margin: 0;
+	}
+	form.search.dashboard .btn-filter{
+		float: left;
+	}
+    ul#sales-date-range {
+		float: right;
+		margin: 0;
+		padding: 5px 0;
+	}
+	ul#sales-date-range li {
+		margin: 0 15px 0 0;
+	}
+	ul#sales-date-range li a {
+		color: #CC6655;
+		text-decoration: none;
+	}
+	ul#sales-date-range li a:hover {
+		text-decoration: underline;
+	}
+	
     fieldset {
         width: 100%;
     }
@@ -528,7 +554,6 @@ table {
     table tbody tr:hover{
         background: #FCF7D1;
     }
-	
         a.btn-edit,
 		a.btn-delete,
 		a.btn-remove,
@@ -589,6 +614,10 @@ table#picklist tfoot td {
 }
 table#picklist tbody tr:nth-child(even) {
 	background: #f8f8f8;
+}
+
+table#tbl-summary{
+	border-top: none;
 }
 
 .pl-heading-row {
@@ -828,6 +857,12 @@ p.pick-list-summary span {
 	text-decoration:none;
 }
 
+/* Dashboard Sales Flowchart */
+#sales-flowchart {
+	width: 100%;
+	min-height: 300px;
+}
+
 /* Tags list */
 ul#tags-list {
 	display: inline-block;
@@ -879,6 +914,10 @@ ul.as-selections li.as-original input {
 	text-align: left;
 }
 
+.text-highlight {
+	color: #CC6655;
+}
+
 .hide {
 	display: none;
 }
@@ -889,6 +928,9 @@ ul.as-selections li.as-original input {
 	display: inline-block !important;
 }
 
+.xxxsmall {
+	width: 35px;
+}
 .xxsmall{
     width: 50px;
 }
@@ -922,4 +964,18 @@ ul.as-selections li.as-original input {
 }
 .quarter {
 	width: 25%;
+}
+
+/* Sorting */
+.sortable {
+	text-decoration: underline;
+}
+.sortable:hover {
+	cursor: pointer;
+}
+.sorting-asc:after {
+	content: " \25b2";
+}
+.sorting-desc:after {
+	content: " \25bc";
 }

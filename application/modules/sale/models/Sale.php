@@ -83,7 +83,7 @@ class Sale extends Transaction {
     }
     
     public function getSummary($is_picked = false) {
-        $sub_total = $discount = $tax = $total_paid = 0;
+        $sub_total = $discount = $tax = $total_paid = $due = 0;
 		
 		$items = $this->getItems();
         $payments = $this->getPayments();
@@ -96,7 +96,7 @@ class Sale extends Transaction {
             }
         }
         
-		if($items->count() > 0) {            
+		if($items->count() > 0) {
 			foreach($items as $item) {
                 $qty = ($is_picked) ? $item->getPicked() : $item->getQty();
                 
@@ -106,11 +106,15 @@ class Sale extends Transaction {
 			}            
 		}
 		
+		if ($sub_total + $tax - $total_paid > 0) {
+			$due = $sub_total + $tax - $total_paid;
+		}
+		
 		return array('sub_total' => number_format($sub_total, 2, '.', ''),
 					 'discount'  => number_format($discount, 2, '.', ''),
 					 'tax' 		 => number_format($tax, 2, '.', ''),
 					 'total' 	 => number_format($sub_total + $tax, 2, '.', ''),
-                     'total_due' => number_format($sub_total + $tax - $total_paid, 2, '.', ''));
+                     'total_due' => number_format($due, 2, '.', ''));
     }
     
     // override the parent class method

@@ -70,7 +70,7 @@
                 <td><?php echo get_full_name($sale->getType()); ?></td>
                 <!--<td><?php // echo get_full_name($sale->getPayment()); ?></td>-->
                 <td><?php echo $sale->getDefaultDiscount() * 100; ?>%</td>
-                <td>$<?php echo $_summary['total']; ?>/$<?php echo $_summary['total_due']; ?></td>
+                <td>$<?php echo $_summary['total']; ?>/<span class="text-highlight">$<?php echo $_summary['total_due']; ?></span></td>
                 <td>
                     <a class="btn-edit" href="sale/edit/<?php echo $sale->getId(); ?>"></a>
                     <a class="btn-delete" href="sale/delete/<?php echo $sale->getId(); ?>"></a>
