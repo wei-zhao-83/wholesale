@@ -15,6 +15,14 @@ class SalesReportFilter extends Filter {
         $this->status = $status;
     }
     
+    public function getStatus() {
+        return $this->status;
+    }
+    
+    public function getCustomer() {
+        return $this->customer;
+    }
+    
     public function setRange($range) {
         switch($range) {
             case '7days':

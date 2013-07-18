@@ -53,12 +53,20 @@ body {
 	color: #CC6655;
 }
 
-
-
 p.note {
 	margin: 0;
 	font-size: 11px;
 	color: #666666;
+}
+
+section {
+	margin: 0 0 40px 0;
+}
+section:last-child {
+	margin: 0;
+}
+section h4 {
+	font-size: 13px;
 }
 
 #notification {
@@ -92,13 +100,15 @@ p.note {
 }
 #content-wrapper-ajax .container {
 	width: 100%;
-}
-
+}	
     #header{
         height: 30px;
+		width:1000px;
+		margin: 0 auto;
         position: relative;
     }
-        #logo {
+        #logo, #link-dashboard {
+			margin: 5px 0 0;
             float: left;
         }
 		#quicklinks {
@@ -111,7 +121,7 @@ p.note {
 			    position: relative;
 			    margin: 0;
 			}
-				#quicklinks a{
+				#quicklinks a, a#link-dashboard{
                     font-size: 11px;
 				    color: #FCF7D1;
 				    text-transform: capitalize;
@@ -119,7 +129,7 @@ p.note {
 				    padding: 0 16px;
 				    text-decoration: none;
 				}
-                #quicklinks a:hover{
+                #quicklinks a:hover, a#link-dashboard:hover{
                     color:#fff;
                 }
     #nav {
@@ -258,7 +268,7 @@ p.note {
             #content-head h2{
                 float: left;
                 text-shadow: 0px 1px white;
-                margin: 0 0 0 18px;
+                margin: 0 0 13px 18px;
             }
         
             #content-head ul {

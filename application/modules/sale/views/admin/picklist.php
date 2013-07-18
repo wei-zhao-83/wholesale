@@ -110,19 +110,19 @@
                                             <input name="picked[<?php echo $item->getID(); ?>]"
                                                    value="<?php echo $item->getPicked(); ?>"
                                                    autocomplete="off"
-                                                   class="xxsmall picklist-field">
+                                                   class="xxsmall picklist-field picked-field">
                                         <?php } else { ?>
                                             <?php echo $item->getPicked(); ?>
                                         <?php } ?>
                                     </td>
-                                    <td><input autocomplete="off" name="shipped[<?php echo $item->getID(); ?>]" value="<?php echo $item->getShipped(); ?>" class="xxsmall picklist-field"></td>
+                                    <td><input autocomplete="off" name="shipped[<?php echo $item->getID(); ?>]" value="<?php echo $item->getShipped(); ?>" class="xxsmall picklist-field shipped-field"></td>
                                     <td><?php echo ($item->getComment()) ? $item->getComment() : '-'; ?></td>
                                 </tr>
                                 <?php } ?>
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colspan="11" class="text-lft">
+                                    <td colspan="8" class="text-lft">
                                         <?php if($boh_updated == 0) { ?>
                                             <label>
                                                 <input type="checkbox" name="update_boh" value="1" class="checkbox update-boh">
@@ -135,6 +135,9 @@
                                             </label>
                                         <?php } ?>
                                     </td>
+                                    <td><a href="#" class="max-qty" data-field="picked">Max</a></td>
+                                    <td><a href="#" class="max-qty" data-field="shipped">Max</a></td>
+                                    <td></td>
                                 </tr>
                             </tfoot>
                         </table>

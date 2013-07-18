@@ -68,17 +68,14 @@ class ProductRepository extends EntityRepository {
 			$qry_str .= ' WHERE ' . implode(' AND ', $qry_array);
 		}
 		
-		$qry_str .= ' ORDER BY p.name';
+		$qry_str .= ' ORDER BY p.' . (!empty($filter['order']) ? $filter['order']: 'name') . ' ' . (!empty($filter['sort']) ? $filter['sort']: 'DESC');
 		
-		$current_page = !empty($filter['current_page']) ? $filter['current_page'] : 0;
-		
+		// Pagination
 		if (!empty($filter['per_page'])) {
-			$per_page = $filter['per_page'];
-			
 			$qry = $this->_em->createQuery($qry_str)
-						 ->setFirstResult($current_page)
-						 ->setMaxResults($per_page);
-						 
+						->setFirstResult($filter['current_page'])
+						->setMaxResults($filter['per_page']);
+			
 			$products = new Paginator($qry, $fetchJoinCollection = true);
 		} else {
 			$qry = $this->_em->createQuery($qry_str);

@@ -4,6 +4,7 @@ namespace sale\models;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class SaleRepository extends EntityRepository {
 	public function getSales($filter = null) {
@@ -43,8 +44,17 @@ class SaleRepository extends EntityRepository {
 		
 		$qry_str .= ' ORDER BY s.' . (!empty($filter['order']) ? $filter['order']: 'created_at') . ' ' . (!empty($filter['sort']) ? $filter['sort']: 'DESC');
 		
-		$qry = $this->_em->createQuery($qry_str);
-		$sales = $qry->getResult();
+		// Pagination
+		if (!empty($filter['per_page'])) {
+			$qry = $this->_em->createQuery($qry_str)
+						->setFirstResult($filter['current_page'])
+						->setMaxResults($filter['per_page']);
+			
+			$sales = new Paginator($qry, $fetchJoinCollection = true);
+		} else {
+			$qry = $this->_em->createQuery($qry_str);
+			$sales = $qry->getResult();
+		}
 		
 		return $sales;
 	}

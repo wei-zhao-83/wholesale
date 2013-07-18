@@ -7,6 +7,8 @@ class Admin extends Admin_Controller {
 	function  __construct() {
 		parent::__construct();
 		
+		$this->load->model('ProductsFilter');
+		
 		$temp_unit_measures = product\models\Product::getUOM();
 		foreach ($temp_unit_measures as $measure) {
 			$this->unit_measures[$measure] = get_full_name($measure); 
@@ -92,32 +94,18 @@ class Admin extends Admin_Controller {
 	}
 	
 	public function index() {
-		// Filter setting
-		if ($_POST) {
-			$_filter = $this->input->post();
-			
-			if ($this->input->post('as_values_tags')) {
-				$_filter['tags'] = array_filter(explode(',', $this->input->post('as_values_tags')));
-			}
-			
-			// Set current filter to session
-			$this->session->set_userdata(array('product_filter' => $_filter));
+		$this->load->model('ProductsFilter');
+		
+		$filter = new ProductsFilter($_GET);
+		$filter->setCurrentPage($this->uri->segment(4, 0));
+		if (!empty($_GET['as_values_tags'])) {
+			$filter->setTags($_GET['as_values_tags']);
 		}
 		
-		$filter = $this->session->userdata('product_filter');
+		$products = $this->em->getRepository('product\models\Product')->getProducts($filter->toArray());
 		
-		// Grab the current page number from url instead of session
-		$filter['current_page'] = $this->uri->segment(4, 0);
-		
-		if (empty($filter['per_page'])) {
-			$filter['per_page'] = $this->config->item('per_page', 'config_site');
-		}
-		
-		// Get all the products by filter
-		$products = $this->em->getRepository('product\models\Product')->getproducts($filter);		
-		
-		$_per_page = !empty($filter['per_page']) ? $filter['per_page'] : false;
-		$pagination	= create_pagination('admin/product/index/', count($products), $_per_page);		
+		// Pagination
+		$pagination	= create_pagination('admin/product/index/', count($products), $filter->toArray());
 		
 		$data = array('categories'  	=> $this->em->getRepository('category\models\Category')->getCategories(),
 					  'products' 		=> $products,

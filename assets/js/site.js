@@ -22,17 +22,15 @@
 }(jQuery));
 
 // Sortable
-(function($) {
-    $('#search-products, #picklist').stupidtable();
-})(jQuery);
+(function($) { $('#search-products, #picklist').stupidtable(); })(jQuery);
+// Dateepicker
+(function($) { $('.datepicker').datepicker({'dateFormat': 'yy-mm-dd'}); })(jQuery);
 
 // Dashboard
 (function($) {
     var current_view = $('body').data('view');
     
     if (current_view === 'dashboard') {
-        $('.datepicker').datepicker({'dateFormat': 'yy-mm-dd'});
-        
         var sales_by_date = $("#sales-flowchart").data('sales-by-date') || [];
         var result = [];
         
@@ -104,6 +102,8 @@
             picklistField: '.picklist-field',
             recievedField: '.recieved-field',
             
+            maxQty:  '.max-qty',
+            
             notification: '#notification'
         },
         
@@ -144,22 +144,38 @@
                 e.preventDefault();
             });
             
+            // Picklist
+            $(config.maxQty).on('click', function(e) {
+                var $max = $(this),
+                    $table = $max.parents('table'),
+                    fieldType = $max.data('field');
+                
+                $table.find('tr').each(function() {
+                    var $tr = $(this),
+                        qty = $tr.data('qty');
+                        
+                    $tr.find('.' + fieldType + '-field').val(qty);
+                });
+                
+                e.preventDefault();
+            });
+            
             $(config.checkAllBtn).on('click', function() {
                 $(this).parents('ul').find(':checkbox').attr('checked', this.checked);
             });
             
-            //$('body').on('keydown', config.qtyField, function(e) {
-            //    var qty = $(this).val();
-            //    
-            //    if (e.which == 38) { // up
-            //        qty++;
-            //    } else if (e.which == 40 && qty > 1) { // down
-            //        qty--;
-            //    }
-            //    
-            //    $(this).val(qty);
-            //    e.preventDefault();
-            //});
+            $('body').on('keydown', config.qtyField, function(e) {
+                var qty = $(this).val();
+                
+                if (e.which == 38) { // up
+                    qty++;
+                } else if (e.which == 40 && qty > 0) { // down
+                    qty--;
+                }
+                
+                $(this).val(qty);
+                e.preventDefault();
+            });
             
             // Search the product
             $(config.prodSearchBtn).on('click', function(e) {

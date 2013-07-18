@@ -159,7 +159,7 @@
                                     <td><?php echo isset($frequency[$product->getID()]) ? $frequency[$product->getID()] : 0; ?></td>
                                     <td><input type="text"
                                                autocomplete="off"
-                                               class="xxxsmall item-update-field"
+                                               class="xxxsmall item-update-field field-qty"
                                                name="products[<?php echo $product->getId(); ?>][qty]"
                                                value="<?php echo isset($purchased_items[$product->getID()]) ? $purchased_items[$product->getID()]->getQty() : 0; ?>" /></td>
                                     <td>

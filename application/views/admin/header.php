@@ -14,8 +14,8 @@
 <body data-view="<?php echo !empty($current_view) ? $current_view : ''; ?>">
     <div id="header-wrapper">
         <header id="header" class="container">
-            <a href="<?php echo site_url('admin'); ?>" id="logo">
-                <!--<img src="http://placehold.it/80x40">-->
+            <a href="<?php echo site_url('admin'); ?>" id="link-dashboard">
+                Home
             </a>
             
             <ul id="quicklinks">

@@ -9,25 +9,26 @@
     </div>
     
     <div id="white-bg-container">
-        <?php echo form_open('admin/sale', array('class' => 'search')); ?>
+        
+        <form action="<?php echo site_url('admin/sale'); ?>" method="get" class="search">
             <ul class="filter-fields-list">
                 <li>
                     <?php echo form_input('id', set_value('id'), 'class=\'small\' placeholder=\'Order #\''); ?>
                 </li>
                 
                 <li>
-                    <?php echo form_input('from', set_value('from'), 'class=\'small\' id=\'date-picker\' placeholder=\'From\''); ?>
+                    <?php echo form_input('from', set_value('from'), 'class=\'small datepicker\' placeholder=\'From\''); ?>
                 </li>
                 
                 <li>
-                    <?php echo form_input('to', set_value('to'), 'class=\'small\' id=\'date-picker\' placeholder=\'To\''); ?>
+                    <?php echo form_input('to', set_value('to'), 'class=\'small datepicker\' placeholder=\'To\''); ?>
                 </li>
                 
                 <li>
                     <select name="status">
                         <option value="">Status</option>
                         <?php foreach($statuses as $status): ?>
-                        <option value="<?php echo $status; ?>" <?php echo set_select('status'); ?>><?php echo get_full_name($status); ?></option>
+                        <option value="<?php echo $status; ?>" <?php echo ($filter->getStatus() == $status) ? 'selected' : ''; ?>><?php echo get_full_name($status); ?></option>
                         <?php endforeach; ?>
                     </select>
                 </li>
@@ -36,13 +37,23 @@
                     <select name="customer">
                         <option value="">Customer</option>
                         <?php foreach($customers as $customer): ?>
-                        <option value="<?php echo $customer->getId(); ?>" <?php echo set_select('customer'); ?>><?php echo $customer->getName(); ?></option>
+                        <option value="<?php echo $customer->getId(); ?>" <?php echo ($filter->getCustomer() == $customer->getId()) ? 'selected' : ''; ?>><?php echo $customer->getName(); ?></option>
                         <?php endforeach; ?>
+                    </select>
+                </li>
+                
+                <li>
+                    <select name="per_page">
+                        <option value="">Per Page</option>
+                        <option value="5" <?php echo ($filter->getPerPage() == 5) ? 'selected' : ''; ?>>5</option>
+                        <option value="10" <?php echo ($filter->getPerPage() == 10) ? 'selected' : ''; ?>>10</option>
+                        <option value="50" <?php echo ($filter->getPerPage() == 50) ? 'selected' : ''; ?>>50</option>
+                        <option value="100" <?php echo ($filter->getPerPage() == 100) ? 'selected' : ''; ?>>100</option>
                     </select>
                 </li>
             </ul>
             <?php echo form_submit('filter', '', 'class=\'btn-filter\''); ?>
-        <?php echo form_close(); ?>
+        </form>
         
         <?php $this->load->view('admin/message'); ?>
         
@@ -78,5 +89,9 @@
             </tr>
             <?php } ?>
         </table>
+        
+        <?php if(!empty($pagination['links'])) { ?>
+            <?php echo $pagination['links'];?>
+        <?php } ?>
     </div>
 </section>

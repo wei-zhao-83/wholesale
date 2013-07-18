@@ -4,6 +4,7 @@ namespace purchase\models;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class PurchaseRepository extends EntityRepository {
 	//public function getQtyOnSales($prod_ids = array()) {
@@ -125,15 +126,19 @@ class PurchaseRepository extends EntityRepository {
 			$qry_str .= ' WHERE ' . implode(' AND ', $qry_array);
 		}
 		
-		$qry_str .= ' ORDER BY p.created_at DESC';
+		$qry_str .= ' ORDER BY p.' . (!empty($filter['order']) ? $filter['order']: 'created_at') . ' ' . (!empty($filter['sort']) ? $filter['sort']: 'DESC');
 		
-		$qry = $this->_em->createQuery($qry_str);
-		
-		if (!empty($filter['limit']) && is_numeric($filter['limit'])) {
-			$qry->setMaxResults($filter['limit']);
+		// Pagination
+		if (!empty($filter['per_page'])) {
+			$qry = $this->_em->createQuery($qry_str)
+						->setFirstResult($filter['current_page'])
+						->setMaxResults($filter['per_page']);
+			
+			$purchases = new Paginator($qry, $fetchJoinCollection = true);
+		} else {
+			$qry = $this->_em->createQuery($qry_str);
+			$purchases = $qry->getResult();
 		}
-		
-		$purchases = $qry->getResult();
 		
 		return $purchases;
 	}

@@ -20,19 +20,20 @@ if (!function_exists('create_pagination'))
 	 * @return array The pagination array. 
 	 * @see Pagination::create_links()
 	 */
-	function create_pagination($uri, $total_rows, $limit = false, $uri_segment = 4, $full_tag_wrap = TRUE)
+	function create_pagination($uri, $total_rows, $suffixes = array(), $uri_segment = 4, $full_tag_wrap = TRUE)
 	{
 		$ci = & get_instance();
 		$ci->load->library('pagination');
 
 		$current_page = $ci->uri->segment($uri_segment, 0);
-
+		
 		// Initialize pagination
-		$config['suffix'] = $ci->config->item('url_suffix');
+		$config['suffix'] = (!empty($suffixes)) ? '?' . http_build_query($suffixes) : '';
+		
 		$config['base_url'] = $config['suffix'] !== FALSE ? rtrim(site_url($uri), $config['suffix']) : site_url($uri);
 		// Count all records
 		$config['total_rows'] = $total_rows;
-		$config['per_page'] = ($limit) ? $limit : $ci->config->item('per_page', 'config_site');
+		$config['per_page'] = (!empty($suffixes['per_page'])) ? $suffixes['per_page'] : $ci->config->item('per_page', 'config_site');
 		$config['uri_segment'] = $uri_segment;
 		$config['page_query_string'] = FALSE;
 
@@ -42,9 +43,10 @@ if (!function_exists('create_pagination'))
 		$config['full_tag_close'] = '</ul>';
 
 		$config['first_link'] = '&lt;&lt;';
+		$config['first_url'] = 0 . $config['suffix'];
 		$config['first_tag_open'] = '<li class="first">';
 		$config['first_tag_close'] = '</li>';
-
+		
 		$config['prev_link'] = '&lt;';
 		$config['prev_tag_open'] = '<li class="prev">';
 		$config['prev_tag_close'] = '</li>';

@@ -9,25 +9,25 @@
     </div>
     
     <div id="white-bg-container">
-        <form class="search" method="POST" action="<?php echo site_url(); ?>admin/product">
+        <form class="search" method="GET" action="<?php echo site_url('admin/product'); ?>">
             <ul class="filter-fields-list">
                 <li>
-                    <input placeholder="Name" class="small" name="name" value="<?php echo !empty($filter['name']) ? $filter['name'] : ''; ?>" >
+                    <input placeholder="Name" class="small" name="name" value="<?php echo $filter->getName(); ?>" >
                 </li>
                 
                 <li>
-                    <input placeholder="Barcode" class="small" name="barcode" value="<?php echo !empty($filter['barcode']) ? $filter['barcode'] : ''; ?>" >
+                    <input placeholder="Barcode" class="small" name="barcode" value="<?php echo $filter->getBarcode(); ?>" >
                 </li>
                 
                 <li>
-                    <input placeholder="Section" class="xxsmall" name="section" value="<?php echo !empty($filter['section']) ? $filter['section'] : ''; ?>" >
+                    <input placeholder="Section" class="xxsmall" name="section" value="<?php echo $filter->getSection(); ?>" >
                 </li>
                 
                 <li>
                     <select name="category">
                         <option value="">Category</option>
                         <?php foreach($categories as $category): ?>
-                        <option value="<?php echo $category->getId(); ?>" <?php if(!empty($filter['category']) && $filter['category'] == $category->getId()) { ?> selected="selected" <?php } ?>><?php echo $category->getName(); ?></option>
+                        <option value="<?php echo $category->getId(); ?>" <?php echo ($filter->getCategory() == $category->getId()) ? 'selected' : ''; ?>><?php echo $category->getName(); ?></option>
                         <?php endforeach; ?>
                     </select>
                 </li>
@@ -36,22 +36,24 @@
                     <select name="vendor">
                         <option value="">Vendor</option>
                         <?php foreach($vendors as $vendor): ?>
-                        <option value="<?php echo $vendor->getId(); ?>" <?php if(!empty($filter['vendor']) && $filter['vendor'] == $vendor->getId()) { ?> selected="selected" <?php } ?> ><?php echo $vendor->getName(); ?></option>
+                        <option value="<?php echo $vendor->getId(); ?>" <?php echo ($filter->getVendor() == $vendor->getId()) ? 'selected' : ''; ?>><?php echo $vendor->getName(); ?></option>
                         <?php endforeach; ?>
                     </select>
                 </li>
                 
                 <li>
                     <select name="per_page">
-                        <option value="12" <?php if(!empty($filter['per_page']) && $filter['per_page'] == 12) { ?> selected="selected" <?php } ?>>12</option>
-                        <option value="24" <?php if(!empty($filter['per_page']) && $filter['per_page'] == 24) { ?> selected="selected" <?php } ?>>24</option>
-                        <option value="48" <?php if(!empty($filter['per_page']) && $filter['per_page'] == 48) { ?> selected="selected" <?php } ?>>48</option>
+                        <option value="">Per Page</option>
+                        <option value="5" <?php echo ($filter->getPerPage() == 5) ? 'selected' : ''; ?>>5</option>
+                        <option value="10" <?php echo ($filter->getPerPage() == 10) ? 'selected' : ''; ?>>10</option>
+                        <option value="50" <?php echo ($filter->getPerPage() == 50) ? 'selected' : ''; ?>>50</option>
+                        <option value="100" <?php echo ($filter->getPerPage() == 100) ? 'selected' : ''; ?>>100</option>
                     </select>
                 </li>
             </ul>
             <ul class="filter-fields-list">
                 <li>
-                    <input name="tags" class="large" id="tags" data-url="<?php echo site_url('admin/tag/ajax_search/'); ?>" data-never-submit="false" data-prefill="<?php echo (!empty($filter['tags']) && is_array($filter['tags'])) ? implode(',', $filter['tags']) : ''; ?>" >
+                    <input name="tags" class="large" id="tags" data-url="<?php echo site_url('admin/tag/ajax_search/'); ?>" data-never-submit="false" data-prefill="<?php echo $filter->getTags(); ?>" >
                 </li>
             </ul>
             <?php echo form_submit('filter', '', 'class=\'btn-filter\''); ?>
@@ -82,7 +84,7 @@
         <?php endforeach; ?>
         </table>
         
-        <?php if(!empty($pagination['links'])) { ?>
+         <?php if(!empty($pagination['links'])) { ?>
             <?php echo $pagination['links'];?>
         <?php } ?>
     </div>

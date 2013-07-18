@@ -3,12 +3,21 @@
 class Admin extends Admin_Controller {
 	function  __construct() {
 		parent::__construct();
+		$this->load->model('PurchasesReportFilter');
 	}
 	
 	public function index() {
-		$filter = $this->input->post();
+		$filter = new PurchasesReportFilter($_GET);
+		$filter->setCurrentPage($this->uri->segment(4, 0));
 		
-		$data = array('purchases' => $this->em->getRepository('purchase\models\Purchase')->getPurchases($filter),
+		$purchases = $this->em->getRepository('purchase\models\Purchase')->getPurchases($filter->toArray());
+		
+		// Pagination
+		$pagination	= create_pagination('admin/purchase/index/', count($purchases), $filter->toArray());
+		
+		$data = array('purchases' => $purchases,
+					  'pagination' => $pagination,
+					  'filter' => $filter,
 					  'vendors' => $this->em->getRepository('vendor\models\Vendor')->getVendors(),
 					  'statuses' => transaction\models\Transaction::getPurchaseStatuses());
 		

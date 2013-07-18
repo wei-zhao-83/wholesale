@@ -35,10 +35,17 @@ class Admin extends Admin_Controller {
 				
 				$sales_matrix[$_micro_timestamp] = $sale->getTotal();
 			}
-		}
+		}		
+		
+		// Last 5 orders
+		$last_order_filter = new SalesReportFilter();
+		$last_order_filter->setLimit(5);
+		
+		$last_sales = $this->em->getRepository('sale\models\Sale')->getSales($last_order_filter->toArray());	
 		
         $this->load->view('admin/header', array('current_view' => 'dashboard'));
-		$this->load->view('admin/dashboard', array('sales_matrix' => json_encode($sales_matrix)));
+		$this->load->view('admin/dashboard', array('sales_matrix' => json_encode($sales_matrix),
+												   'last_sales' => $last_sales));
 		$this->load->view('admin/footer');
     }
 	

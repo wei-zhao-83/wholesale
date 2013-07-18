@@ -3,14 +3,24 @@
 class Admin extends Admin_Controller {
 	function  __construct() {
 		parent::__construct();
+		
+		$this->load->model('SalesReportFilter');
 	}
 	
-	public function index() {		
-		$filter = $this->input->post();
+	public function index() {
+		$filter = new SalesReportFilter($_GET);
+		$filter->setCurrentPage($this->uri->segment(4, 0));
 		
-		$data = array('sales' 	  => $this->em->getRepository('sale\models\Sale')->getSales($filter),
-					  'customers' => $this->em->getRepository('customer\models\Customer')->getCustomers(),
-					  'statuses'  => transaction\models\Transaction::getSaleStatuses());
+		$sales = $this->em->getRepository('sale\models\Sale')->getSales($filter->toArray());
+		
+		// Pagination
+		$pagination	= create_pagination('admin/sale/index/', count($sales), $filter->toArray());
+		
+		$data = array('sales' 	   => $sales,
+					  'customers'  => $this->em->getRepository('customer\models\Customer')->getCustomers(),
+					  'statuses'   => transaction\models\Transaction::getSaleStatuses(),
+					  'pagination' => $pagination,
+					  'filter'	   => $filter);
 		
 		$this->load->view('admin/header');
 		$this->load->view('admin/index', $data);
