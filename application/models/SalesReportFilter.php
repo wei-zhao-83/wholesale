@@ -7,6 +7,9 @@ class SalesReportFilter extends Filter {
     
     protected $status;
     
+    // Category id
+    protected $category;
+    
     function __construct($filter = array()) {
         parent::__construct($filter);
     }
@@ -21,6 +24,18 @@ class SalesReportFilter extends Filter {
     
     public function getCustomer() {
         return $this->customer;
+    }
+    
+    public function setCustomer($customer) {
+        $this->customer = $customer;
+    }
+    
+    public function setCategory($category) {
+        $this->category = $category;
+    }
+    
+    public function getCategory() {
+        return $this->category;
     }
     
     public function setRange($range) {

@@ -83,8 +83,8 @@
                 <td><?php echo $sale->getDefaultDiscount() * 100; ?>%</td>
                 <td>$<?php echo $_summary['total']; ?>/<span class="text-highlight">$<?php echo $_summary['total_due']; ?></span></td>
                 <td>
-                    <a class="btn-edit" href="sale/edit/<?php echo $sale->getId(); ?>"></a>
-                    <a class="btn-delete" href="sale/delete/<?php echo $sale->getId(); ?>"></a>
+                    <a class="btn-edit" href="<?php echo site_url('admin/sale/edit/' . $sale->getId()) ?>"></a>
+                    <a class="btn-delete" href="<?php echo site_url('admin/sale/delete/' . $sale->getId()) ?>"></a>
                 </td>
             </tr>
             <?php } ?>

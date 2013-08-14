@@ -7,6 +7,56 @@ class Admin extends Admin_Controller {
 		$this->load->model('SalesReportFilter');
 	}
 	
+	public function report() {
+		$data = $products = $items = array();
+		$category_id = !empty($_GET['category']) ? $_GET['category'] : null;
+		
+		if ($category_id != null) {
+			try {
+				// Order items by category
+				$order_items_filter = new SalesReportFilter();
+				$order_items_filter->setCategory($category_id);
+				$order_items_filter->setStatus(Transaction\models\Transaction::STATUS_COMPLETED);
+				
+				$order_items = $this->em->getRepository('sale\models\Sale')->getSaleItemsByCategory($order_items_filter->toArray());
+				
+				foreach($order_items as $item) {
+					if (!isset($products[$item->getProduct()->getID()])) {
+						$products[$item->getProduct()->getID()] = array('obj' => $item->getProduct(),
+																		'qty' => $item->getQty(),
+																		'total' => $item->getRowTotal());
+					} else {
+						$products[$item->getProduct()->getID()]['total'] += $item->getRowTotal();
+						$products[$item->getProduct()->getID()]['qty'] += $item->getQty();
+					}
+					
+					$_datetime = new DateTime($item->getTransaction()->getCreatedAt());
+					$_micro_timestamp = $_datetime->getTimestamp() . '000';					
+					
+					if (isset($items[$_micro_timestamp])) {
+						$items[$_micro_timestamp] += $item->getRowTotal();
+					} else {
+						$items[$_micro_timestamp] = $item->getRowTotal();
+					}
+				}
+			} catch (Exception $e) {
+				$data['message'] = array('type' => 'error', 'content' => $e->getMessage());
+			}
+		}
+		
+		// Sort the result
+		ksort($items);
+		
+		$data = array('products' => $products,
+					'items' => $items,
+					'categories' => $this->em->getRepository('category\models\Category')->getCategories(),
+					'customers' => $this->em->getRepository('customer\models\Customer')->getCustomers());
+		
+		$this->load->view('admin/header', array('current_view' => 'report'));
+		$this->load->view('admin/report', $data);
+		$this->load->view('admin/footer');
+	}
+	
 	public function index() {
 		$filter = new SalesReportFilter($_GET);
 		$filter->setCurrentPage($this->uri->segment(4, 0));

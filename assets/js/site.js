@@ -24,11 +24,52 @@
 // Sortable
 (function($) { $('#search-products, #picklist').stupidtable(); })(jQuery);
 // Dateepicker
-(function($) { $('.datepicker').datepicker({'dateFormat': 'yy-mm-dd'}); })(jQuery);
+(function($) {
+    if ($.fn.datepicker) {
+        $('.datepicker').datepicker({'dateFormat': 'yy-mm-dd'}); }
+    }
+)(jQuery);
 
 // Dashboard
 (function($) {
     var current_view = $('body').data('view');
+    
+    if (current_view === 'report') {
+        var sales_by_date = $("#sales-flowchart").data('sales-by-date') || [];
+        var result = [];
+        
+        $.each(sales_by_date, function(idx, val) {
+            var timestamp = parseInt(idx);
+            var amount = parseFloat(val);
+            
+            result.push([timestamp, amount]);
+        });
+        
+        for (var i = 0; i < result.length; ++i) {
+			result[i][0] += 60 * 60 * 1000;
+		}
+        
+        var options = {
+            xaxis: {
+                mode: 'time',
+                minTickSize: [1, 'day'],
+            },
+            yaxis: {
+                tickFormatter: function(value, axis) {
+					return '$' + value.toFixed(axis.tickDecimals);
+				}
+            },
+            selection: {
+                mode: "x"
+            },
+            lines: {
+                show: true,
+                fill: true
+            }
+        };
+        
+        $.plot("#sales-flowchart", [result], options);
+    }
     
     if (current_view === 'dashboard') {
         var sales_by_date = $("#sales-flowchart").data('sales-by-date') || [];

@@ -39,9 +39,9 @@ class Admin extends Admin_Controller {
 		
 		// Last 5 orders
 		$last_order_filter = new SalesReportFilter();
-		$last_order_filter->setLimit(5);
+		$last_order_filter->setPerPage(5);
 		
-		$last_sales = $this->em->getRepository('sale\models\Sale')->getSales($last_order_filter->toArray());	
+		$last_sales = $this->em->getRepository('sale\models\Sale')->getSales($last_order_filter->toArray());
 		
         $this->load->view('admin/header', array('current_view' => 'dashboard'));
 		$this->load->view('admin/dashboard', array('sales_matrix' => json_encode($sales_matrix),

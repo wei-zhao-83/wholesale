@@ -318,6 +318,8 @@ section h4 {
             border: 1px solid #f2f2f2;
             background: white;
             padding: 20px;
+			float: left;
+			width: 828px;
         }
         
 form {
@@ -613,6 +615,29 @@ table {
 		a.btn-move:hover {
 			background-position: -120px -20px;
 		}
+
+section.report-detail {}
+
+section.report-detail .report-wrap {
+	width: 47%;
+}
+
+section.report-detail .report-wrap:first-child {
+	margin: 0 5% 0 0;
+	width: 48%;
+}
+
+table.report {
+	border: none;
+}
+table.report th {
+	padding: 0 0 10px 0;
+	background: none;
+	border-bottom: 1px solid #dddddd;
+}
+table.report tr:hover{
+	background: none;
+}
 
 table#picklist th {
 	color: #000000;
@@ -974,6 +999,14 @@ ul.as-selections li.as-original input {
 }
 .quarter {
 	width: 25%;
+}
+
+.left {
+	float: left;
+}
+
+.right {
+	float: right;
 }
 
 /* Sorting */
