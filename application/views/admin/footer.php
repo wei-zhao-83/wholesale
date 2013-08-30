@@ -49,5 +49,20 @@
             </tr>
             {{/products}}
         </script>
+        
+         <script id="return-search-template" type="text/x-handlebars-template">
+            {{#products}}
+            <tr class="highlight" data-id="{{id}}" data-current-price="{{price}}" data-cash-and-carry="{{cash_and_carry}}" data-full-service="{{full_service}}" data-standard-service="{{standard_service}}">
+                <td><a target="_blank" href="/admin/product/edit/{{id}}">{{name}}</a></td>
+                <td>{{barcode}}</td>
+                <td>{{category}}</td>
+                <td><input type="text" autocomplete="off" name="products[{{id}}][qty]" value="0" class="xxxsmall field-qty"></td>
+                <td>{{qty}}</td>
+                <td><input type="text" autocomplete="off" name="products[{{id}}][price]" value="0.00" class="xxxsmall field-price"></td>
+                <td><input type="text" name="products[{{id}}][comment]" value="" class="small"></td>
+                <td><a href="#" class="btn-remove show-inline"></a></td>
+            </tr>
+            {{/products}}
+        </script>
     </body>
 </html>

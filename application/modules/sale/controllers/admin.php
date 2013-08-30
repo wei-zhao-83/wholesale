@@ -17,6 +17,8 @@ class Admin extends Admin_Controller {
 				$order_items_filter = new SalesReportFilter();
 				$order_items_filter->setCategory($category_id);
 				$order_items_filter->setStatus(Transaction\models\Transaction::STATUS_COMPLETED);
+				$order_items_filter->setFrom($_GET['from']);
+				$order_items_filter->setTo($_GET['to']);
 				
 				$order_items = $this->em->getRepository('sale\models\Sale')->getSaleItemsByCategory($order_items_filter->toArray());
 				

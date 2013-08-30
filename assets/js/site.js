@@ -34,44 +34,7 @@
 (function($) {
     var current_view = $('body').data('view');
     
-    if (current_view === 'report') {
-        var sales_by_date = $("#sales-flowchart").data('sales-by-date') || [];
-        var result = [];
-        
-        $.each(sales_by_date, function(idx, val) {
-            var timestamp = parseInt(idx);
-            var amount = parseFloat(val);
-            
-            result.push([timestamp, amount]);
-        });
-        
-        for (var i = 0; i < result.length; ++i) {
-			result[i][0] += 60 * 60 * 1000;
-		}
-        
-        var options = {
-            xaxis: {
-                mode: 'time',
-                minTickSize: [1, 'day'],
-            },
-            yaxis: {
-                tickFormatter: function(value, axis) {
-					return '$' + value.toFixed(axis.tickDecimals);
-				}
-            },
-            selection: {
-                mode: "x"
-            },
-            lines: {
-                show: true,
-                fill: true
-            }
-        };
-        
-        $.plot("#sales-flowchart", [result], options);
-    }
-    
-    if (current_view === 'dashboard') {
+    if (current_view === 'report' || current_view == 'dashboard') {
         var sales_by_date = $("#sales-flowchart").data('sales-by-date') || [];
         var result = [];
         
@@ -122,11 +85,13 @@
             
             // Handlebar templates
             prodTemplate:     '#product-search-template',
+            returnTemplate:     '#return-search-template',
             purchaseTemplate: '#purchase-search-template',
             
             // Products ajax search
             prodSearchForm:   '#product-ajax-search',
             prodSearchBtn:    '#product-ajax-search-btn',
+            returnSearchBtn:    '#return-ajax-search-btn',
             
             // Products list table
             prodTable:        '#search-products',
@@ -220,6 +185,19 @@
             
             // Search the product
             $(config.prodSearchBtn).on('click', function(e) {
+                var result = self.prodSearch.call(this),
+                    type = $(this).data('type');
+                
+                result.done(function(data) {
+                    if (data) {
+                        self.renderProdRows(data, type);
+                    }
+                });
+                
+                e.preventDefault();
+            });
+            
+            $(config.returnSearchBtn).on('click', function(e) {
                 var result = self.prodSearch.call(this),
                     type = $(this).data('type');
                 
@@ -354,6 +332,10 @@
         loadProdTemplate: function(type) {            
             if (type === 'sale') {
                 source = $(this.config.prodTemplate).html();
+            }
+            
+            if (type === 'return') {
+                source = $(this.config.returnTemplate).html();
             }
             
             if (type === 'purchase') {

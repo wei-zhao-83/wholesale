@@ -38,21 +38,25 @@ class SalesReportFilter extends Filter {
         return $this->category;
     }
     
-    public function setRange($range) {
-        switch($range) {
-            case '7days':
-                $this->created_at_from = new DateTime('-1 week');
-            break;
-            case 'ytd':
-                $this->created_at_from = new DateTime('-1 year');
-            break;
-            case '2ytd':
-                $this->created_at_from = new DateTime('-2 year');
-            break;
-            default:
-            case 'month':
-                $this->created_at_from = new DateTime('first day of this month');
-            break;
+    public function setFrom($from) {
+        if (!empty($from)) {
+            if (is_string($from)) {
+                $this->created_at_from = new DateTime($from);
+            }
+            if ($from instanceof DateTime) {
+                $this->created_at_from = $form;
+            }
+        }
+    }
+    
+    public function setTo($to) {
+        if (!empty($to)) {
+            if (is_string($to)) {
+               $this->created_at_to = new DateTime($to . ' 23:59:59');
+           }
+           if ($to instanceof DateTime) {
+               $this->created_at_to = $to;
+           }
         }
     }
 }
